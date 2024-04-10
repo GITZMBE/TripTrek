@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.12.1",
+    "bcrypt": "^5.1.1",
     "next": "14.1.4",
     "prisma": "^5.12.1",
     "react": "^18",
