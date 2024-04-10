@@ -45,11 +45,12 @@ export const SignupForm = () => {
 
     const registeredUser = await register();
 
-    if (!registeredUser.ok) {
+    if (registeredUser.message) {
+      console.log(registeredUser.message);
       return;
     }
     
-    const loggedInUser = await login();
+    // const loggedInUser = await login();
 
     setFormData({
       email: '',
@@ -57,7 +58,6 @@ export const SignupForm = () => {
       password: ''
     });
     router.push("/");
-    window.location.reload();
   };
 
   return (
