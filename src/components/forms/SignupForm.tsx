@@ -1,9 +1,9 @@
 import React from 'react'
 
-const SignupForm = () => {
+export const SignupForm = () => {
   return (
     <form action="">
-      
+
     </form>
   )
 }
