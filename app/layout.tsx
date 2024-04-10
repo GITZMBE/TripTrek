@@ -19,6 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" type="image/x-icon" href="favicon.png" />
+        <title>Trik Trek</title>
       </head>
       <body className={inter.className}>
         <Header />
