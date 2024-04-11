@@ -65,7 +65,7 @@ export const LoginForm = () => {
         />
       </div>
       <FormButton
-        label='Register'
+        label='Login'
         onClick={(e) => {
           e.preventDefault();
           handleLogin();
