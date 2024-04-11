@@ -24,6 +24,8 @@ export const PUT = async (req: Request, context: any) => {
       dataToUpdate.avatar = avatar;
     }
 
+    console.log(dataToUpdate)
+
     const updatedUser = await prisma.user.update({
       where: {
         id: id,
