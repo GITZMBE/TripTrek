@@ -8,7 +8,7 @@ import { FormInput } from '../ui';
 import { FormButton } from './ui';
 import Link from 'next/link';
 
-const LoginForm = () => {
+export const LoginForm = () => {
   const router = useRouter();
   const [ formData, setFormData ] = useState({
     email: '',
