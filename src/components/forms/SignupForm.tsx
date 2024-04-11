@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSetRecoilState } from 'recoil';
 import { loggedInUserState } from '@/src/recoil';
+import { useErrorMessage } from '@/src/hooks';
 
 export const SignupForm = () => {
   const router = useRouter();
@@ -16,6 +17,7 @@ export const SignupForm = () => {
     password: ''
   });
   const setLoggedInUser = useSetRecoilState(loggedInUserState);
+  const { errorMessage, setErrorMessage } = useErrorMessage();
 
   const login = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
@@ -43,19 +45,21 @@ export const SignupForm = () => {
       formData.username === '' ||
       formData.password === ''
     ) {
+      setErrorMessage("All fields needs to be filled")
       return;
     }
 
     const registeredUser = await register();
 
     if (registeredUser.message) {
-      console.log(registeredUser.message);
+      setErrorMessage(registeredUser.message);
       return;
     }
     
     const user_token= await login();
-    setLoggedInUser(user_token);
 
+    setErrorMessage(null);
+    setLoggedInUser(user_token);
     setFormData({
       email: '',
       username: '',
@@ -71,6 +75,7 @@ export const SignupForm = () => {
         <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} />
         <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} />
       </div>
+      <p className='text-error'>{ errorMessage }</p>
       <FormButton label="Register" onClick={(e) => {
         e.preventDefault();
         handleRegister();
