@@ -28,7 +28,7 @@ const Navbar = () => {
               
               <p>{ user_token.user.name || user_token.user.email }</p>
             </div>
-            <button onClick={_ => setUserToken(null)}>Loggout</button>
+            <button onClick={_ => setUserToken(null)}>Log out</button>
           </>
         )
       }
