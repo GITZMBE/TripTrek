@@ -7,6 +7,7 @@ import { useSetRecoilState } from "recoil";
 import { FormInput } from "../ui";
 import { FormButton } from "./ui";
 import Link from "next/link";
+import { useErrorMessage } from "@/src/hooks";
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -15,6 +16,7 @@ export const LoginForm = () => {
     password: "",
   });
   const setLoggedInUser = useSetRecoilState(loggedInUserState);
+  const { errorMessage, setErrorMessage } = useErrorMessage();
 
   const login = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
@@ -28,17 +30,18 @@ export const LoginForm = () => {
 
   const handleLogin = async () => {
     if (formData.email === "" || formData.password === "") {
+      setErrorMessage("All fields needs to be filled");
       return;
     }
 
     const user_token = await login();
     if (user_token.message) {
-      console.log(user_token.message);
+      setErrorMessage(user_token.message);
       return;
     }
 
+    setErrorMessage(null);
     setLoggedInUser(user_token);
-
     setFormData({
       email: "",
       password: "",
@@ -64,6 +67,7 @@ export const LoginForm = () => {
           setValue={setFormData}
         />
       </div>
+      <p className="text-error">{ errorMessage }</p>
       <FormButton
         label='Login'
         onClick={(e) => {
