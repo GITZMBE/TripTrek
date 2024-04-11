@@ -8,7 +8,7 @@ import { VscBlank } from "react-icons/vsc";
 
 interface InputProps {
   icon?: IconType
-  type: string;
+  type?: string;
   name: string;
   placeholder?: string;
   required?: boolean;
@@ -18,7 +18,7 @@ interface InputProps {
 
 export const FormInput = ({
   icon: Icon,
-  type,
+  type = 'text',
   name,
   placeholder = "",
   required = false,
@@ -40,7 +40,7 @@ export const FormInput = ({
         required={required}
         onChange={(e) => setValue({ ...value, [e.target.name]: e.target.value})}
         value={value[name]}
-        className='w-full px-2 py-1 rounded-full transition-all duration-300 text-secondary border-2 border-grey/50 focus:border-grey outline-none'
+        className='w-full px-2 py-1 rounded-full transition-all duration-300 bg-light text-secondary border-2 border-grey/50 focus:border-grey outline-none'
       />
       {
         type.toLowerCase() === "password" ? (
