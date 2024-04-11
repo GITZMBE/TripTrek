@@ -12,7 +12,8 @@ const config: Config = {
         secondary: "#31363F",
         accent: "#76ABAE",
         light: "#EEEEEE",
-        grey: "#555D6B"
+        grey: "#555D6B",
+        error: "#cc0000"
       },
     },
   },
