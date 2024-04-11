@@ -5,6 +5,8 @@ import { FormInput } from '../ui'
 import { FormButton } from './ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSetRecoilState } from 'recoil';
+import { loggedInUserState } from '@/src/recoil';
 
 export const SignupForm = () => {
   const router = useRouter();
@@ -13,6 +15,7 @@ export const SignupForm = () => {
     username: '',
     password: ''
   });
+  const setLoggedInUser = useSetRecoilState(loggedInUserState);
 
   const login = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
@@ -20,8 +23,8 @@ export const SignupForm = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    const user = await res.json();
-    return user;
+    const user_token = await res.json();
+    return user_token;
   };
 
   const register = async () => {
@@ -50,7 +53,8 @@ export const SignupForm = () => {
       return;
     }
     
-    // const loggedInUser = await login();
+    const user_token= await login();
+    setLoggedInUser(user_token);
 
     setFormData({
       email: '',
@@ -63,11 +67,11 @@ export const SignupForm = () => {
   return (
     <form className='w-full max-w-[350px] flex flex-col gap-4 items-center'>
       <div className='w-full flex flex-col gap-4'>
-        <FormInput type='text' name='email' placeholder='Email' value={formData} setValue={setFormData} required />
-        <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} required />
-        <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} required />
+        <FormInput type='text' name='email' placeholder='Email' value={formData} setValue={setFormData} />
+        <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} />
+        <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} />
       </div>
-      <FormButton label="Register" type='submit' onClick={(e) => {
+      <FormButton label="Register" onClick={(e) => {
         e.preventDefault();
         handleRegister();
       }} />
@@ -76,6 +80,6 @@ export const SignupForm = () => {
       </Link>
     </form>
   )
-}
+};
 
-export default SignupForm
+export default SignupForm;
