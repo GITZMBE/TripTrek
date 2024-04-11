@@ -1,0 +1,126 @@
+'use client';
+
+import { loggedInUserState } from '@/src/recoil';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react'
+import { useSetRecoilState } from 'recoil';
+import { FormInput } from '../ui';
+import { FormButton } from './ui';
+import Link from 'next/link';
+
+const LoginForm = () => {
+  const router = useRouter();
+  const [ formData, setFormData ] = useState({
+    email: '',
+    password: ''
+  });
+  const setLoggedInUser = useSetRecoilState(loggedInUserState);
+
+  const handleLogin = async () => {
+    if (
+      formData.email === '' ||
+      formData.password === ''
+    ) {
+      return;
+    }
+
+    const login = async () => {
+      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const user_token = await res.json();
+      return user_token;
+    };
+    
+    const user_token= await login();
+    if (user_token.message) {
+      console.log(user_token.message);
+      return;
+    }
+
+    setLoggedInUser(user_token);
+
+    setFormData({
+      email: '',
+      password: ''
+    });
+    router.push("/");
+  };
+
+  return (
+    <form className='w-full max-w-[350px] flex flex-col gap-4 items-center'>
+      <div className='w-full flex flex-col gap-4'>
+        <FormInput type='text' name='email' placeholder='Email' value={formData} setValue={setFormData} />
+        <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} />
+        <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} />
+      </div>
+      <FormButton label="Register" onClick={(e) => {
+        e.preventDefault();
+        handleLogin();
+      }} />
+      <Link className='text-light/50 hover:text-light' href='/login'>
+        Do not have an accout? Sign up here
+      </Link>
+    </form>
+  )
+}
+
+export default LoginForm;
+
+
+
+export const SignupForm = () => {
+  const router = useRouter();
+  const [ formData, setFormData ] = useState({
+    email: '',
+    password: ''
+  });
+  const setLoggedInUser = useSetRecoilState(loggedInUserState);
+
+  const login = async () => {
+    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    const user_token = await res.json();
+    return user_token;
+  };
+
+  const handleLogin = async () => {
+    if (
+      formData.email === '' ||
+      formData.password === ''
+    ) {
+      return;
+    }
+    
+    const user_token= await login();
+    setLoggedInUser(user_token);
+
+    setFormData({
+      email: '',
+      password: ''
+    });
+    router.push("/");
+  };
+
+  return (
+    <form className='w-full max-w-[350px] flex flex-col gap-4 items-center'>
+      <div className='w-full flex flex-col gap-4'>
+        <FormInput type='text' name='email' placeholder='Email' value={formData} setValue={setFormData} />
+        <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} />
+        <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} />
+      </div>
+      <FormButton label="Register" onClick={(e) => {
+        e.preventDefault();
+        handleLogin();
+      }} />
+      <Link className='text-light/50 hover:text-light' href='/login'>
+        already have an account? sign in here.
+      </Link>
+    </form>
+  )
+};
