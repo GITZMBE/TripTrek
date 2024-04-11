@@ -39,9 +39,9 @@ export const SignupForm = () => {
 
   const handleRegister = async () => {
     if (
-      formData.email === undefined ||
-      formData.username === undefined ||
-      formData.password === undefined
+      formData.email === '' ||
+      formData.username === '' ||
+      formData.password === ''
     ) {
       return;
     }
