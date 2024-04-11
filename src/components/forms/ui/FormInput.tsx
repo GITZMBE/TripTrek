@@ -10,7 +10,8 @@ interface InputProps {
   icon?: IconType
   type: string;
   name: string;
-  placeholder: string;
+  placeholder?: string;
+  required?: boolean;
   value: any;
   setValue: SetStateAction<any>;
 }
@@ -19,7 +20,8 @@ export const FormInput = ({
   icon: Icon,
   type,
   name,
-  placeholder,
+  placeholder = "",
+  required = false,
   value,
   setValue,
 }: InputProps) => {
@@ -35,6 +37,7 @@ export const FormInput = ({
         type={inputType}
         name={name}
         placeholder={placeholder}
+        required={required}
         onChange={(e) => setValue({ ...value, [e.target.name]: e.target.value})}
         value={value[name]}
         className='w-full px-2 py-1 rounded-full transition-all duration-300 text-secondary border-2 border-grey/50 focus:border-grey outline-none'

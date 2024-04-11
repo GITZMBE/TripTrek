@@ -3,6 +3,7 @@ import { IconType } from "react-icons";
 
 interface FormButtonProps {
   label: string;
+  type?: "button" | "submit" | "reset",
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   outline?: boolean;
@@ -12,6 +13,7 @@ interface FormButtonProps {
 
 export const FormButton = ({
   label,
+  type = "button",
   onClick,
   disabled,
   outline,
@@ -20,6 +22,7 @@ export const FormButton = ({
 }: FormButtonProps) => {
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={`relative tracking-widest disabled:opacity-70 disabled:cursor-not-allowed rounded-lg transition w-full ${

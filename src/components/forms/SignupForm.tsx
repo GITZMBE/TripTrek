@@ -5,6 +5,8 @@ import { FormInput } from '../ui'
 import { FormButton } from './ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSetRecoilState } from 'recoil';
+import { loggedInUserState } from '@/src/recoil';
 
 export const SignupForm = () => {
   const router = useRouter();
@@ -13,6 +15,7 @@ export const SignupForm = () => {
     username: '',
     password: ''
   });
+  const setLoggedInUser = useSetRecoilState(loggedInUserState);
 
   const login = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
@@ -20,8 +23,8 @@ export const SignupForm = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    const user = await res.json();
-    return user;
+    const user_token = await res.json();
+    return user_token;
   };
 
   const register = async () => {
@@ -50,7 +53,8 @@ export const SignupForm = () => {
       return;
     }
     
-    // const loggedInUser = await login();
+    const user_token= await login();
+    setLoggedInUser(user_token);
 
     setFormData({
       email: '',
@@ -76,6 +80,6 @@ export const SignupForm = () => {
       </Link>
     </form>
   )
-}
+};
 
-export default SignupForm
+export default SignupForm;
