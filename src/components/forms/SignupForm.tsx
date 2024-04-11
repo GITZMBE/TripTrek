@@ -63,11 +63,11 @@ export const SignupForm = () => {
   return (
     <form className='w-full max-w-[350px] flex flex-col gap-4 items-center'>
       <div className='w-full flex flex-col gap-4'>
-        <FormInput type='text' name='email' placeholder='Email' value={formData} setValue={setFormData} />
-        <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} />
-        <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} />
+        <FormInput type='text' name='email' placeholder='Email' value={formData} setValue={setFormData} required />
+        <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} required />
+        <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} required />
       </div>
-      <FormButton label="Register" onClick={(e) => {
+      <FormButton label="Register" type='submit' onClick={(e) => {
         e.preventDefault();
         handleRegister();
       }} />
