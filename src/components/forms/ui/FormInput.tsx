@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
