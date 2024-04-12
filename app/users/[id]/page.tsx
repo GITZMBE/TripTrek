@@ -8,14 +8,18 @@ import { useRecoilState } from 'recoil';
 import bcrypt from 'bcrypt';
 import Image from 'next/image';
 import FormFileInput from '@/src/components/forms/ui/FormFileInput';
+import { put } from '@vercel/blob';
 
 const UserPage = ({ params }: { params: { id: string } }) => {
   const [user_token, setUserToken] = useRecoilState(loggedInUserState);
   const [ updateable, setUpdateable ] = useState(false);
-  const [ formData, setFormData ] = useState<{ name: string, email: string, password: string, avatar: string | File }>({ name: '', email: '', password: '', avatar: '' });
+  const [ formData, setFormData ] = useState<{ name: string, email: string, password: string, avatar: any }>({ name: '', email: '', password: '', avatar: '' });
 
   const update = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASEURL}/api/users/${params.id}`, {
+    const { url } = await put(formData.avatar?.name, formData.avatar);
+    console.log(url)
+    setFormData({ ...formData, avatar: url });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASEURL}/api/users/update/${params.id}`, {
       method: 'PUT',
       headers: {
         'Content-Types': 'application/json'
@@ -54,7 +58,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
     <main className='w-full min-h-screen flex flex-col justify-center items-center gap-8 bg-primary'>
       <div className='flex gap-8 w-1/2'>
         {user_token !== null && user_token.user.avatar !== null ? (
-          <Image src={`data:image/jpeg;base64,${user_token.user.avatar}`} width='256' height='256' alt="Profile Picture" />
+          <Image src={user_token.user.avatar} width='256' height='256' alt="Profile Picture" />
         ) : (
           <Image src='/male_default_avatar.png' width='256' height='256' alt='' />
         )}
@@ -62,9 +66,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
           <FormInput name='name' placeholder='Name' value={formData} setValue={setFormData} />
           <FormInput name='email' placeholder='Email' value={formData} setValue={setFormData} />
           <FormInput name='password' placeholder='Password' value={formData} setValue={setFormData} />
-          {/* <FormInput type='file' name='avatar' placeholder='Avatar' value={formData} setValue={setFormData} /> */}
           <FormFileInput name='avatar' value={formData} setValue={setFormData} />
-          {/* <input type="file" onChange={e => setFile(e.target.files?.[0])} /> */}
           <FormButton label='Update' onClick={handleUpdate} outline={!updateable} disabled={!updateable} />
         </div>
       </div>

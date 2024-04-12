@@ -26,7 +26,6 @@ export const FormFileInput = ({
       accept="image/*"
       onChange={(e) => {
         setValue({ ...value, [e.target.name]: e.target.files?.[0] });
-        console.log(e)
       }}
       className='w-full px-2 py-1 rounded-full transition-all duration-300 bg-light text-secondary border-2 border-grey/50 focus:border-grey outline-none'
     />
