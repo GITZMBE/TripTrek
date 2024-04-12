@@ -42,10 +42,6 @@ const UserPage = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     let samePassword = false;
-    // const getIsSamePassword = async () => {
-    //   samePassword = await bcrypt.compare(formData.password, user_token?.user.hashedPassword!);
-    // };
-    // getIsSamePassword();
     
     if ((formData.name !== user_token?.user.name && formData.name !== '') || (formData.email !== user_token?.user.email && formData.email !== '') || (!samePassword && formData.password !== '') || (formData.avatar !== user_token?.user.avatar && formData.avatar !== null)) {
       setUpdateable(true);
