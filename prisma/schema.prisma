@@ -13,7 +13,7 @@ model User {
   email          String        @unique
   hashedPassword String
   favoriteIds    String[]
-  avatar         Bytes?
+  avatar         String?
   accounts       Account[]
   listings       Listing[]
   reservations   Reservation[]

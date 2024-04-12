@@ -1,4 +1,5 @@
 import prisma from '@/prisma';
+import { put } from '@vercel/blob';
 import bcrypt from 'bcrypt';
 import imageToBase64, {} from 'image-to-base64';
 
@@ -22,18 +23,10 @@ export const PUT = async (req: Request, context: any) => {
       dataToUpdate.hashedPassword = hashedPassword;
     }
     if (avatar && avatar.trim() !== '') {
-      // const reader = new FileReader();
-      // reader.readAsArrayBuffer(avatar);
-      // reader.onloadend = () => {
-      //     var array = new Uint8Array(reader.result);
-      //     for (var i = 0; i < array.length; i++) {
-      //         fileByteArray.push(array[i]);
-      //      }
-      // }
-      // console.log(avatar)
-      // const avatarAsBase64 = await imageToBase64(avatar);
-      // console.log(avatarAsBase64)
-      dataToUpdate.avatar = avatar;
+      // const blob = await put(avatar.name, avatar);
+      // console.log(blob)
+      // dataToUpdate.avatar = blob.url;
+      dataToUpdate.avatar = avatar
     }
 
     console.log(dataToUpdate)
