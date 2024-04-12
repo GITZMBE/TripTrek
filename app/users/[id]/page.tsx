@@ -6,6 +6,7 @@ import { loggedInUserState } from '@/src/recoil';
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil';
 import bcrypt from 'bcrypt';
+import Image from 'next/image';
 
 const UserPage = ({ params }: { params: { id: string } }) => {
   const [user_token, setUserToken] = useRecoilState(loggedInUserState);
@@ -35,11 +36,11 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
-    let samePassword;
-    const getIsSamePassword = async () => {
-      samePassword = await bcrypt.compare(formData.password, user_token?.user.hashedPassword!);
-    };
-    getIsSamePassword();
+    let samePassword = false;
+    // const getIsSamePassword = async () => {
+    //   samePassword = await bcrypt.compare(formData.password, user_token?.user.hashedPassword!);
+    // };
+    // getIsSamePassword();
     
     if (formData.name !== user_token?.user.name && formData.name !== '' && formData.email !== user_token?.user.email && formData.email !== '' && samePassword && formData.password !== '' && formData.avatar !== user_token?.user.avatar && formData.avatar !== '') {
       setUpdateable(true);
@@ -51,8 +52,8 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   return (
     <main className='w-full min-h-screen flex flex-col justify-center items-center gap-8 bg-primary'>
       <div className='flex gap-8 w-1/2'>
-        <img src="/male_default_avatar.png" className='w-56' alt="" />
-        <div className='flex flex-col items-center gap-4'>
+        <Image src='/male_default_avatar.png' width='256' height='256' alt='' />
+        <div className='w-full h-full flex flex-col items-center gap-4'>
           <FormInput name='name' placeholder='Name' value={formData} setValue={setFormData} />
           <FormInput name='email' placeholder='Email' value={formData} setValue={setFormData} />
           <FormInput name='password' placeholder='Password' value={formData} setValue={setFormData} />

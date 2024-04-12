@@ -4,7 +4,6 @@ import React, { SetStateAction, useState } from "react";
 import { IconType } from "react-icons";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-import { VscBlank } from "react-icons/vsc";
 
 interface InputProps {
   icon?: IconType
