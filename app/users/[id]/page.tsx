@@ -16,7 +16,11 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   const [ formData, setFormData ] = useState<{ name: string, email: string, password: string, avatar: any }>({ name: '', email: '', password: '', avatar: '' });
 
   const update = async () => {
-    const { url } = await put(formData.avatar?.name, formData.avatar);
+    const { url } = await fetch(process.env.NEXT_PUBLIC_BASEURL + '/api/upload/image', { 
+      method: 'POST', 
+      headers: { 'content-types': formData.avatar.type || 'application/octet-stream' }, 
+      body: JSON.stringify(formData.avatar)
+    });
     console.log(url)
     setFormData({ ...formData, avatar: url });
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASEURL}/api/users/update/${params.id}`, {
