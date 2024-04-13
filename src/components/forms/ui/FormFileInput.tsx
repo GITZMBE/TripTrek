@@ -21,11 +21,17 @@ export const FormFileInput = ({
     <input
       type='file'
       name={name}
-      // value={value}
       required={required}
       accept="image/*"
       onChange={(e) => {
-        setValue({ ...value, [e.target.name]: e.target.files?.[0] });
+        let file;
+        if (e.target.files && e.target.files[0]) {
+          file = e.target.files[0];
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+
+          setValue({ ...value, [e.target.name]: file });
+        }
       }}
       className='w-full px-2 py-1 rounded-full transition-all duration-300 bg-light text-secondary border-2 border-grey/50 focus:border-grey outline-none'
     />
