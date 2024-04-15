@@ -73,7 +73,6 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
-    console.log(typeof formData.avatar)
     if (formData.avatar !== user_token?.user.avatar && formData.avatar !== null && formData.avatar !== "" && typeof formData.avatar !== 'string') {
       uploadImage();
     }
