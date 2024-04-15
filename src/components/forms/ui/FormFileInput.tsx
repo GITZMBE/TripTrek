@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useEffect } from "react";
+import React, { SetStateAction } from "react";
 
 interface InputProps {
   name: string;
@@ -15,8 +15,6 @@ export const FormFileInput = ({
   value,
   setValue,
 }: InputProps) => {
-  useEffect(() => {console.log(value)}, [value])
-
   return (
     <input
       type='file'
