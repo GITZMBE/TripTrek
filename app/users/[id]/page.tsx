@@ -55,10 +55,12 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   };
 
   const handleUpdate = async () => {
-    const uploadedImage = await uploadImage();
-    if (uploadedImage && uploadedImage.message) {
-      setErrorMessage(uploadedImage.message);
-      return;
+    if (formData.avatar !== "" || formData.avatar !== null) {
+      const uploadedImage = await uploadImage();
+      if (uploadedImage && uploadedImage.message) {
+        setErrorMessage(uploadedImage.message);
+        return;
+      }
     }
 
     const newUser = await updateUserInfo();
@@ -71,13 +73,18 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
+    console.log(typeof formData.avatar)
+    if (formData.avatar !== user_token?.user.avatar && formData.avatar !== null && formData.avatar !== "" && typeof formData.avatar !== 'string') {
+      uploadImage();
+    }
+
     let samePassword = false;
 
     if (
       (formData.name !== user_token?.user.name && formData.name !== "") ||
       (formData.email !== user_token?.user.email && formData.email !== "") ||
       (!samePassword && formData.password !== "") ||
-      (formData.avatar !== user_token?.user.avatar && formData.avatar !== null)
+      (formData.avatar !== user_token?.user.avatar && formData.avatar !== null && formData.avatar !== "")
     ) {
       setUpdateable(true);
       return;
@@ -100,7 +107,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
             src='/male_default_avatar.png'
             width='256'
             height='256'
-            alt=''
+            alt='Default avatar'
           />
         )}
         <div className='w-full h-full flex flex-col items-center gap-4'>
