@@ -1,28 +1,30 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react'
-import { FormInput } from './ui'
-import { FormButton } from './ui';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useSetRecoilState } from 'recoil';
-import { loggedInUserState } from '@/src/recoil';
-import { useErrorMessage } from '@/src/hooks';
-import { FcGoogle } from 'react-icons/fc';
-import { FaGithub } from 'react-icons/fa';
-import { signIn } from 'next-auth/react';
+import React, { useState } from "react";
+import { FormInput } from "./ui";
+import { FormButton } from "./ui";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSetRecoilState } from "recoil";
+import { loggedInUserState } from "@/src/recoil";
+import { useErrorMessage } from "@/src/hooks";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
+import { signIn } from "next-auth/react";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type FormFields = {
+  email: string,
+  username: string,
+  password: string
+};
 
 export const SignupForm = () => {
   const router = useRouter();
-  const [ formData, setFormData ] = useState({
-    email: '',
-    username: '',
-    password: ''
-  });
+  const { register, handleSubmit, formState: { errors } } = useForm<FormFields>();
   const setLoggedInUser = useSetRecoilState(loggedInUserState);
-  const { errorMessage, setErrorMessage } = useErrorMessage();
 
-  const login = async () => {
+  const login = async (formData: FormFields) => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -32,7 +34,7 @@ export const SignupForm = () => {
     return user_token;
   };
 
-  const register = async () => {
+  const signup = async (formData: FormFields) => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -42,54 +44,68 @@ export const SignupForm = () => {
     return user;
   };
 
-  const handleRegister = async () => {
-    if (
-      formData.email === '' ||
-      formData.username === '' ||
-      formData.password === ''
-    ) {
-      setErrorMessage("All fields needs to be filled")
-      return;
-    }
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    const registeredUser = await signup(data);
 
-    const registeredUser = await register();
+    const user_token = await login(data);
 
-    if (registeredUser.message) {
-      setErrorMessage(registeredUser.message);
-      return;
-    }
-    
-    const user_token= await login();
-
-    setErrorMessage(null);
     setLoggedInUser(user_token);
-    setFormData({
-      email: '',
-      username: '',
-      password: ''
-    });
     router.push("/");
   };
 
   return (
-    <form className='w-full max-w-[350px] flex flex-col gap-4 items-center'>
+    <form className='w-full max-w-[350px] flex flex-col gap-4 items-center' onSubmit={handleSubmit(onSubmit)}>
       <div className='w-full flex flex-col gap-4'>
-        <FormInput type='text' name='email' placeholder='Email' value={formData} setValue={setFormData} />
-        <FormInput type='text' name='username' placeholder='Username' value={formData} setValue={setFormData} />
-        <FormInput type='password' name='password' placeholder='Password' value={formData} setValue={setFormData} />
+        <FormInput
+          type='text'
+          name='email'
+          placeholder='Email'
+          required="Email is required"
+          register={register}
+          errors={errors}
+        />
+        <FormInput
+          type='text'
+          name='username'
+          placeholder='Username'
+          required="Username is required"
+          register={register}
+          errors={errors}
+        />
+        <FormInput
+          type='password'
+          name='password'
+          placeholder='Password'
+          required="Password is required"
+          register={register}
+          errors={errors}
+        />
       </div>
-      <p className='text-error'>{ errorMessage }</p>
-      <FormButton label="Register" onClick={(e) => {
-        e.preventDefault();
-        handleRegister();
-      }} />
-      <FormButton label="Login with Google" outline icon={FcGoogle} onClick={() => signIn('google')} />
-      <FormButton label="Login with Github" outline icon={FaGithub} onClick={() => signIn('github')} />
+      { errors.root && (
+        <p className='text-error'>{ errors.root.message }</p>
+      )}
+      <FormButton
+        type="submit"
+        label='Register'
+      />
+      <hr className="w-full border-secondary" />
+      <FormButton
+        label='Login with Google'
+        outline
+        icon={FcGoogle}
+        onClick={() => signIn("google")}
+      />
+      <FormButton
+        label='Login with Github'
+        outline
+        icon={FaGithub}
+        onClick={() => signIn("github")}
+      />
       <Link className='text-light/50 hover:text-light' href='/login'>
         already have an account? sign in here.
       </Link>
     </form>
-  )
+  );
 };
 
 export default SignupForm;
