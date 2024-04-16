@@ -1,7 +1,12 @@
 import { atom } from "recoil";
 import { User } from "@prisma/client";
 
-export const loggedInUserState = atom<{ user: User, token: string } | null>({
-  key: 'userState',
-  default: null
+type UserToken = { 
+  user: User; 
+  token: string;
+};
+
+export const loggedInUserState = atom<UserToken | null>({
+  key: "userState",
+  default: null,
 });
