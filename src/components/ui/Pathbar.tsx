@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useRecoilValue } from "recoil";
-import { loggedInUserState } from "../recoil";
+import { loggedInUserState } from "../../recoil";
 
 const Pathbar = () => {
   const router = useRouter();
@@ -17,8 +17,8 @@ const Pathbar = () => {
   useEffect(() => {
     const isLoggedIn = user_token !== null;
 
-    if (!isLoggedIn && pathName !== '/login' && pathName !== '/signup') {
-      router.push('/login');
+    if (!isLoggedIn && pathName !== "/login" && pathName !== "/signup") {
+      router.push("/login");
     }
   }, [pathName, user_token]);
 
@@ -38,11 +38,7 @@ const Pathbar = () => {
               /{path}
             </p>
           ) : (
-            <Link
-              key={i}
-              href={subpath}
-              className='text-grey hover:text-light'
-            >
+            <Link key={i} href={subpath} className='text-grey hover:text-light'>
               /{path}
             </Link>
           );
