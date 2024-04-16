@@ -69,7 +69,7 @@ const Navbar = () => {
             />
             <hr className='border-primary border-thin mx-4' />
             <button
-              onClick={(_) => setUserToken(null)}
+              onClick={(_) => {setUserToken(null); setIsOpen(false)}}
               className='text-left px-4 py-2 bg-secondary hover:bg-primary transition'
             >
               Log out
