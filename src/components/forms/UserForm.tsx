@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FormInput } from "../ui";
+import { FormInput } from "./ui";
 import FormFileInput from "./ui/FormFileInput";
 import { FormButton } from "./ui";
-import { useErrorMessage } from "@/src/hooks";
+import { useErrorMessage, useFormUpdateable } from "@/src/hooks";
 import { useRecoilState } from "recoil";
 import { loggedInUserState } from "@/src/recoil";
 
@@ -21,7 +21,7 @@ export const UserForm = ({ id }: UserFormProps) => {
   }>({ name: "", email: "", password: "", avatar: "" });
   const [user_token, setUserToken] = useRecoilState(loggedInUserState);
   const { errorMessage, setErrorMessage } = useErrorMessage();
-  const [updateable, setUpdateable] = useState(false);
+  const { updateable, setUpdateable } = useFormUpdateable(false);
 
   const uploadImage = async () => {
     const imageData = await fetch(
@@ -57,7 +57,13 @@ export const UserForm = ({ id }: UserFormProps) => {
   };
 
   const handleUpdate = async () => {
-    if (formData.avatar !== "" || formData.avatar !== null) {
+    if (
+      formData.avatar !== user_token?.user.avatar &&
+      formData.avatar !== null &&
+      formData.avatar !== "" &&
+      formData.avatar !== undefined &&
+      typeof formData.avatar !== "string"
+    ) {
       const uploadedImage = await uploadImage();
       if (uploadedImage && uploadedImage.message) {
         setErrorMessage(uploadedImage.message);
@@ -75,15 +81,6 @@ export const UserForm = ({ id }: UserFormProps) => {
   };
 
   useEffect(() => {
-    if (
-      formData.avatar !== user_token?.user.avatar &&
-      formData.avatar !== null &&
-      formData.avatar !== "" &&
-      typeof formData.avatar !== "string"
-    ) {
-      uploadImage();
-    }
-
     let samePassword = false;
 
     if (
