@@ -14,8 +14,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoading } from "@/src/hooks";
 
 type FormFields = {
-  email: string,
-  password: string
+  email: string;
+  password: string;
 };
 
 export const LoginForm = () => {
