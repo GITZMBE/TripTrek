@@ -2,16 +2,16 @@
 
 import { loggedInUserState } from "@/src/recoil";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { useSetRecoilState } from "recoil";
 import { FormInput } from "./ui";
 import { FormButton } from "./ui";
 import Link from "next/link";
-import { useErrorMessage } from "@/src/hooks";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useLoading } from "@/src/hooks";
 
 type FormFields = {
   email: string,
@@ -22,6 +22,7 @@ export const LoginForm = () => {
   const router = useRouter();
   const { register, handleSubmit, formState: { errors } } = useForm<FormFields>();
   const setLoggedInUser = useSetRecoilState(loggedInUserState);
+  const { isLoading, setIsLoading } = useLoading();
 
   const login = async (formData: FormFields) => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
@@ -34,9 +35,13 @@ export const LoginForm = () => {
   };
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    setIsLoading(true);
     const user_token = await login(data);
 
     setLoggedInUser(user_token);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     router.push("/");
   };
 
@@ -44,19 +49,16 @@ export const LoginForm = () => {
     <form className='w-full max-w-[350px] flex flex-col gap-4 items-center' onSubmit={handleSubmit(onSubmit)}>
       <div className='w-full flex flex-col gap-4'>
         <FormInput
-          type='text'
-          name='email'
           placeholder='Email'
-          required="Email is required"
-          register={register}
+          register={register("email", { required: "Email is required" })}
+          propName="email"
           errors={errors}
         />
         <FormInput
           type='password'
-          name='password'
           placeholder='Password'
-          required="Password is required"
-          register={register}
+          register={register("password", { required: "Password is required" })}
+          propName="password"
           errors={errors}
         />
       </div>
@@ -66,6 +68,7 @@ export const LoginForm = () => {
       <FormButton
         type="submit"
         label='Login'
+        isLoading={isLoading}
       />
       <hr className="w-full border-secondary" />
       <FormButton label="Login with Google" outline icon={FcGoogle} onClick={() => signIn('google')} />
