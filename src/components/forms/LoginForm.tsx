@@ -11,17 +11,19 @@ import { useErrorMessage } from "@/src/hooks";
 import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type FormFields = {
+  email: string,
+  password: string
+};
 
 export const LoginForm = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const { register, handleSubmit, formState: { errors } } = useForm<FormFields>();
   const setLoggedInUser = useSetRecoilState(loggedInUserState);
-  const { errorMessage, setErrorMessage } = useErrorMessage();
 
-  const login = async () => {
+  const login = async (formData: FormFields) => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,53 +33,41 @@ export const LoginForm = () => {
     return user_token;
   };
 
-  const handleLogin = async () => {
-    if (formData.email === "" || formData.password === "") {
-      setErrorMessage("All fields needs to be filled");
-      return;
-    }
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    const user_token = await login(data);
 
-    const user_token = await login();
-    if (user_token.message) {
-      setErrorMessage(user_token.message);
-      return;
-    }
-
-    setErrorMessage(null);
     setLoggedInUser(user_token);
-    setFormData({
-      email: "",
-      password: "",
-    });
     router.push("/");
   };
 
   return (
-    <form className='w-full max-w-[350px] flex flex-col gap-4 items-center'>
+    <form className='w-full max-w-[350px] flex flex-col gap-4 items-center' onSubmit={handleSubmit(onSubmit)}>
       <div className='w-full flex flex-col gap-4'>
         <FormInput
           type='text'
           name='email'
           placeholder='Email'
-          value={formData}
-          setValue={setFormData}
+          required="Email is required"
+          register={register}
+          errors={errors}
         />
         <FormInput
           type='password'
           name='password'
           placeholder='Password'
-          value={formData}
-          setValue={setFormData}
+          required="Password is required"
+          register={register}
+          errors={errors}
         />
       </div>
-      <p className="text-error">{ errorMessage }</p>
+      { errors.root && (
+        <p className="text-error">{ errors.root.message }</p>
+      )}
       <FormButton
+        type="submit"
         label='Login'
-        onClick={(e) => {
-          e.preventDefault();
-          handleLogin();
-        }}
       />
+      <hr className="w-full border-secondary" />
       <FormButton label="Login with Google" outline icon={FcGoogle} onClick={() => signIn('google')} />
       <FormButton label="Login with Github" outline icon={FaGithub} onClick={() => signIn('github')} />
       <Link className='text-light/50 hover:text-light' href='/signup'>
