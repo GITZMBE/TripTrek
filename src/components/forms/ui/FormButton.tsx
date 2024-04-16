@@ -27,7 +27,7 @@ export const FormButton = ({
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       className={`relative tracking-widest disabled:opacity-70 disabled:cursor-not-allowed rounded-lg transition w-full ${
         outline
           ? "bg-transparent hover:bg-accent border-accent/75 hover:border-accent text-accent hover:text-white"
