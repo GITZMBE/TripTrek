@@ -14,9 +14,9 @@ import { signIn } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type FormFields = {
-  email: string,
-  username: string,
-  password: string
+  email: string;
+  username: string;
+  password: string;
 };
 
 export const SignupForm = () => {

@@ -17,7 +17,8 @@ type FormFields = {
   name: string;
   email: string;
   password: string;
-  avatar: File | string;
+  avatar: FileList;
+  avatarUrl: string
 };
 
 export const UserForm = ({ id }: UserFormProps) => {
@@ -33,23 +34,25 @@ export const UserForm = ({ id }: UserFormProps) => {
   const { updateable, setUpdateable } = useFormUpdateable(false);
   const { isLoading, setIsLoading } = useLoading();
 
-  const uploadImage = async (data: FormFields) => {
+  const uploadImage = async (file: File) => {
+    setIsLoading(true);
     const imageData = await fetch(
       process.env.NEXT_PUBLIC_BASEURL + "/api/upload/image",
       {
         method: "POST",
         headers: {
-          "Content-Type": data.avatar?.type || "image/*",
+          "Content-Type": file.type || "image/*",
           "accept": "image/*"
         },
-        body: data.avatar,
+        body: file,
       }
     );
     const savedImage = await imageData.json();
     if (savedImage.message) {
       return savedImage;
     }
-    setValue("avatar", savedImage.url);
+    setValue("avatarUrl", savedImage.url);
+    setIsLoading(false);
   };
 
   const updateUserInfo = async (data: FormFields) => {
@@ -71,16 +74,8 @@ export const UserForm = ({ id }: UserFormProps) => {
     setIsLoading(true);
     
     try {
-      console.log(data)
-      if (
-        data.avatar !== user_token?.user.avatar &&
-        data.avatar !== null &&
-        data.avatar !== "" &&
-        data.avatar !== undefined &&
-        typeof data.avatar !== "string"
-      ) {
-        console.log("upload")
-        const uploadedImage = await uploadImage(data);
+      if (data.avatar.length > 0 && typeof data.avatar !== 'string') {
+        const uploadedImage = await uploadImage(data.avatar[0]);
         if (uploadedImage && uploadedImage.message) {
           return;
         }
@@ -89,7 +84,7 @@ export const UserForm = ({ id }: UserFormProps) => {
       const newUser = await updateUserInfo(data);
       if (newUser && newUser.message) {
         return;
-      }      
+      }
     } catch(error: any) {
       setTimeout(() => {
         setIsLoading(false);
@@ -104,6 +99,12 @@ export const UserForm = ({ id }: UserFormProps) => {
 
   useEffect(() => {
     let samePassword = false;
+    
+    if (currentFormData.avatar && currentFormData.avatar.length > 0 && currentFormData.avatarUrl === undefined) {
+      uploadImage(currentFormData.avatar[0])
+    }
+
+    console.log(currentFormData)
 
     if (
       (currentFormData.name !== user_token?.user.name &&
@@ -111,15 +112,13 @@ export const UserForm = ({ id }: UserFormProps) => {
       (currentFormData.email !== user_token?.user.email &&
         currentFormData.email !== "") ||
       (!samePassword && currentFormData.password !== "") ||
-      (currentFormData.avatar !== user_token?.user.avatar &&
-        currentFormData.avatar !== null &&
-        currentFormData.avatar !== "")
+      (currentFormData.avatarUrl !== undefined && currentFormData.avatarUrl !== user_token?.user.avatar)
     ) {
       setUpdateable(true);
       return;
     }
     setUpdateable(false);
-  }, []);
+  }, [currentFormData]);
 
   return (
     <form
