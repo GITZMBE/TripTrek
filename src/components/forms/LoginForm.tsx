@@ -4,10 +4,11 @@ import { loggedInUserState } from "@/src/recoil";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { FormInput } from "../ui";
+import { FormInput } from "./ui";
 import { FormButton } from "./ui";
 import Link from "next/link";
 import { useErrorMessage } from "@/src/hooks";
+import { signIn } from "next-auth/react";
 
 export const LoginForm = () => {
   const router = useRouter();
