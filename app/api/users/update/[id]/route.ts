@@ -7,7 +7,7 @@ export const PUT = async (req: Request, context: any) => {
   const { id } = params;
 
   try {
-    const { name, email, password, avatar } = await req.json();
+    const { name, email, password, avatar, avatarUrl } = await req.json();
 
     const dataToUpdate: any = {};
     if (name && name.trim() !== '') {
@@ -20,8 +20,8 @@ export const PUT = async (req: Request, context: any) => {
       const hashedPassword = bcrypt.hashSync(password, 10);
       dataToUpdate.hashedPassword = hashedPassword;
     }
-    if (avatar) {
-      dataToUpdate.avatar = avatar
+    if (avatarUrl && avatarUrl.trim() !== '') {
+      dataToUpdate.avatar = avatarUrl
     }
 
     const updatedUser = await prisma.user.update({
