@@ -1,38 +1,31 @@
 "use client";
 
-import React, { SetStateAction } from "react";
+import React, { ComponentPropsWithoutRef } from "react";
+import { FieldErrors, UseFormRegister, UseFormRegisterReturn } from "react-hook-form";
 
-interface InputProps {
-  name: string;
-  required?: boolean;
-  value: any;
-  setValue: SetStateAction<any>;
+interface InputProps extends ComponentPropsWithoutRef<"input"> {
+  errors: FieldErrors<any>;
+  propName: string;
+  register: UseFormRegisterReturn<any>;
 }
 
 export const FormFileInput = ({
-  name,
-  required = false,
-  value,
-  setValue,
+  errors,
+  propName,
+  register,
+  ...props
 }: InputProps) => {
   return (
-    <input
-      type='file'
-      name={name}
-      required={required}
-      accept="image/*"
-      onChange={(e) => {
-        let file;
-        if (e.target.files && e.target.files[0]) {
-          file = e.target.files[0];
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-
-          setValue({ ...value, [e.target.name]: file });
-        }
-      }}
-      className='w-full px-2 py-1 rounded-full transition-all duration-300 bg-light text-secondary border-2 border-grey/50 focus:border-grey outline-none'
-    />
+    <div className="w-full flex flex-col">
+      <input
+        {...props}
+        {...register}
+        type='file'
+        accept='image/*'
+        className='w-full px-2 py-1 rounded-full transition-all duration-300 bg-light text-secondary border-2 border-grey/50 focus:border-grey outline-none'
+      />
+      {errors[propName] && <p>{errors[propName]?.message as string}</p>}
+    </div>
   );
 };
 

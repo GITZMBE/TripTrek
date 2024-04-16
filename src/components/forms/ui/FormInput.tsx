@@ -1,45 +1,40 @@
 "use client";
 
-import React, { SetStateAction, useState } from "react";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import React, { ComponentPropsWithoutRef, useState } from "react";
+import { FieldErrors, UseFormRegisterReturn } from "react-hook-form";
 import { IconType } from "react-icons";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 
-interface InputProps {
+interface InputProps extends ComponentPropsWithoutRef<"input"> {
   icon?: IconType;
-  type?: string;
-  name: string;
-  placeholder?: string;
-  required?: boolean | string;
-  // value: any;
-  // setValue: SetStateAction<any>;
-  register: UseFormRegister<any>;
-  errors?: FieldErrors<any>;
+  propName: string;
+  register: UseFormRegisterReturn<any>;
+  errors: FieldErrors<any>;
 }
 
 export const FormInput = ({
   icon: Icon,
   type = "text",
-  name,
+  propName,
   placeholder = "",
-  required = false,
   register,
-  errors
+  errors,
+  ...props
 }: InputProps) => {
   const [inputType, setInputType] = useState<string>(type);
 
   return (
-    <div className="flex flex-col">
+    <div className="w-full flex flex-col">
       <div
         className={`relative flex justify-end items-center w-full cursor-default ${
           Icon !== undefined ? "" : ""
         }`}
       >
         <input
-          {...register(name, { required: required })}
+          {...props}
+          {...register}
           type={inputType}
-          name={name}
           placeholder={placeholder}
           className='w-full px-2 py-1 rounded-full transition-all duration-300 bg-light text-secondary border-2 border-grey/50 focus:border-grey outline-none'
         />
@@ -66,7 +61,7 @@ export const FormInput = ({
           )
         )}
       </div>
-      {errors?.[name] && <p className='text-error'>{errors?.[name]?.message as string}</p>}
+      {errors[propName] && <p className='text-error'>{errors[propName]?.message as string}</p>}
     </div>
   );
 };
