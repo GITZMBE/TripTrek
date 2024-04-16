@@ -1,13 +1,16 @@
 'use client';
 
 import React, { useState } from 'react'
-import { FormInput } from '../ui'
+import { FormInput } from './ui'
 import { FormButton } from './ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSetRecoilState } from 'recoil';
 import { loggedInUserState } from '@/src/recoil';
 import { useErrorMessage } from '@/src/hooks';
+import { FcGoogle } from 'react-icons/fc';
+import { FaGithub } from 'react-icons/fa';
+import { signIn } from 'next-auth/react';
 
 export const SignupForm = () => {
   const router = useRouter();
@@ -80,6 +83,8 @@ export const SignupForm = () => {
         e.preventDefault();
         handleRegister();
       }} />
+      <FormButton label="Login with Google" outline icon={FcGoogle} onClick={() => signIn('google')} />
+      <FormButton label="Login with Github" outline icon={FaGithub} onClick={() => signIn('github')} />
       <Link className='text-light/50 hover:text-light' href='/login'>
         already have an account? sign in here.
       </Link>

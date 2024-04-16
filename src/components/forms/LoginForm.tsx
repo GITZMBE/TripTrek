@@ -9,6 +9,8 @@ import { FormButton } from "./ui";
 import Link from "next/link";
 import { useErrorMessage } from "@/src/hooks";
 import { signIn } from "next-auth/react";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -76,6 +78,8 @@ export const LoginForm = () => {
           handleLogin();
         }}
       />
+      <FormButton label="Login with Google" outline icon={FcGoogle} onClick={() => signIn('google')} />
+      <FormButton label="Login with Github" outline icon={FaGithub} onClick={() => signIn('github')} />
       <Link className='text-light/50 hover:text-light' href='/signup'>
         Do not have an accout? Sign up here
       </Link>
