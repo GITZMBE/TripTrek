@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/src/components/ui/Header";
-import RecoilProvider from "@/src/components/RecoilProvider";
+import Header from "@/src/components/layout/Header";
+import RecoilProvider from "@/src/components/providers/RecoilProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,9 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <head>
-        <link rel="icon" type="image/x-icon" href="favicon.png" />
+        <link rel='icon' type='image/x-icon' href='favicon.png' />
         <title>Trip Trek</title>
       </head>
       <body className={inter.className}>
