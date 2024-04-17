@@ -8,5 +8,5 @@ type UserToken = {
 
 export const loggedInUserState = atom<UserToken | null>({
   key: "userState",
-  default: { user: { id: "", name: "", email: "", hashedPassword: "", favoriteIds: [], avatar: null }, token: "" },
+  default: null,
 });

@@ -34,7 +34,7 @@ const Navbar = () => {
             <RxAvatar size={32} className='text-grey' />
           )}
 
-          <p>{user_token.user.name || user_token.user.email}</p>
+          <p className="text-white">{user_token.user.name || user_token.user.email}</p>
         </Link>
       )}
       <GiHamburgerMenu

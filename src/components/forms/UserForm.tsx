@@ -104,8 +104,6 @@ export const UserForm = ({ id }: UserFormProps) => {
       uploadImage(currentFormData.avatar[0])
     }
 
-    console.log(currentFormData)
-
     if (
       (currentFormData.name !== user_token?.user.name &&
         currentFormData.name !== "") ||

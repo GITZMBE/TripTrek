@@ -12,7 +12,7 @@ interface CategoryIconProps extends ComponentPropsWithoutRef<"button"> {
 export const CategoryIcon = ({ category, icon: Icon, className, ...props }: CategoryIconProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [ currentCategory, setCurrentCategory ] = useState<string>()
+  const [ currentCategory, setCurrentCategory ] = useState<string | null>(null)
 
   const onClickIcon = (category: string) => {
     router.push(`/?category=${category.toLowerCase()}`)
