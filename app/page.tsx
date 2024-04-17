@@ -5,7 +5,7 @@ export default function Home() {
     <main className="w-full h-screen min-h-screen flex flex-col items-center py-[105px] bg-primary">
       <Categorybar />
       <div className="w-full h-full flex justify-center items-center">
-        <img src='/logo.png' width='550' height='200' alt='' />
+        <img src='/logo.png' className="w-64 md:w-80 lg:w-[500px]" alt='' />
       </div>
     </main>
   );
