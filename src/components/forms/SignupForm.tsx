@@ -21,7 +21,7 @@ type FormFields = {
 
 export const SignupForm = () => {
   const router = useRouter();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormFields>();
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<FormFields>();
   const setLoggedInUser = useSetRecoilState(loggedInUserState);
   const { isLoading, setIsLoading } = useLoading();
 
@@ -48,6 +48,15 @@ export const SignupForm = () => {
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     setIsLoading(true);
     const registeredUser = await signup(data);
+
+    if (registeredUser?.message) {
+      setError('root', {
+        type: 'manual',
+        message: registeredUser.message
+      })
+      setIsLoading(false);
+      return;
+    }
 
     const user_token = await login(data);
 
