@@ -20,6 +20,10 @@ const Pathbar = () => {
     if (!isLoggedIn && pathName !== "/login" && pathName !== "/signup") {
       router.push("/login");
     }
+
+    if (isLoggedIn && (pathName === "/login" || pathName === "/signup")) {
+      router.back();
+    }
   }, [pathName, user_token]);
 
   return (
