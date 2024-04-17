@@ -20,7 +20,7 @@ type FormFields = {
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormFields>();
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<FormFields>();
   const setLoggedInUser = useSetRecoilState(loggedInUserState);
   const { isLoading, setIsLoading } = useLoading();
 
@@ -37,6 +37,15 @@ export const LoginForm = () => {
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     setIsLoading(true);
     const user_token = await login(data);
+
+    if (user_token?.message) {
+      setError("root", {
+        type: "manual",
+        message: user_token.message
+      })
+      setIsLoading(false);
+      return;
+    }
 
     setLoggedInUser(user_token);
     setTimeout(() => {

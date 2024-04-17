@@ -7,7 +7,7 @@ export const POST = async (req: Request, res: Response) => {
 
   const user = await prisma.user.findUnique({ where: { email: email } })
   if (!user) {
-    return new Response(JSON.stringify({ message: "User does not exist!" }), { status: 404 });
+    return new Response(JSON.stringify({ message: "User with that email does not exist!" }), { status: 404 });
   };
 
   const correctPassword = bcrypt.compareSync(password, user?.hashedPassword);
