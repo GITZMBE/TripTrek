@@ -10,7 +10,7 @@ interface NavLinkProps {
 
 export const NavLink = ({ href, label, onClick }: NavLinkProps) => {
   return (
-    <Link href={ href } className='px-4 py-2 bg-secondary hover:bg-primary transition' onClick={ onClick }>{ label }</Link>
+    <Link href={ href } className='px-4 py-2 bg-secondary hover:bg-primary text-light transition' onClick={ onClick }>{ label }</Link>
   )
 }
 
