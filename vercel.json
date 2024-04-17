@@ -1,8 +1,9 @@
 {
-  "build": {
-    "commands": [
-      "prisma generate",
-      "npm run build"
-    ]
-  }
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": { "commands": ["prisma generate && npm run build"] }
+    }
+  ]
 }
