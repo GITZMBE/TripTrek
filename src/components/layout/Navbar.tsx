@@ -63,8 +63,33 @@ const Navbar = () => {
         ) : (
           <>
             <NavLink
+              href={`/users/${user_token.user.id}`}
+              label='My Account'
+              onClick={() => setIsOpen(false)}
+            />
+            <NavLink
+              href={`/listings`}
+              label='Trips'
+              onClick={() => setIsOpen(false)}
+            />
+            <NavLink
               href={`/users/${user_token.user.id}/favorites`}
               label='Favorite landings'
+              onClick={() => setIsOpen(false)}
+            />
+            <NavLink
+              href={`/users/${user_token.user.id}/reservations`}
+              label='Reservations'
+              onClick={() => setIsOpen(false)}
+            />
+            <NavLink
+              href={`/users/${user_token.user.id}/listings`}
+              label='My listings'
+              onClick={() => setIsOpen(false)}
+            />
+            <NavLink
+              href='/'
+              label='Home'
               onClick={() => setIsOpen(false)}
             />
             <hr className='border-primary border-thin mx-4' />
