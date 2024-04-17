@@ -4,7 +4,7 @@ import React, { ComponentPropsWithoutRef } from 'react';
 interface ContainerProps extends ComponentPropsWithoutRef<"div"> {
   center?: boolean;
   extraPadding?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const Container = ({ center, extraPadding, children, className, ...props }: ContainerProps) => {
