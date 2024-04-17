@@ -4,12 +4,13 @@ import { loggedInUserState } from "@/src/recoil";
 import React from "react";
 import { useRecoilState } from "recoil";
 import { UserForm } from "@/src/components/forms";
+import { Container } from "@/src/components/layout";
 
 const UserPage = ({ params }: { params: { id: string } }) => {
   const [user_token, setUserToken] = useRecoilState(loggedInUserState);
 
   return (
-    <main className='w-full min-h-screen flex flex-col justify-center items-center gap-8 bg-primary py-24 px-4 sm-px-8 md-px-12'>
+    <Container center extraPadding>
       <div className='flex justify-center items-center flex-col sm:flex-row gap-8 w-full md:w-3/4 xl:w-1/2'>
         {user_token !== null && user_token.user.avatar !== null ? (
           <img
@@ -28,7 +29,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
         )}
         <UserForm id={params.id} />
       </div>
-    </main>
+    </Container>
   );
 };
 
