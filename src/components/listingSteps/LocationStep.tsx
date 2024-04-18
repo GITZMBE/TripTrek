@@ -1,8 +1,32 @@
-import React from 'react'
+'use client';
 
-export const LocationStep = () => {
+import React, { useMemo } from 'react'
+import { CountrySelect, Map } from './ui';
+import { UseFormRegister, UseFormSetValue, UseFormUnregister, UseFormWatch } from 'react-hook-form';
+import dynamic from 'next/dynamic';
+
+interface LocationStepProps {
+  unregister: UseFormUnregister<any>;
+  setValue: UseFormSetValue<any>;
+  watch: UseFormWatch<any>;
+  name: string;
+}
+
+export const LocationStep = ({ unregister, setValue, watch, name }: LocationStepProps) => {
+  const selectedCountry = watch(name);
+
+  const Map = useMemo(() => dynamic(() => import('./ui/Map'), {
+    ssr: false
+  }), [selectedCountry])
+
   return (
-    <div>LocationStep</div>
+    <div className='max-w-[700px] min-h-[65vh]'>
+      <h1 className='text-light text-2xl text-center pb-4'>Were is your listing located?</h1>
+      <div className='flex flex-col justify-between gap-4 p-4 w-[700px] h-[65vh] shadow-inner overflow-y-auto scrollbar-hidden'>
+        <CountrySelect onChange={(value) => value !== null ? setValue(name, value) : unregister(name) } value={selectedCountry} />
+        <Map center={ selectedCountry?.latlng } />
+      </div>
+    </div>
   )
 }
 
