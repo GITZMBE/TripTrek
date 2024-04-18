@@ -46,7 +46,7 @@ const Categorybar = ({}: CategorybarProps) => {
   }, []);
 
   return (
-    <div className='flex justify-start xl:justify-center items-center w-full xl:px-12 overflow-y-hidden overflow-x-auto scrollbar-styled scrollable-container'>
+    <div className='flex justify-start xl:justify-center items-center w-full xl:px-12 overflow-y-hidden overflow-x-auto scrollable-container'>
       <div className='flex flex-shrink-1 justify-start items-center'>
         { categories.length > 0 &&
           categories.map(({category, icon}, index) => (
