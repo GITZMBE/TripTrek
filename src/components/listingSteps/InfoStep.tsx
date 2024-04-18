@@ -1,15 +1,13 @@
 import React from 'react';
-import { UseFormSetValue, UseFormUnregister, UseFormWatch } from 'react-hook-form';
+import { UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { Counter } from './ui';
 
 interface InfoStepProps {
-  unregister: UseFormUnregister<any>;
   setValue: UseFormSetValue<any>;
   watch: UseFormWatch<any>;
-  name: string;
 }
 
-export const InfoStep = ({ unregister, setValue, watch, name }: InfoStepProps) => {
+export const InfoStep = ({ setValue, watch }: InfoStepProps) => {
   const guestCount = watch('guestCount');
   const roomCount = watch('roomCount');
   const bathroomCount = watch('bathroomCount');

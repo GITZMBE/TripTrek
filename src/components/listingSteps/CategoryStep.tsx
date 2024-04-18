@@ -41,7 +41,7 @@ export const CategoryStep = ({ unregister, setValue, watch, name }: CategoryStep
   return (
     <div className='max-w-[700px]'>
       <h1 className='text-light text-2xl text-center pb-4'>Which category fits your listing the best?</h1>
-      <div className='flex flex-wrap justify-start gap-4 p-4 h-[65vh] shadow-inner overflow-y-auto scrollbar-hidden'>
+      <div className='flex flex-wrap justify-start gap-4 p-4 h-[60vh] shadow-inner overflow-y-auto scrollbar-hidden'>
         {
           categoryIcons.map(({category, icon}, i) => (
             <CategoryButton key={i} label={category} icon={icon} onClick={() => { selectedCategory === category ? unregister(name) : setValue(name, category) }} selected={selectedCategory === category} style={{ flexBasis: 'calc(50% - 1rem)' }} />
