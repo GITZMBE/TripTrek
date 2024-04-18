@@ -2,20 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+.leaflet-bottom,
+.leaflet-control,
+.leaflet-control-zoom,
+.leaflet-pane,
+.leaflet-top,
+.leaflet-left {
+  z-index: 0 !important;
+}
+
 @layer utilities {
   .scrollbar-hidden::-webkit-scrollbar {
     display: none !important;
   }
 
-  .scrollbar-styled::-webkit-scrollbar {
-    @apply h-1;
+  *::-webkit-scrollbar {
+    @apply h-1 w-1;
   }
 
-  .scrollbar-styled::-webkit-scrollbar-track {
+  *::-webkit-scrollbar-track {
     @apply bg-primary;
   }
 
-  .scrollbar-styled::-webkit-scrollbar-thumb {
+  *::-webkit-scrollbar-thumb {
     @apply bg-secondary;
   }
 
