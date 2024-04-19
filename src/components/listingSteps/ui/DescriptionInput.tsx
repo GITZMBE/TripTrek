@@ -1,9 +1,9 @@
 'use client'
 
-import React, { ComponentPropsWithRef, useEffect, useRef, useState } from 'react';
+import React, { ComponentPropsWithoutRef, useState } from 'react';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 
-interface ListingInputProps extends ComponentPropsWithRef<"input"> {
+interface DescriptionInputProps extends ComponentPropsWithoutRef<"input"> {
   title: string;
   name: string;
   register: UseFormRegister<any>;
@@ -11,7 +11,7 @@ interface ListingInputProps extends ComponentPropsWithRef<"input"> {
   watch: UseFormWatch<any>;
 };
 
-export const ListingInput = ({ register, name, title, errors, watch, ...props}: ListingInputProps) => {
+export const DescriptionInput = ({ register, name, title, errors, watch, ...props}: DescriptionInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const input = watch(name);
 
@@ -24,4 +24,4 @@ export const ListingInput = ({ register, name, title, errors, watch, ...props}: 
   )
 }
 
-export default ListingInput;
+export default DescriptionInput;
