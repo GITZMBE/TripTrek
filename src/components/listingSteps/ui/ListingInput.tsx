@@ -1,3 +1,5 @@
+'use client'
+
 import React, { ComponentPropsWithRef, useEffect, useRef, useState } from 'react';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 
