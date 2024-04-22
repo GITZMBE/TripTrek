@@ -27,7 +27,7 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
   const uploadImage = async (file: File) => {
     setIsLoading(true);
     const imageData = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + "/api/upload/image",
+      process.env.NEXT_PUBLIC_BASEURL + "/api/images/upload",
       {
         method: "POST",
         headers: {

@@ -37,7 +37,7 @@ export const UserForm = ({ id }: UserFormProps) => {
   const uploadImage = async (file: File) => {
     setIsLoading(true);
     const imageData = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + "/api/upload/image",
+      process.env.NEXT_PUBLIC_BASEURL + "/api/images/upload",
       {
         method: "POST",
         headers: {
