@@ -99,7 +99,7 @@ const UploadListingPage = () => {
   };
 
   const uploadListing = async (data: FormFields) => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/upload/listing", {
+    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/listings/upload", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
