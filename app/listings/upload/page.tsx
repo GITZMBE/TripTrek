@@ -1,12 +1,23 @@
-'use client';
+"use client";
 
-import { Container } from '@/src/components/layout';
-import { CategoryStep, DescriptionStep, ImagesStep, LocationStep, PriceStep } from '@/src/components/listingSteps';
-import InfoStep from '@/src/components/listingSteps/InfoStep';
-import { CountrySelectValue } from '@/src/components/listingSteps/ui';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
+import { Container } from "@/src/components/layout";
+import {
+  CategoryStep,
+  DescriptionStep,
+  ImageStep,
+  LocationStep,
+  PriceStep,
+} from "@/src/components/listingSteps";
+import InfoStep from "@/src/components/listingSteps/InfoStep";
+import { CountrySelectValue } from "@/src/components/listingSteps/ui";
+import { LoadingAnimation } from "@/src/components/ui";
+import { useLoading } from "@/src/hooks";
+import { loggedInUserState } from "@/src/recoil";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
+import { useRecoilValue } from "recoil";
 
 enum Steps {
   Category = 0,
@@ -14,21 +25,39 @@ enum Steps {
   Info = 2,
   Images = 3,
   Description = 4,
-  Price = 5
-};
+  Price = 5,
+}
 
 type FormFields = {
   category: string;
   location: CountrySelectValue;
-  info: string;
-  images: string[];
+  guestCount: number;
+  roomCount: number;
+  bathroomCount: number;
+  image: string;
+  title: string;
   description: string;
-  price: number;
+  price: string;
+  userId: string;
 };
 
 const UploadListingPage = () => {
-  const [ step, setStep ] = useState(Steps.Category);
-  const { register, unregister, setValue, handleSubmit, watch, setError, formState: { errors } } = useForm<FormFields>();
+  const router = useRouter();
+  const user_token = useRecoilValue(loggedInUserState);
+  const [step, setStep] = useState(Steps.Category);
+  const { isLoading, setIsLoading } = useLoading();
+  const {
+    register,
+    unregister,
+    setValue,
+    handleSubmit,
+    watch,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<FormFields>({
+    defaultValues: { userId: user_token?.user.id, guestCount: 1, roomCount: 1, bathroomCount: 1 },
+  });
 
   const formData = watch();
 
@@ -36,22 +65,32 @@ const UploadListingPage = () => {
     setStep(step - 1);
   };
 
-  const isClickable = (
-    step === Steps.Category && formData.category !== undefined) || (
-    step === Steps.Location && formData.location !== undefined) || (
-    step === Steps.Info && formData.info !== undefined) || (
-    step === Steps.Images && formData.images !== undefined) || (
-    step === Steps.Description && formData.description !== undefined) || (
-    step === Steps.Price && formData.price !== undefined);
+  const isClickable =
+    (step === Steps.Category && formData.category !== undefined) ||
+    (step === Steps.Location && formData.location !== undefined) ||
+    (step === Steps.Info &&
+      formData.guestCount !== undefined &&
+      formData.roomCount !== undefined &&
+      formData.bathroomCount !== undefined) ||
+    (step === Steps.Images && formData.image !== undefined) ||
+    (step === Steps.Description &&
+      formData.description !== "" &&
+      formData.description !== undefined &&
+      formData.title !== "" &&
+      formData.title !== undefined) ||
+    (step === Steps.Price &&
+      formData.price !== undefined &&
+      !isNaN(parseInt(formData.price)) &&
+      parseInt(formData.price) > 0);
 
   const errorMessages = {
-    [Steps.Category]: 'Select a category before proceeding',
-    [Steps.Location]: 'Choose a country before proceeding',
-    [Steps.Info]: 'Share some information about your listing before proceeding',
-    [Steps.Images]: 'Add some photos to your listing before proceeding',
-    [Steps.Description]: 'Describe your listing before proceeding',
-    [Steps.Price]: 'Select a price before proceeding'
-  }
+    [Steps.Category]: "Select a category before proceeding",
+    [Steps.Location]: "Choose a country before proceeding",
+    [Steps.Info]: "Share some information about your listing before proceeding",
+    [Steps.Images]: "Share a photo of your listing before proceeding",
+    [Steps.Description]: "Fill out required fields before proceeding",
+    [Steps.Price]: "Select a price before proceeding",
+  };
 
   const onNext = () => {
     if (isClickable) {
@@ -59,45 +98,126 @@ const UploadListingPage = () => {
     }
   };
 
-  useEffect(() => {console.log(formData)}, [formData]);
-  useEffect(() => {setError("root", { type: 'manual' })}, [isClickable]);
+  const uploadListing = async (data: FormFields) => {
+    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/upload/listing", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const newListing = await res.json();
+    return newListing;
+  };
+
+  const onSubmit: SubmitHandler<FormFields> = async (data, e) => {
+    e?.preventDefault();
+    try {
+      setIsLoading(true);
+      const listing = await uploadListing(data);
+      console.log(listing)
+      router.push('/');
+    } catch(error: any) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(false);
+  };
+
+  const onError = (e: any) => console.log(e)
+
+  useEffect(() => {
+    clearErrors("root");
+  }, [isClickable]);
 
   return (
     <Container center extraPadding>
-      <div className="flex flex-col gap-2 items-center">
-        {
-          step === Steps.Category ? (
-            <CategoryStep unregister={unregister} setValue={setValue} watch={watch} name='category' />
+      <form
+        onSubmit={e => {e.preventDefault();handleSubmit(onSubmit, onError)(e).catch(e => console.log(e))}}
+      >
+        <div className='flex flex-col gap-2 items-center'>
+          {step === Steps.Category ? (
+            <CategoryStep
+              unregister={unregister}
+              setValue={setValue}
+              watch={watch}
+              name='category'
+            />
           ) : step === Steps.Location ? (
-            <LocationStep unregister={unregister} setValue={setValue} watch={watch} name='location' />
+            <LocationStep
+              unregister={unregister}
+              setValue={setValue}
+              watch={watch}
+              name='location'
+            />
           ) : step === Steps.Info ? (
-            <InfoStep unregister={unregister} setValue={setValue} watch={watch} name='info'  />
+            <InfoStep setValue={setValue} watch={watch} />
           ) : step === Steps.Images ? (
-            <ImagesStep />
+            <ImageStep
+              unregister={unregister}
+              setValue={setValue}
+              watch={watch}
+              setError={setError}
+              clearErrors={clearErrors}
+              errors={errors}
+            />
           ) : step === Steps.Description ? (
-            <DescriptionStep />
+            <DescriptionStep
+              register={register}
+              watch={watch}
+              errors={errors}
+            />
           ) : step === Steps.Price ? (
-            <PriceStep />
-          ) : <></>
-        }
-        <p className='text-error'>{ errors.root?.message || '' }</p>
-      </div>
-      <div className='w-full max-w-[700px] flex justify-between items-center px-4'>
-        <button className={``} onClick={onBack}>
-          <span className={ step === Steps.Category ? 'hidden' : 'flex gap-4 text-grey hover:text-light' }>
-            <FaAngleDoubleLeft size={24} />
-            Back
-          </span>
-        </button>
-        <button className={`${ !isClickable && 'cursor-not-allowed' }`} onClick={ () => isClickable ? onNext() : setError("root", { type: 'manual', message: errorMessages[step] }) } >
-          <span className={`flex gap-4 ${ step === Steps.Price ? 'hidden' : isClickable ? 'text-grey hover:text-light' : 'text-secondary' }`}>
-            Next
-            <FaAngleDoubleRight size={24} />
-          </span>
-        </button>
-      </div>
+            <PriceStep register={register} watch={watch} errors={errors} />
+          ) : (
+            <></>
+          )}
+          <p className='text-error'>{errors.root?.message || ""}</p>
+        </div>
+        <div className='w-full max-w-[700px] flex justify-between items-center px-4'>
+          <button className={``} onClick={onBack}>
+            <span
+              className={
+                step === Steps.Category
+                  ? "hidden"
+                  : "flex gap-4 text-grey hover:text-light"
+              }
+            >
+              <FaAngleDoubleLeft size={24} />
+              Back
+            </span>
+          </button>
+          {(isClickable && step === Steps.Price) ? (
+              <button type="submit" className="flex items-center gap-4 px-2 py-1 bg-accent/80 hover:bg-accent rounded-lg text-xl text-light" disabled={!isClickable}>Post your listing { isLoading && <LoadingAnimation width={32} height={32} /> }</button>
+            ) : (
+              <button
+                type="button"
+                className={`${!isClickable && "cursor-not-allowed"} ${step === Steps.Price && 'hidden'}`}
+                onClick={() =>
+                  isClickable && step !== Steps.Price
+                    ? onNext()
+                    : setError("root", {
+                        type: "manual",
+                        message: errorMessages[step],
+                      })
+                }
+              >
+                <span
+                  className={`flex gap-4 ${
+                    isClickable ? "text-grey hover:text-light" : "text-secondary"
+                  }`}
+                >
+                  Next
+                  <FaAngleDoubleRight size={24} />
+                </span>
+              </button>
+            )
+          }
+        </div>
+      </form>
     </Container>
-  )
-}
+  );
+};
 
 export default UploadListingPage;
