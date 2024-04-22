@@ -7,6 +7,9 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
     where: { 
       userId: id 
     },
+    include: {
+      favorites: true,
+    }
   });
   return NextResponse.json(usersListings);
 };
