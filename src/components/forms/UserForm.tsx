@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FormInput } from "./ui";
 import FormFileInput from "./ui/FormFileInput";
 import { FormButton } from "./ui";
-import { useErrorMessage, useFormUpdateable, useLoading } from "@/src/hooks";
+import { useFormUpdateable, useLoading } from "@/src/hooks";
 import { useRecoilState } from "recoil";
 import { loggedInUserState } from "@/src/recoil";
 import { useForm } from "react-hook-form";
@@ -57,7 +57,7 @@ export const UserForm = ({ id }: UserFormProps) => {
 
   const updateUserInfo = async (data: FormFields) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/update/${id}`,
+      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/${id}/update`,
       {
         method: "PUT",
         headers: {
@@ -82,6 +82,7 @@ export const UserForm = ({ id }: UserFormProps) => {
       }
 
       const newUser = await updateUserInfo(data);
+      console.log(newUser)
       if (newUser && newUser.message) {
         return;
       }
