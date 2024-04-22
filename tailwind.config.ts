@@ -13,7 +13,8 @@ const config: Config = {
         accent: "#76ABAE",
         light: "#EEEEEE",
         grey: "#555D6B",
-        error: "#cc0000"
+        error: "#cc0000",
+        love: "#E41B17"
       },
     },
   },
