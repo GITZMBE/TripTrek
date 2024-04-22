@@ -43,7 +43,7 @@ const Navbar = () => {
         onClick={handleToggleMenu}
       />
       <div
-        className={`absolute top-12 right-0 flex flex-col min-w-52 overflow-hidden rounded-lg shadow-lg shadow-primary bg-secondary ${
+        className={`absolute top-12 right-0 flex flex-col min-w-52 overflow-hidden rounded-lg shadow-lg shadow-primary bg-secondary z-50 ${
           !isOpen && "hidden"
         }`}
       >
@@ -74,7 +74,7 @@ const Navbar = () => {
             />
             <NavLink
               href={`/users/${user_token.user.id}/favorites`}
-              label='Favorite landings'
+              label='Favorite listings'
               onClick={() => setIsOpen(false)}
             />
             <NavLink
