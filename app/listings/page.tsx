@@ -16,8 +16,8 @@ const ListingsPage = async () => {
   const listings = await getAllListings();
   return (
     <Container extraPadding>
-      <h1 className='text-6xl text-light'>Listings</h1>
-      <div className='flex flex-wrap gap-4 py-4'>
+      <h1 className='text-4xl text-light'>Listings</h1>
+      <div className='w-full flex flex-wrap gap-4 py-4'>
         {listings &&
           listings.map((listing: Listing) => (
             <ListingCard key={listing.id} listing={listing} />

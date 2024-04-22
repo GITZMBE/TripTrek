@@ -8,17 +8,17 @@ import { faBan } from '@fortawesome/free-solid-svg-icons';
 
 const UserListingsPage = async ({ params }: { params: { id: string } }) => {
   const getUsersListings = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${params.id}/listings`, { method: 'GET' });
+    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${params.id}/listings`, { method: 'GET', cache: 'no-cache' });
     const listings: Listing[] = await res.json();
     return listings;
   };
 
   const listings = await getUsersListings();
-  return (
-    <Container extraPadding className={ !listings || listings.length === 0 ? 'justify-between' : '' }>
+  return listings && (
+    <Container extraPadding className={ listings.length === 0 ? 'justify-between' : '' }>
       <h1 className='text-4xl text-white font-bold'>My Listings</h1>
-      <div className='flex flex-wrap gap-4 py-4'>
-        { listings && listings.length > 0 ? listings.map((listing: Listing) => (
+      <div className='w-full flex flex-wrap gap-4 py-4'>
+        { listings.length > 0 ? listings.map((listing: Listing) => (
           <ListingCard key={listing.id} listing={listing} />
         )) : (
           <div className='flex flex-col items-center gap-8'>
