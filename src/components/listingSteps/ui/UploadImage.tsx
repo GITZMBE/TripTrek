@@ -2,7 +2,7 @@
 
 import { useLoading } from "@/src/hooks";
 import React, { useEffect, useRef, useState } from "react";
-import { FieldErrors, UseFormSetError, UseFormSetValue, UseFormUnregister, UseFormWatch } from "react-hook-form";
+import { FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue, UseFormUnregister, UseFormWatch } from "react-hook-form";
 import { LoadingAnimation } from "../../ui";
 import {useDropzone} from 'react-dropzone';
 import { HiCursorClick } from "react-icons/hi";
@@ -14,10 +14,11 @@ interface UploadImageProps {
   setValue: UseFormSetValue<any>;
   watch: UseFormWatch<any>;
   setError: UseFormSetError<any>;
+  clearErrors: UseFormClearErrors<any>;
   errors: FieldErrors;
 }
 
-export const UploadImage = ({ unregister, setValue, watch, setError, errors }: UploadImageProps) => {
+export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors, errors }: UploadImageProps) => {
   const image = watch("image");
   const { isLoading, setIsLoading } = useLoading();
   const [ file, setFile ] = useState<File | null>(null);
@@ -25,28 +26,23 @@ export const UploadImage = ({ unregister, setValue, watch, setError, errors }: U
 
   const uploadImage = async (file: File) => {
     setIsLoading(true);
-    // const imageData = await fetch(
-    //   process.env.NEXT_PUBLIC_BASEURL + "/api/upload/image",
-    //   {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": file.type || "image/*",
-    //       "accept": "image/*"
-    //     },
-    //     body: file,
-    //   }
-    // );
-    // const savedImage = await imageData.json();
-    // if (savedImage.message) {
-    //   return savedImage;
-    // }
-    // setValue("image", savedImage.url);
-    setTimeout(() => {
-      // temporary dev code. No unneccessary uploads. Limited bandwidth.
-      setValue("image", "https://ykpfznfuclkfj2gr.public.blob.vercel-storage.com/jLcqfw9-qdCPImCJQuzbESsFAyeqVKIy5km3Hf.avif");
-      setIsLoading(false);
-    }, 2000);
-    
+    const imageData = await fetch(
+      process.env.NEXT_PUBLIC_BASEURL + "/api/upload/image",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": file.type || "image/*",
+          "accept": "image/*"
+        },
+        body: file,
+      }
+    );
+    const savedImage = await imageData.json();
+    if (savedImage.message) {
+      return savedImage;
+    }
+    setValue("image", savedImage.url);
+    setIsLoading(false);    
   };
 
   const handleClickSelectImage = () => {
@@ -65,7 +61,7 @@ export const UploadImage = ({ unregister, setValue, watch, setError, errors }: U
     setFile(null);
   };
 
-  useEffect(() => { file !== null && setError('image', { type: 'manual' })}, [file]);
+  useEffect(() => { (file !== null && file !== undefined) && clearErrors('image')}, [file]);
 
   return (
     <div className='flex flex-col items-center gap-8'>
@@ -79,7 +75,7 @@ export const UploadImage = ({ unregister, setValue, watch, setError, errors }: U
               </div>
             </>
           ) : isLoading ? (
-              <LoadingAnimation width={80} height={80} className="" />
+              <LoadingAnimation width={80} height={80} />
           ) : (
             <>
               { isDragActive ? <p className="font-bold text-3xl text-secondary cursor-pointer">Drop the image</p> : <p className="font-bold text-3xl text-secondary cursor-pointer">Click or Drag & Drop</p> }
@@ -108,6 +104,7 @@ export const UploadImage = ({ unregister, setValue, watch, setError, errors }: U
         className='w-full px-2 py-1 rounded-full transition-all duration-300 bg-light text-secondary border-2 border-grey/50 focus:border-grey outline-none hidden'
       />
       <button 
+        type="button"
         className={`${ (isLoading || file === null) && 'opacity-70 cursor-not-allowed' } rounded-lg transition w-full bg-accent/75 border-accent/75 text-light hover:bg-accent hover:border-accent hover:text-white py-3 text-md font-semibold`}
         onClick={() => file !== null ? uploadImage(file) : setError('image', { type: 'manual', message: 'Select image before uploading' }) }
       >
