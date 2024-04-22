@@ -1,8 +1,8 @@
 import prisma from "@/prisma";
 import { NextResponse } from "next/server";
 
-export const POST = async (req: Request) => {
-  const { id } = await req.json();
+export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+  const id = params.id;
   const usersListings = await prisma.listing.findMany({
     where: { 
       userId: id 
