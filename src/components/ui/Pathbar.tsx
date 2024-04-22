@@ -22,7 +22,7 @@ const Pathbar = () => {
     }
 
     if (isLoggedIn && (pathName === "/login" || pathName === "/signup")) {
-      router.back();
+      router.push('/');
     }
   }, [pathName, user_token]);
 
