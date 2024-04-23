@@ -27,7 +27,7 @@ const Navbar = () => {
           {user_token.user.avatar ? (
             <img
               src={user_token.user.avatar || ""}
-              className='w-8 aspect-square rounded-full'
+              className='w-8 aspect-square object-cover object-center rounded-full'
               alt=''
             />
           ) : (
