@@ -3,6 +3,7 @@
 import { loggedInUserState } from '@/src/recoil';
 import { Listing } from '@prisma/client'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 import React from 'react'
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
@@ -13,6 +14,7 @@ interface ListingCardProps {
 
 export const ListingCard = ({ listing, ...props }: ListingCardProps) => {
   const [user_token, setUserToken] = useRecoilState(loggedInUserState);
+  const router = useRouter();
 
   const isFavorite = () => {
     const favorites = user_token?.user.favoriteIds || [];
@@ -49,20 +51,24 @@ export const ListingCard = ({ listing, ...props }: ListingCardProps) => {
   };
 
   return (
-    <Link href={`/listings/${listing.id}`} { ...props } className='group relative w-64 aspect-square rounded-xl shadow-lg overflow-hidden'>
-      <img src={ listing.imageSrc } className='absolute w-full h-full object-cover object-center transition group-hover:scale-110' alt="" />
-      <div className='absolute flex justify-center items-center w-full h-full transition group-hover:backdrop-brightness-50 z-10'>
+    <button onClick={() => router.push(`/listings/${listing.id}`)} { ...props } className='group relative w-64 aspect-square rounded-xl shadow-lg overflow-hidden'>
+      <img src={ listing.imageSrc } className='absolute top-0 w-full h-full object-cover object-center transition group-hover:scale-110' alt="" />
+      <div className='absolute top-0 flex justify-center items-center w-full h-full transition group-hover:backdrop-brightness-50 z-10'>
         <h1 className='w-full px-4 text-xl text-light font-bold text-center text-ellipsis text-capitalize'>{ listing.title }</h1>
         { isOwner() ? (
           <span className='absolute top-4 right-4 text-light'>Owner</span>
         ) : isFavorite() ? (
-          <FaHeart className='absolute top-4 right-4 text-love' onClick={e => {e.stopPropagation(); handleRemoveFavorite()}} />
+          <div className='absolute top-4 right-4' onClick={e => {e.stopPropagation(); handleRemoveFavorite()}}>
+            <FaHeart className='text-love' />
+          </div>
+          
         ) : (
-          <FaRegHeart className='absolute top-4 right-4 text-light' onClick={e => {e.stopPropagation(); handleLikeListing()}} />
+          <div className='absolute top-4 right-4' onClick={e => {e.stopPropagation(); handleLikeListing()}}>
+            <FaRegHeart className=' text-light' />
+          </div>
         ) }
-        
       </div>
-    </Link>
+    </button>
   )
 }
 
