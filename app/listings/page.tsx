@@ -20,19 +20,18 @@ const ListingsPage = async () => {
   return (
     <Container extraPadding>
       <h1 className='text-4xl text-light'>Listings</h1>
-      <div className='w-full flex flex-wrap gap-4 py-4'>
-        {listings.length > 0 ? 
-          listings.map((listing: Listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          )) : (
-            <div className='flex flex-col items-center gap-8'>
+      <div className='w-full flex flex-wrap justify-start gap-4 py-4'>
+        {listings.length > 0 ? listings.map((listing: Listing) => (
+          <ListingCard key={listing.id} listing={listing} />
+        )) : (
+          <div className='flex flex-col items-center gap-8'>
             <div className='w-24'>
               <FontAwesomeIcon icon={faBan} style={{ color: '#CC0000' }} />
             </div>
             <h1 className='text-light text-2xl'>No Listings found</h1>
             <Link href='/' className='text-grey hover:text-light'>Go back to main page</Link>
           </div>
-          )}
+        )}
       </div>
     </Container>
   );

@@ -17,11 +17,11 @@ const UserListingsPage = async ({ params }: { params: { id: string } }) => {
   return listings && (
     <Container extraPadding className={ listings.length === 0 ? 'justify-between' : '' }>
       <h1 className='text-4xl text-white font-bold'>My Listings</h1>
-      <div className={`'w-full flex ${ listings.length === 0 && 'items-center' } flex-wrap gap-4 py-4'`}>
+      <div className={`w-full flex ${ listings.length === 0 && 'items-center' } flex-wrap gap-4 py-4`}>
         { listings.length > 0 ? listings.map((listing: Listing) => (
           <ListingCard key={listing.id} listing={listing} />
         )) : (
-          <div className='flex flex-col items-center gap-8'>
+          <div className='w-full flex flex-col items-center gap-8'>
             <div className='w-24'>
               <FontAwesomeIcon icon={faBan} style={{ color: '#CC0000' }} />
             </div>
