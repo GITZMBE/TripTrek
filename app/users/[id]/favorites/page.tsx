@@ -30,7 +30,8 @@ const FavoritesPage = () => {
 
   return (
     <Container>
-      <div className="w-full flex flex-wrap justify-start gap-4 py-4">
+      <h1 className='text-4xl text-light pt-4'>Favorite Listings</h1>
+      <div className="w-full flex flex-wrap justify-start gap-4 py-4">        
         {listings.length > 0 ? listings.map((listing: Listing) => (
             <ListingCard key={listing.id} listing={listing} />
           )) : (
