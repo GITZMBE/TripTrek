@@ -6,9 +6,6 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   const usersListings = await prisma.listing.findMany({
     where: { 
       userId: id 
-    },
-    include: {
-      favorites: true,
     }
   });
   return NextResponse.json(usersListings);
