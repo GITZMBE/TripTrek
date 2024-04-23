@@ -12,22 +12,22 @@ import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { BiSolidCategory } from 'react-icons/bi';
 
 const categoryIcons: CategoryIconModel[] = [
-  new CategoryIconModel("All", BiSolidCategory),
-  new CategoryIconModel("Beach", TbBeach),
-  new CategoryIconModel("Windmills", GiWindmill),
-  new CategoryIconModel("Modern", MdOutlineVilla),
-  new CategoryIconModel("Countryside", TbMountain),
-  new CategoryIconModel("Pools", TbPool),
-  new CategoryIconModel("Islands", GiIsland),
-  new CategoryIconModel("Lake", GiBoatFishing),
-  new CategoryIconModel("Skiing", FaSkiing),
-  new CategoryIconModel("Castles", GiCastle),
-  new CategoryIconModel("Camping", GiForestCamp),
-  new CategoryIconModel("Artic", BsSnow),
-  new CategoryIconModel("Cave", GiCaveEntrance),
-  new CategoryIconModel("Desert", GiCactus),
-  new CategoryIconModel("Barns", GiBarn),
-  new CategoryIconModel("Lux", IoDiamond),
+  new CategoryIconModel('', BiSolidCategory),
+  new CategoryIconModel("beach", TbBeach),
+  new CategoryIconModel("windmills", GiWindmill),
+  new CategoryIconModel("modern", MdOutlineVilla),
+  new CategoryIconModel("countryside", TbMountain),
+  new CategoryIconModel("pools", TbPool),
+  new CategoryIconModel("islands", GiIsland),
+  new CategoryIconModel("lake", GiBoatFishing),
+  new CategoryIconModel("skiing", FaSkiing),
+  new CategoryIconModel("castles", GiCastle),
+  new CategoryIconModel("camping", GiForestCamp),
+  new CategoryIconModel("artic", BsSnow),
+  new CategoryIconModel("cave", GiCaveEntrance),
+  new CategoryIconModel("desert", GiCactus),
+  new CategoryIconModel("barns", GiBarn),
+  new CategoryIconModel("lux", IoDiamond),
 ];
 
 interface CategorybarProps {};

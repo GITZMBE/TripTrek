@@ -26,22 +26,22 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
 
   const uploadImage = async (file: File) => {
     setIsLoading(true);
-    const imageData = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + "/api/images/upload",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": file.type || "image/*",
-          "accept": "image/*"
-        },
-        body: file,
-      }
-    );
-    const savedImage = await imageData.json();
-    if (savedImage.message) {
-      return savedImage;
-    }
-    setValue("image", savedImage.url);
+    // const imageData = await fetch(
+    //   process.env.NEXT_PUBLIC_BASEURL + "/api/images/upload",
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": file.type || "image/*",
+    //       "accept": "image/*"
+    //     },
+    //     body: file,
+    //   }
+    // );
+    // const savedImage = await imageData.json();
+    // if (savedImage.message) {
+    //   return savedImage;
+    // }
+    setValue("image", "https://images.unsplash.com/photo-1595138320174-a64d168e9970?q=80&w=2660&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
     setIsLoading(false);    
   };
 
