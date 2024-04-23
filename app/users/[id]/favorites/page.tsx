@@ -5,12 +5,10 @@ import { ListingCard, LoadingAnimation } from '@/src/components/ui';
 import { useLoading } from '@/src/hooks';
 import { loggedInUserState } from '@/src/recoil';
 import { Listing } from '@prisma/client';
-import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil';
 
 const FavoritesPage = () => {
-  const searchParams = useSearchParams();
   const user_token = useRecoilValue(loggedInUserState);
   const [listings, setListings] = useState<Listing[]>([]);
   const {isLoading, setIsLoading} = useLoading();
