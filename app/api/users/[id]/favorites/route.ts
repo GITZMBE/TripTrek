@@ -1,6 +1,23 @@
 import prisma from "@/prisma";
 import { NextResponse } from "next/server";
 
+export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+  const { id } = params;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: id
+    }
+  });
+  const favoriteIds = user?.favoriteIds || [];
+
+  const favoriteListings = await prisma.listing.findMany({
+    where: {
+      id: { in: favoriteIds }
+    },
+  });
+  return NextResponse.json(favoriteListings);
+};
+
 export const POST = async (req: Request, { params }: { params: { id: string } }) => {
   const { listingId } = await req.json();
   const { id } = params;

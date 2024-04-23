@@ -27,7 +27,7 @@ export const ListingCard = ({ listing, ...props }: ListingCardProps) => {
   }
 
   const handleLikeListing = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/favorite`, { 
+    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/favorites`, { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ export const ListingCard = ({ listing, ...props }: ListingCardProps) => {
   };
 
   const handleRemoveFavorite = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/favorite`, {
+    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/favorites`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
