@@ -115,7 +115,6 @@ const UploadListingPage = () => {
     try {
       setIsLoading(true);
       const listing = await uploadListing(data);
-      console.log(listing)
       router.push('/');
     } catch(error: any) {
       setIsLoading(false);
