@@ -1,0 +1,11 @@
+import prisma from "@/prisma";
+import { NextResponse } from "next/server";
+
+export const POST = async (req: Request) => {
+  const body = await req.json();
+  const reservation = await prisma.reservation.create({
+    data: body
+  });
+
+  return NextResponse.json(reservation);
+};
