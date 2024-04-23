@@ -1,8 +1,9 @@
 import prisma from "@/prisma";
 import { NextResponse } from "next/server";
 
-export const POST = async (req: Request, { params }: { params: { id: string, listingId: string } }) => {
-  const { id, listingId } = params;
+export const POST = async (req: Request, { params }: { params: { id: string } }) => {
+  const { listingId } = await req.json();
+  const { id } = params;
   const user = await prisma.user.findUnique({
     where: {
       id: id
@@ -21,8 +22,9 @@ export const POST = async (req: Request, { params }: { params: { id: string, lis
   return NextResponse.json(updatedUser);
 };
 
-export const DELETE = async (req: Request, { params }: { params: { id: string, listingId: string } }) => {
-  const { id, listingId } = params;
+export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {
+  const { listingId } = await req.json();
+  const { id } = params;
   const user = await prisma.user.findUnique({
     where: {
       id: id
