@@ -48,10 +48,8 @@ export const LoginForm = () => {
     }
 
     setLoggedInUser(user_token);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
     router.push("/");
+    setIsLoading(false);
   };
 
   return (
