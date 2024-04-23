@@ -50,12 +50,12 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
         <span className='absolute top-4 right-4 text-light'>Owner</span>
       ) : isFavorite() ? (
         <div className='absolute top-4 right-4' onClick={e => {e.stopPropagation(); handleRemoveFavorite()}}>
-          <FaHeart className='text-love' />
+          <FaHeart className='text-love cursor-pointer' />
         </div>
         
       ) : (
         <div className='absolute top-4 right-4' onClick={e => {e.stopPropagation(); handleLikeListing()}}>
-          <FaRegHeart className=' text-light' />
+          <FaRegHeart className=' text-light cursor-pointer' />
         </div>
       ) }    
     </>
