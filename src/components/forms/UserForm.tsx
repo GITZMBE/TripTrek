@@ -82,7 +82,6 @@ export const UserForm = ({ id }: UserFormProps) => {
       }
 
       const newUser = await updateUserInfo(data);
-      console.log(newUser)
       if (newUser && newUser.message) {
         return;
       }

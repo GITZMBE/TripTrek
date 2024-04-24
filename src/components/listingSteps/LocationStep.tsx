@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useMemo } from 'react'
-import { CountrySelect, Map } from './ui';
-import { UseFormRegister, UseFormSetValue, UseFormUnregister, UseFormWatch } from 'react-hook-form';
+import { CountrySelect } from './ui';
+import { UseFormSetValue, UseFormUnregister, UseFormWatch } from 'react-hook-form';
 import dynamic from 'next/dynamic';
 
 interface LocationStepProps {

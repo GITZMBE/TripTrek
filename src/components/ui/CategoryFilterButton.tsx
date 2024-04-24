@@ -9,7 +9,7 @@ interface CategoryIconProps extends ComponentPropsWithoutRef<"button"> {
   icon: IconType;
 };
 
-export const CategoryIcon = ({ category, icon: Icon, className, ...props }: CategoryIconProps) => {
+export const CategoryFilterButton = ({ category, icon: Icon, className, ...props }: CategoryIconProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -39,4 +39,4 @@ export const CategoryIcon = ({ category, icon: Icon, className, ...props }: Cate
   );
 };
 
-export default CategoryIcon;
+export default CategoryFilterButton;
