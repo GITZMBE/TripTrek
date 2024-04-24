@@ -1,22 +1,29 @@
+'use client';
+
 import { Container } from "@/src/components/layout";
 import { ListingCard } from "@/src/components/ui";
 import { faBan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Listing } from "@prisma/client";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const ListingsPage = async () => {
+const ListingsPage = () => {
+  const [listings, setListings] = useState<Listing[]>([]);
   const getAllListings = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/listings", {
       method: "GET",
       cache: 'no-cache'
     }) || [];
-    const listings: Listing[] = await res.json();
-    return listings;
+    const list: Listing[] = await res.json() || [];
+    setListings(list);
+    return list;
   };
 
-  const listings = await getAllListings();
+  useEffect(() => {
+    getAllListings();
+  }, []);
+
   return (
     <Container extraPadding>
       <h1 className='text-4xl text-light'>Listings</h1>
@@ -24,7 +31,7 @@ const ListingsPage = async () => {
         {listings.length > 0 ? listings.map((listing: Listing) => (
           <ListingCard key={listing.id} listing={listing} />
         )) : (
-          <div className='flex flex-col items-center gap-8'>
+          <div className='w-full flex flex-col items-center gap-8'>
             <div className='w-24'>
               <FontAwesomeIcon icon={faBan} style={{ color: '#CC0000' }} />
             </div>
