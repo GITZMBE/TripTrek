@@ -1,19 +1,26 @@
+'use client';
+
 import { Container } from '@/src/components/layout';
 import { ListingCard } from '@/src/components/ui';
 import { Listing } from '@prisma/client';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 
-const UserListingsPage = async ({ params }: { params: { id: string } }) => {
+const UserListingsPage = ({ params }: { params: { id: string } }) => {
+  const [listings, setListings] = useState<Listing[]>([]);
   const getUsersListings = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${params.id}/listings`, { method: 'GET', cache: 'no-cache' });
-    const listings: Listing[] = await res.json() || [];
-    return listings;
+    const list: Listing[] = await res.json() || [];
+    setListings(list);
+    return list;
   };
 
-  const listings = await getUsersListings();
+  useEffect(() => {
+    getUsersListings();
+  }, [])
+
   return listings && (
     <Container extraPadding className={ listings.length === 0 ? 'justify-between' : '' }>
       <h1 className='text-4xl text-white font-bold'>My Listings</h1>

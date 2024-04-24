@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/src/components/layout/Header";
 import RecoilProvider from "@/src/components/providers/RecoilProvider";
+import NextuiProvider from "@/src/components/providers/NextuiProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,10 +27,12 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
-        <RecoilProvider>
-          <Header />
-          {children}
-        </RecoilProvider>
+        <NextuiProvider>
+          <RecoilProvider>
+              <Header />
+              {children}
+          </RecoilProvider>
+        </NextuiProvider>
       </body>
     </html>
   );
