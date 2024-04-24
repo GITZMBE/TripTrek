@@ -6,7 +6,6 @@ import { FaSkiing } from 'react-icons/fa';
 import { BsSnow } from 'react-icons/bs';
 import { IoDiamond } from 'react-icons/io5';
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
-import { BiSolidCategory } from 'react-icons/bi';
 import { CategoryButton } from './ui';
 import { UseFormSetValue, UseFormUnregister, UseFormWatch } from 'react-hook-form';
 
@@ -52,4 +51,4 @@ export const CategoryStep = ({ unregister, setValue, watch, name }: CategoryStep
   )
 }
 
-export default CategoryStep
+export default CategoryStep;
