@@ -1,8 +1,11 @@
+'use client';
+
 import React, { Dispatch, SetStateAction, useEffect } from "react";
 import Datepicker from "./Datepicker";
 import { DateValue, RangeValue } from "@nextui-org/react";
 import { differenceInCalendarDays } from "date-fns";
 import { dateValueToDate } from "@/src/utils";
+import { Reservation } from "@prisma/client";
 
 interface CalendarProps {
   price: number;
@@ -12,6 +15,7 @@ interface CalendarProps {
   setTotalPrice: Dispatch<SetStateAction<number>>;
   onChangeDate: SetStateAction<any>;
   dateRange: RangeValue<DateValue> | undefined;
+  reservations: Reservation[];
 }
 
 export const Calendar = ({
@@ -22,6 +26,7 @@ export const Calendar = ({
   setTotalPrice,
   onChangeDate,
   dateRange,
+  reservations
 }: CalendarProps) => {
 
   useEffect(() => {
@@ -60,7 +65,7 @@ export const Calendar = ({
             </div>
           </div>
           <hr />
-          <Datepicker onChangeDate={onChangeDate} dateRange={dateRange} setNightCount={setNightCount} />
+          <Datepicker onChangeDate={onChangeDate} dateRange={dateRange} setNightCount={setNightCount} reservations={reservations} />
         </div>
       </div>
     </div>
