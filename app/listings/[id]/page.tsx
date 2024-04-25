@@ -122,7 +122,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const makeReservation = async () => {
     setIsLoading(true);
     if (isValidReservation) {
-      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/reservation`, {
+      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -137,7 +137,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
       });
       const reservation = await res.json();
       setDateRange(initialDateRange);
-      router.push(`/users/${user_token?.user.id}/reservations`);
+      router.push(`/users/${user_token?.user.id}/reservations/${reservation.id}`);
       setIsLoading(false);
       return reservation;
     }
@@ -199,6 +199,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                   setTotalPrice={setTotalPrice}
                   onChangeDate={setDateRange}
                   dateRange={dateRange}
+                  reservations={reservations}
                 />
               </div>              
             </div>
