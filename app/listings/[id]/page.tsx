@@ -10,18 +10,17 @@ import { Container } from '@/src/components/layout'
 import { Calendar, Filter, Icontype, LoadingAnimation } from '@/src/components/ui';
 import FavoriteButton from '@/src/components/ui/FavoriteButton';
 import { Listing, Reservation, User } from '@prisma/client';
-import React, { ReactElement, useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { useCountries, useLoading } from '@/src/hooks';
 import { useRecoilValue } from 'recoil';
 import { loggedInUserState } from '@/src/recoil';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { differenceInCalendarDays, eachDayOfInterval } from 'date-fns';
 import { IconType } from 'react-icons';
-import { getLocalTimeZone, today } from '@internationalized/date';
 import { DateValue, RangeValue } from '@nextui-org/react';
 import CategoryReactIconModel from '@/src/models/CategoryReactIconModel';
+import { dateValueToDate } from '@/src/utils';
 const Map = dynamic(() => import('../../../src/components/listingSteps/ui/Map'), {
   ssr: false,
 });
@@ -44,10 +43,7 @@ const iconComponents: CategoryReactIconModel[] = [
   new CategoryReactIconModel("lux", <IoDiamond className='text-grey w-12 h-12' />),
 ];
 
-const initialDateRange = { 
-  start: today(getLocalTimeZone()), 
-  end: today(getLocalTimeZone()).add({days: 1})
-};
+const initialDateRange = undefined;
 
 type Country = {
   value: string;
@@ -63,8 +59,9 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const router = useRouter();
   const { isLoading, setIsLoading } = useLoading();
+  const [nightCount, setNightCount] = useState(0);
   const [totalPrice, setTotalPrice] = useState<number>(listing?.price || 0);
-  const [dateRange, setDateRange] = useState<RangeValue<DateValue>>(initialDateRange);
+  const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
   const { getByValue } = useCountries();
   const [location, setLocation] = useState<Country | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -120,71 +117,40 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     getData();
   }, []);
 
-  const disabledDates = useMemo(() => {
-    let dates: Date[] = [];
-
-    reservations.forEach((reservation) => {
-      const range = eachDayOfInterval({
-        start: new Date(reservation.startDate),
-        end: new Date(reservation.endDate)
-      });
-
-      dates = [...dates, ...range];
-    });
-
-    return dates;
-  }, [reservations]);
-
-  const dateValueToDate = (dateVal: DateValue) => {
-    return new Date(`${dateVal.year}-${dateVal.month}-${dateVal.day}`);
-  };
+  const isValidReservation = dateRange !== undefined && dateRange.start !== undefined && dateRange.end !== undefined && user_token?.user.id && listing?.id && totalPrice > 0;
 
   const makeReservation = async () => {
     setIsLoading(true);
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/reservation`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        userId: user_token?.user.id,
-        listingId: listing?.id,
-        startDate: dateValueToDate(dateRange.start),
-        endDate: dateValueToDate(dateRange.end),
-        totalPrice: totalPrice
-      })
-    });
-    const reservation = await res.json();
-    setDateRange(initialDateRange);
-    router.push(`/users/${user_token?.user.id}/reservations`);
-    setIsLoading(false);
-    return reservation;
-  };
-
-  useEffect(() => {
-    if (dateRange.start && dateRange.end) {
-      const dayCount = differenceInCalendarDays(
-        dateValueToDate(dateRange.end),
-        dateValueToDate(dateRange.start)
-      );
-
-      if (listing?.price !== undefined) {
-        if (dayCount) {
-          setTotalPrice(listing?.price * dayCount);
-        } else {
-          setTotalPrice(listing?.price);
-        }
-      }
+    if (isValidReservation) {
+      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/reservation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: user_token?.user.id,
+          listingId: listing?.id,
+          startDate: dateValueToDate(dateRange.start!),
+          endDate: dateValueToDate(dateRange.end!),
+          totalPrice: totalPrice
+        })
+      });
+      const reservation = await res.json();
+      setDateRange(initialDateRange);
+      router.push(`/users/${user_token?.user.id}/reservations`);
+      setIsLoading(false);
+      return reservation;
     }
-  }, [dateRange, listing?.price]);
+    setIsLoading(false);
+  };
 
   return (
     <Container banner>
       { listing && (
         <div className='w-full min-h-screen'>
-          <div className={`relative w-full h-[50vh] bg-cover bg-center bg-no-repeat`} style={{ backgroundImage: `url('${listing.imageSrc}')` }}>
+          <div className={`relative w-full h-[80vh] md:h-[50vh] bg-cover bg-center bg-no-repeat`} style={{ backgroundImage: `url('${listing.imageSrc}')` }}>
             <Filter center>
-              <h1 className='text-6xl text-light font-bold text-nowrap'>{ listing.title }</h1>
+              <h1 className='text-4xl sm:text-6xl text-light text-center font-bold text-wrap leading-[80px]'>{ listing.title }</h1>
               <FavoriteButton listing={listing} /> 
             </Filter>
           </div>
@@ -219,17 +185,18 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                 <span className='text-light capitalize leading-7'>{ listing.category }</span>
               </div>
               <hr className='w-full border-secondary my-4' />
-              <p className='text-secondary font-bold'>{ listing.description }</p>
+              <p className='text-grey font-bold'>{ listing.description }</p>
               <hr className='w-full border-secondary my-4' />
-              <div className='w-full flex gap-4'>
+              <div className='w-full flex flex-col md:flex-row flex-nowrap gap-4'>
                 { location && (
-                  <div>
-                    <Map center={location.latlng} />
-                  </div>
+                  <Map center={location.latlng} />
                 )}
                 <Calendar 
                   price={listing.price}
+                  nightCount={nightCount}
+                  setNightCount={setNightCount}
                   totalPrice={totalPrice}
+                  setTotalPrice={setTotalPrice}
                   onChangeDate={setDateRange}
                   dateRange={dateRange}
                 />
@@ -237,7 +204,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
             </div>
           </div>
           <div className='w-full flex justify-center items-center mt-8'>
-            <button className='flex gap-4 text-grey hover:text-light py-2 px-4 rounded-lg transition bg-secondary hover:bg-grey' disabled={isLoading} onClick={makeReservation}>
+            <button className='flex gap-4 text-grey disabled:hover:text-grey hover:text-light py-2 px-4 rounded-lg transition bg-secondary disabled:hover:bg-secondary hover:bg-grey disabled:cursor-not-allowed' disabled={isLoading || !isValidReservation} onClick={makeReservation}>
               <span>Rent listing</span>
               { isLoading && <LoadingAnimation className='w-12 aspect-square' /> }
             </button>
