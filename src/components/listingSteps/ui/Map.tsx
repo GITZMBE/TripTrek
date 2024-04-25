@@ -25,7 +25,7 @@ export const Map = ({ center }: MapProps) => {
       center={center as L.LatLngExpression || [40, 20]}
       zoom={center ? 5 : 2 }
       scrollWheelZoom={false}
-      className='h-[50vh] aspect-square rounded-lg'
+      className='w-full max-w-[550px] aspect-square rounded-lg'
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

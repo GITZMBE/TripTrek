@@ -33,7 +33,7 @@ export default function Home() {
   return (
     <Container className="min-h-screen">
       <Categorybar />
-      <div className="w-full flex flex-wrap justify-start gap-4 py-4">
+      <div className="w-full flex flex-wrap flex-col sm:flex-row items-center sm:items-start justify-start gap-4 py-4">
         {listings.length > 0 ? listings.map((listing: Listing) => (
             <ListingCard key={listing.id} listing={listing} />
           )) : (

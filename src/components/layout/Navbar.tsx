@@ -22,7 +22,7 @@ const Navbar = () => {
       {user_token && (
         <Link
           href={`/users/${user_token.user.id}`}
-          className='flex gap-4 items-center'
+          className='hidden sm:flex gap-4 items-center'
         >
           {user_token.user.avatar ? (
             <img
