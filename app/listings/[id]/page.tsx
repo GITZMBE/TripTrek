@@ -12,7 +12,7 @@ import FavoriteButton from '@/src/components/ui/FavoriteButton';
 import { Listing, Reservation, User } from '@prisma/client';
 import React, { ReactElement, useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { useCountries, useLoading } from '@/src/hooks';
+import { useCountries, useErrorMessage, useLoading } from '@/src/hooks';
 import { useRecoilValue } from 'recoil';
 import { loggedInUserState } from '@/src/recoil';
 import { useRouter } from 'next/navigation';
@@ -59,6 +59,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const router = useRouter();
   const { isLoading, setIsLoading } = useLoading();
+  const {errorMessage, setErrorMessage} = useErrorMessage(null);
   const [nightCount, setNightCount] = useState(0);
   const [totalPrice, setTotalPrice] = useState<number>(listing?.price || 0);
   const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
@@ -204,8 +205,13 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
               </div>              
             </div>
           </div>
+          <p className='text-error'>{ errorMessage }</p>
           <div className='w-full flex justify-center items-center mt-8'>
-            <button className='flex gap-4 text-grey disabled:hover:text-grey hover:text-light py-2 px-4 rounded-lg transition bg-secondary disabled:hover:bg-secondary hover:bg-grey disabled:cursor-not-allowed' disabled={isLoading || !isValidReservation} onClick={makeReservation}>
+            <button 
+              className={`flex gap-4 text-grey py-2 px-4 rounded-lg transition bg-secondary ${ (isLoading || !isValidReservation) ? 'hover:text-grey hover:bg-secondary cursor-not-allowed' : 'hover:text-light hover:bg-grey' }`} 
+              disabled={isLoading || !isValidReservation} 
+              onClick={() => (isLoading || !isValidReservation) ? setErrorMessage('Choose date range before making reservation') : makeReservation()}
+            >
               <span>Rent listing</span>
               { isLoading && <LoadingAnimation className='w-12 aspect-square' /> }
             </button>
