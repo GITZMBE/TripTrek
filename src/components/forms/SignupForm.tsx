@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { FormInput } from "./ui";
 import { FormButton } from "./ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSetRecoilState } from "recoil";
-import { loggedInUserState } from "@/src/recoil";
 import { useLoading } from "@/src/hooks";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { signIn } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { login } from "@/src/storage";
 
 type FormFields = {
   email: string;
@@ -22,10 +21,9 @@ type FormFields = {
 export const SignupForm = () => {
   const router = useRouter();
   const { register, handleSubmit, formState: { errors }, setError } = useForm<FormFields>();
-  const setLoggedInUser = useSetRecoilState(loggedInUserState);
   const { isLoading, setIsLoading } = useLoading();
 
-  const login = async (formData: FormFields) => {
+  const findUser = async (formData: FormFields) => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -58,9 +56,18 @@ export const SignupForm = () => {
       return;
     }
 
-    const user_token = await login(data);
+    const user_token = await findUser(data);
 
-    setLoggedInUser(user_token);
+    if (user_token?.message) {
+      setError("root", {
+        type: "manual",
+        message: user_token.message
+      })
+      setIsLoading(false);
+      return;
+    }
+
+    login(user_token);
     router.push("/");
     setIsLoading(false);
   };
