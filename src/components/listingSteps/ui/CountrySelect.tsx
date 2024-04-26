@@ -1,6 +1,5 @@
 import { useCountries } from '@/src/hooks';
 import React from 'react';
-import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import Select from 'react-select';
 
 export type CountrySelectValue = {

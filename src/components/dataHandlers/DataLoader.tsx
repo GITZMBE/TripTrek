@@ -3,7 +3,6 @@
 import { useLoading } from '@/src/hooks';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { LoadingAnimation } from '../ui';
-import Link from 'next/link';
 
 interface DataLoaderProps {
   fetchData: () => Promise<any[]>;

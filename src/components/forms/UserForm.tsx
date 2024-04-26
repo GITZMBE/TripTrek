@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FormInput } from "./ui";
 import FormFileInput from "./ui/FormFileInput";
 import { FormButton } from "./ui";
 import { useFormUpdateable, useLoading } from "@/src/hooks";
-import { useRecoilState } from "recoil";
-import { loggedInUserState } from "@/src/recoil";
 import { useForm } from "react-hook-form";
+import { getLoggedInUser, login } from "@/src/storage";
+import { User } from "@prisma/client";
 
 interface UserFormProps {
   id: string;
@@ -26,11 +26,12 @@ export const UserForm = ({ id }: UserFormProps) => {
     register,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors },
     watch,
   } = useForm<FormFields>();
   const currentFormData = watch();
-  const [user_token, setUserToken] = useRecoilState(loggedInUserState);
+  const [user, setUser] = useState(getLoggedInUser());
   const { updateable, setUpdateable } = useFormUpdateable(false);
   const { isLoading, setIsLoading } = useLoading();
 
@@ -66,7 +67,7 @@ export const UserForm = ({ id }: UserFormProps) => {
         body: JSON.stringify(data),
       }
     );
-    const updatedUser = await res.json();
+    const updatedUser: User | { message: string } = await res.json();
     return updatedUser;
   };
 
@@ -82,19 +83,17 @@ export const UserForm = ({ id }: UserFormProps) => {
       }
 
       const newUser = await updateUserInfo(data);
-      if (newUser && newUser.message) {
+      if ('message' in newUser) {
+        setError('root', { message: newUser.message });
         return;
       }
-    } catch(error: any) {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    }
 
-    setTimeout(() => {
+      login(newUser);
+    } catch(error: any) {
+      return;      
+    } finally {
       setIsLoading(false);
-    }, 1000);
-    setUserToken(null);
+    }
   };
 
   useEffect(() => {
@@ -105,12 +104,12 @@ export const UserForm = ({ id }: UserFormProps) => {
     }
 
     if (
-      (currentFormData.name !== user_token?.user.name &&
+      (currentFormData.name !== user?.name &&
         currentFormData.name !== "") ||
-      (currentFormData.email !== user_token?.user.email &&
+      (currentFormData.email !== user?.email &&
         currentFormData.email !== "") ||
       (!samePassword && currentFormData.password !== "") ||
-      (currentFormData.avatarUrl !== undefined && currentFormData.avatarUrl !== user_token?.user.avatar)
+      (currentFormData.avatarUrl !== undefined && currentFormData.avatarUrl !== user?.avatar)
     ) {
       setUpdateable(true);
       return;

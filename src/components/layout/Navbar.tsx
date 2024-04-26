@@ -1,32 +1,35 @@
 "use client";
 
-import { loggedInUserState } from "@/src/recoil";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { RxAvatar } from "react-icons/rx";
-import { useRecoilState } from "recoil";
 import { NavLink } from "./ui";
 import { useToggleMenu } from "@/src/hooks";
+import { getLoggedInUser, logout } from "@/src/storage";
 
 const Navbar = () => {
-  const [user_token, setUserToken] = useRecoilState(loggedInUserState);
+  const [user, setUser] = useState(getLoggedInUser());
   const { isOpen, setIsOpen, navComponent } = useToggleMenu();
 
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    setUser(getLoggedInUser());
+  }, []);
+
   return (
     <nav className='relative flex gap-4 items-center' ref={navComponent}>
-      {user_token && (
+      {user && (
         <Link
-          href={`/users/${user_token.user.id}`}
+          href={`${user.id}`}
           className='hidden sm:flex gap-4 items-center'
         >
-          {user_token.user.avatar ? (
+          {user.avatar ? (
             <img
-              src={user_token.user.avatar || ""}
+              src={user.avatar || ""}
               className='w-8 aspect-square object-cover object-center rounded-full'
               alt=''
             />
@@ -34,7 +37,7 @@ const Navbar = () => {
             <RxAvatar size={32} className='text-grey' />
           )}
 
-          <p className="text-white">{user_token.user.name || user_token.user.email}</p>
+          <p className="text-white">{user.name || user.email}</p>
         </Link>
       )}
       <GiHamburgerMenu
@@ -47,7 +50,7 @@ const Navbar = () => {
           !isOpen && "hidden"
         }`}
       >
-        {!user_token ? (
+        {!user ? (
           <>
             <NavLink
               href='/login'
@@ -63,7 +66,7 @@ const Navbar = () => {
         ) : (
           <>
             <NavLink
-              href={`/users/${user_token.user.id}`}
+              href={`/users/${user.id}`}
               label='My Account'
               onClick={() => setIsOpen(false)}
             />
@@ -73,17 +76,17 @@ const Navbar = () => {
               onClick={() => setIsOpen(false)}
             />
             <NavLink
-              href={`/users/${user_token.user.id}/favorites`}
+              href={`/users/${user.id}/favorites`}
               label='Favorite listings'
               onClick={() => setIsOpen(false)}
             />
             <NavLink
-              href={`/users/${user_token.user.id}/reservations`}
+              href={`/users/${user.id}/reservations`}
               label='Reservations'
               onClick={() => setIsOpen(false)}
             />
             <NavLink
-              href={`/users/${user_token.user.id}/listings`}
+              href={`/users/${user.id}/listings`}
               label='My listings'
               onClick={() => setIsOpen(false)}
             />
@@ -94,7 +97,7 @@ const Navbar = () => {
             />
             <hr className='border-primary border-thin mx-4' />
             <button
-              onClick={(_) => {setUserToken(null); setIsOpen(false)}}
+              onClick={(_) => {logout(); setIsOpen(false)}}
               className='text-left px-4 py-2 bg-secondary hover:bg-primary text-light transition'
             >
               Log out

@@ -33,6 +33,6 @@ export const PUT = async (req: Request, context: any) => {
 
     return NextResponse.json(updatedUser);
   } catch (error: any) {
-    return NextResponse.json({ message: error.message });
+    return NextResponse.json({ message: error.message.toString() });
   }
 }
