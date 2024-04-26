@@ -1,53 +1,28 @@
-// 'use client';
+'use client';
 
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { RxAvatar } from "react-icons/rx";
-import { NavLink } from "./ui";
-import { useCurrentUser, useToggleMenu } from "@/src/hooks";
-import { getLoggedInUser, logout } from "@/src/storage";
-import { useRecoilState } from "recoil";
-import { loggedInUserState } from "@/src/recoil";
-import { getCurrentUser } from "@/src/actions";
-import DropDownMenu from "./ui/DropDownMenu";
-import { User } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import React from 'react'
+import NavLink from './NavLink';
+import { User } from '@prisma/client';
+import { GiHamburgerMenu } from 'react-icons/gi';
+import { useToggleMenu } from '@/src/hooks';
+import { signOut } from 'next-auth/react';
 
-interface NavbarProps {
-  currentUser: User | null;
+interface DropDownMenu {
+  user: User | null;
 }
 
-export const Navbar = ({ currentUser }: NavbarProps) => {
-  // const currentUser = await getCurrentUser();
+const DropDownMenu = ({ user }: DropDownMenu) => {
+  const { isOpen, setIsOpen, navComponent } = useToggleMenu();
 
-  // const { data: session } = useSession();
-  // const currentUser = session?.user as User;
-  // const { currentUser } = useCurrentUser();
+  const handleToggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // try to use navComponent in a ref attribute
 
   return (
-    <nav className='relative flex gap-4 items-center'>
-      {currentUser && (
-        <Link
-          href={`${currentUser?.id}`}
-          className='hidden sm:flex gap-4 items-center'
-        >
-          {currentUser.avatar ? (
-            <img
-              src={currentUser.avatar || ""}
-              className='w-8 aspect-square object-cover object-center rounded-full'
-              alt=''
-            />
-          ) : (
-            <RxAvatar size={32} className='text-grey' />
-          )}
-
-          <p className="text-white">{currentUser.name || currentUser.email}</p>
-        </Link>
-      )}
-      <DropDownMenu user={currentUser} />
-      {/* make as separate component (DropDownMenu) */}
-      {/* <GiHamburgerMenu
+    <>
+      <GiHamburgerMenu
         size={24}
         className='text-light hover:text-white cursor-pointer'
         onClick={handleToggleMenu}
@@ -104,16 +79,16 @@ export const Navbar = ({ currentUser }: NavbarProps) => {
             />
             <hr className='border-primary border-thin mx-4' />
             <button
-              onClick={(_) => {logout(); setUser(undefined); setLoggedInUser(undefined); setIsOpen(false)}}
+              onClick={(_) => signOut({ callbackUrl: '/login' })}
               className='text-left px-4 py-2 bg-secondary hover:bg-primary text-light transition'
             >
               Log out
             </button>
           </>
         )}
-      </div> */}
-    </nav>
-  );
-};
+      </div>
+    </>
+  )
+}
 
-export default Navbar;
+export default DropDownMenu
