@@ -21,35 +21,12 @@ type FormFields = {
 
 export const LoginForm = () => {
   const router = useRouter();
-  const setLoggedInUser = useSetRecoilState(loggedInUserState);
   const { register, handleSubmit, formState: { errors }, setError } = useForm<FormFields>();
   const { isLoading, setIsLoading } = useLoading();
 
-  const findUser = async (formData: FormFields) => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-    const user_token = await res.json();
-    return user_token;
-  };
-
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     setIsLoading(true);
-    const user_token = await findUser(data);
-
-    if (user_token?.message) {
-      setError("root", {
-        type: "manual",
-        message: user_token.message
-      })
-      setIsLoading(false);
-      return;
-    }
-
-    login(user_token.user);
-    setLoggedInUser(user_token.user);
+    signIn('credentials', data);
     router.push("/");
     setIsLoading(false);
   };

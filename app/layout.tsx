@@ -6,6 +6,7 @@ import RecoilProvider from "@/src/components/providers/RecoilProvider";
 import NextuiProvider from "@/src/components/providers/NextuiProvider";
 import NextAuthProvider from "@/src/components/providers/NextAuthProvider";
 import { getServerSession } from "next-auth";
+import { getCurrentUser } from "@/src/actions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession();
+  const currentUser = await getCurrentUser();
 
   return (
     <html lang='en' suppressHydrationWarning>
@@ -34,7 +36,7 @@ export default async function RootLayout({
         <NextAuthProvider session={session}>
           <NextuiProvider>
             <RecoilProvider>
-              <Header />
+              <Header currentUser={currentUser} />
               {children}
             </RecoilProvider>
           </NextuiProvider>          
