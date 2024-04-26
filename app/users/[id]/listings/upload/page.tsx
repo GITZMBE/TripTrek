@@ -12,12 +12,10 @@ import InfoStep from "@/src/components/listingSteps/InfoStep";
 import { CountrySelectValue } from "@/src/components/listingSteps/ui";
 import { LoadingAnimation } from "@/src/components/ui";
 import { useLoading } from "@/src/hooks";
-import { loggedInUserState } from "@/src/recoil";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
-import { useRecoilValue } from "recoil";
 
 enum Steps {
   Category = 0,
@@ -41,9 +39,8 @@ type FormFields = {
   userId: string;
 };
 
-const UploadListingPage = () => {
+const UploadListingPage = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
-  const user_token = useRecoilValue(loggedInUserState);
   const [step, setStep] = useState(Steps.Category);
   const { isLoading, setIsLoading } = useLoading();
   const {
@@ -56,7 +53,7 @@ const UploadListingPage = () => {
     clearErrors,
     formState: { errors },
   } = useForm<FormFields>({
-    defaultValues: { userId: user_token?.user.id, guestCount: 1, roomCount: 1, bathroomCount: 1 },
+    defaultValues: { userId: params.id, guestCount: 1, roomCount: 1, bathroomCount: 1 },
   });
 
   const formData = watch();

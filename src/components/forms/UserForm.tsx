@@ -8,6 +8,8 @@ import { useFormUpdateable, useLoading } from "@/src/hooks";
 import { useForm } from "react-hook-form";
 import { getLoggedInUser, login } from "@/src/storage";
 import { User } from "@prisma/client";
+import { useSetRecoilState } from "recoil";
+import { loggedInUserState } from "@/src/recoil";
 
 interface UserFormProps {
   id: string;
@@ -31,6 +33,7 @@ export const UserForm = ({ id }: UserFormProps) => {
     watch,
   } = useForm<FormFields>();
   const currentFormData = watch();
+  const setLoggedInUser = useSetRecoilState(loggedInUserState);
   const [user, setUser] = useState(getLoggedInUser());
   const { updateable, setUpdateable } = useFormUpdateable(false);
   const { isLoading, setIsLoading } = useLoading();
@@ -89,6 +92,8 @@ export const UserForm = ({ id }: UserFormProps) => {
       }
 
       login(newUser);
+      setLoggedInUser(newUser);
+      setUser(newUser);
     } catch(error: any) {
       return;      
     } finally {
