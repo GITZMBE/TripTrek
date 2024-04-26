@@ -11,6 +11,8 @@ import { FaGithub } from "react-icons/fa";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoading } from "@/src/hooks";
 import { login } from "@/src/storage";
+import { useSetRecoilState } from "recoil";
+import { loggedInUserState } from "@/src/recoil";
 
 type FormFields = {
   email: string;
@@ -19,6 +21,7 @@ type FormFields = {
 
 export const LoginForm = () => {
   const router = useRouter();
+  const setLoggedInUser = useSetRecoilState(loggedInUserState);
   const { register, handleSubmit, formState: { errors }, setError } = useForm<FormFields>();
   const { isLoading, setIsLoading } = useLoading();
 
@@ -46,6 +49,7 @@ export const LoginForm = () => {
     }
 
     login(user_token.user);
+    setLoggedInUser(user_token.user);
     router.push("/");
     setIsLoading(false);
   };

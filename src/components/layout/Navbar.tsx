@@ -7,9 +7,12 @@ import { RxAvatar } from "react-icons/rx";
 import { NavLink } from "./ui";
 import { useToggleMenu } from "@/src/hooks";
 import { getLoggedInUser, logout } from "@/src/storage";
+import { useRecoilState } from "recoil";
+import { loggedInUserState } from "@/src/recoil";
 
 const Navbar = () => {
   const [user, setUser] = useState(getLoggedInUser());
+  const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const { isOpen, setIsOpen, navComponent } = useToggleMenu();
 
   const handleToggleMenu = () => {
@@ -18,7 +21,7 @@ const Navbar = () => {
 
   useEffect(() => {
     setUser(getLoggedInUser());
-  }, []);
+  }, [loggedInUser]);
 
   return (
     <nav className='relative flex gap-4 items-center' ref={navComponent}>
@@ -97,7 +100,7 @@ const Navbar = () => {
             />
             <hr className='border-primary border-thin mx-4' />
             <button
-              onClick={(_) => {logout(); setIsOpen(false)}}
+              onClick={(_) => {logout(); setUser(undefined); setLoggedInUser(undefined); setIsOpen(false)}}
               className='text-left px-4 py-2 bg-secondary hover:bg-primary text-light transition'
             >
               Log out

@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { getLoggedInUser } from "@/src/storage";
+import { useRecoilValue } from "recoil";
+import { loggedInUserState } from "@/src/recoil";
 
 const Pathbar = () => {
   const router = useRouter();
@@ -11,6 +13,7 @@ const Pathbar = () => {
   let paths = pathName.split("/");
   paths.shift();
   const currentPath = paths.findLast((_) => true);
+  const loggedInUser = useRecoilValue(loggedInUserState);
 
   useEffect(() => {
     const user = getLoggedInUser();
@@ -23,7 +26,7 @@ const Pathbar = () => {
     if (isLoggedIn && (pathName === "/login" || pathName === "/signup")) {
       router.push('/');
     }
-  }, [pathName]);
+  }, [pathName, loggedInUser]);
 
   return (
     <div className='flex gap-2'>
