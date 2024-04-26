@@ -4,6 +4,8 @@ import "./globals.css";
 import Header from "@/src/components/layout/Header";
 import RecoilProvider from "@/src/components/providers/RecoilProvider";
 import NextuiProvider from "@/src/components/providers/NextuiProvider";
+import NextAuthProvider from "@/src/components/providers/NextAuthProvider";
+import { getServerSession } from "next-auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,20 +21,24 @@ export const metadata: Metadata = {
   ]
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession();
+
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
-        <NextuiProvider>
-          <RecoilProvider>
+        <NextAuthProvider session={session}>
+          <NextuiProvider>
+            <RecoilProvider>
               <Header />
               {children}
-          </RecoilProvider>
-        </NextuiProvider>
+            </RecoilProvider>
+          </NextuiProvider>          
+        </NextAuthProvider>
       </body>
     </html>
   );
