@@ -28,7 +28,7 @@ const ReservationPage = ({ params }: { params: { id: string, reservationId: stri
       
       const reservationJSON = JSON.stringify(reservation, null, 2);
       doc.text(reservationJSON, 10, 10);
-      doc.save(`reservation_${ reservation.id }.pdf`);      
+      doc.save(`reservation_${ reservation.id }.pdf`);
     }
   };
 
