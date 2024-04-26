@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import React, { ComponentPropsWithoutRef, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { format } from 'date-fns';
+import { getLoggedInUser } from '@/src/storage';
 
 interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
   reservation: Reservation;
@@ -14,7 +15,7 @@ interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
 
 export const ReservationCard = ({ reservation, ...props }: ReservationCardProps) => {
   const router = useRouter();
-  const user_token = useRecoilValue(loggedInUserState);
+  const [user, setUser] = useState(getLoggedInUser());
   const [listing, setListing] = useState<Listing>();
   const getListing = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/listings/${reservation.listingId}`);
@@ -24,11 +25,12 @@ export const ReservationCard = ({ reservation, ...props }: ReservationCardProps)
   };
 
   useEffect(() => {
+    setUser(getLoggedInUser());
     getListing();
   }, []);
 
   return (
-    <button onClick={() => router.push(`/users/${user_token?.user.id}/reservations/${reservation.id}`)} { ...props } className='group relative flex flex-col gap-4 w-64 aspect-square rounded-xl shadow-lg overflow-hidden'>
+    <button onClick={() => router.push(`/users/${user?.id}/reservations/${reservation.id}`)} { ...props } className='group relative flex flex-col gap-4 w-64 aspect-square rounded-xl shadow-lg overflow-hidden'>
       { listing && (
         <>
           <div className={`absolute top-0 bottom-0 group-hover:bottom-[92px] w-full transition-all overflow-hidden rounded-xl z-10`}>
