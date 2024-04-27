@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React, { Dispatch } from 'react'
 import NavLink from './NavLink';
 import { User } from '@prisma/client';
 import { GiHamburgerMenu } from 'react-icons/gi';
@@ -9,16 +9,16 @@ import { signOut } from 'next-auth/react';
 
 interface DropDownMenu {
   user: User | null;
+  isOpen: boolean;
+  setIsOpen: Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropDownMenu = ({ user }: DropDownMenu) => {
-  const { isOpen, setIsOpen, navComponent } = useToggleMenu();
+const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
+  // const { isOpen, setIsOpen, navComponent } = useToggleMenu();
 
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
-  // try to use navComponent in a ref attribute
 
   return (
     <>

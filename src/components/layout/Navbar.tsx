@@ -1,4 +1,4 @@
-// 'use client';
+'use client';
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -19,14 +19,10 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ currentUser }: NavbarProps) => {
-  // const currentUser = await getCurrentUser();
-
-  // const { data: session } = useSession();
-  // const currentUser = session?.user as User;
-  // const { currentUser } = useCurrentUser();
+  const { isOpen, setIsOpen, navComponent } = useToggleMenu();
 
   return (
-    <nav className='relative flex gap-4 items-center'>
+    <nav className='relative flex gap-4 items-center' ref={navComponent}>
       {currentUser && (
         <Link
           href={`${currentUser?.id}`}
@@ -45,7 +41,7 @@ export const Navbar = ({ currentUser }: NavbarProps) => {
           <p className="text-white">{currentUser.name || currentUser.email}</p>
         </Link>
       )}
-      <DropDownMenu user={currentUser} />
+      <DropDownMenu user={currentUser} isOpen={isOpen} setIsOpen={setIsOpen} />
       {/* make as separate component (DropDownMenu) */}
       {/* <GiHamburgerMenu
         size={24}
