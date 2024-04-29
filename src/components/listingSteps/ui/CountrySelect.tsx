@@ -1,5 +1,6 @@
 import { useCountries } from '@/src/hooks';
 import React from 'react';
+import { UseFormWatch } from 'react-hook-form';
 import Select from 'react-select';
 
 export type CountrySelectValue = {
@@ -12,10 +13,12 @@ export type CountrySelectValue = {
 
 interface CountrySelectProps {
   onChange: (value: CountrySelectValue | null) => void;
-  value: CountrySelectValue | null;
+  watch: UseFormWatch<any>;
+  name: string;
 };
 
-export const CountrySelect = ({ onChange, value }: CountrySelectProps) => {
+export const CountrySelect = ({ onChange, watch, name }: CountrySelectProps) => {
+  const selectedCountry = watch(name);
   const { getAll, getByValue } = useCountries();
 
   return (
@@ -24,7 +27,7 @@ export const CountrySelect = ({ onChange, value }: CountrySelectProps) => {
         placeholder='Country'
         isClearable
         options={getAll()} 
-        value={value}
+        value={selectedCountry}
         onChange={onChange}
         formatOptionLabel={
           (option) => (

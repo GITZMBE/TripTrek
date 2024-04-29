@@ -19,6 +19,7 @@ import { IconType } from 'react-icons';
 import { DateValue, RangeValue } from '@nextui-org/react';
 import CategoryReactIconModel from '@/src/models/CategoryReactIconModel';
 import { dateValueToDate } from '@/src/utils';
+import { CountryModel } from '@/src/models';
 const Map = dynamic(() => import('../../../src/components/listingSteps/ui/Map'), {
   ssr: false,
 });
@@ -43,14 +44,6 @@ const iconComponents: CategoryReactIconModel[] = [
 
 const initialDateRange = undefined;
 
-type Country = {
-  value: string;
-  label: string;
-  flag: string;
-  latlng: [number, number];
-  region: string;
-};
-
 const ListingPage = ({ params }: { params: { id: string} }) => {
   const { currentUser: user } = useCurrentUser();
   const [listing, setListing] = useState<Listing | null>(null);
@@ -62,7 +55,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [totalPrice, setTotalPrice] = useState<number>(listing?.price || 0);
   const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
   const { getByValue } = useCountries();
-  const [location, setLocation] = useState<Country | null>(null);
+  const [location, setLocation] = useState<CountryModel | null>(null);
   const [categoryIcon, setCategoryIcon] = useState<ReactElement<IconType> | null>(null);
 
   const getListing = async () => {
