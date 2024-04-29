@@ -6,12 +6,12 @@ import { LoadingAnimation } from '../ui';
 
 interface DataLoaderProps {
   fetchData: () => Promise<any[]>;
-  renderData: (data: any[]) => JSX.Element[];
+  renderData: (data: any) => JSX.Element;
   noDataContent: ReactNode;
 }
 
 export const DataLoader = ({ fetchData, renderData, noDataContent }: DataLoaderProps) => {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any>();
   const {isLoading, setIsLoading} = useLoading(true);
 
   useEffect(() => {
@@ -36,10 +36,10 @@ export const DataLoader = ({ fetchData, renderData, noDataContent }: DataLoaderP
         <div className='flex justify-center w-full'>
           <LoadingAnimation className='w-28 aspect-square' />
         </div>
-      ) : data.length > 0 ? (
-        renderData(data)
-      ) : (
+      ) : !data || data.length === 0 ? (
         noDataContent
+      ) : (
+        renderData(data)
       )}
     </div>
   )
