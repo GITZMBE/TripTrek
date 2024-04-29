@@ -18,7 +18,7 @@ export const Navbar = ({ currentUser }: NavbarProps) => {
     <nav className='relative flex gap-4 items-center' ref={navComponent}>
       {currentUser && (
         <Link
-          href={`${currentUser?.id}`}
+          href={`/users/${currentUser?.id}`}
           className='hidden sm:flex gap-4 items-center'
         >
           {currentUser.avatar ? (
