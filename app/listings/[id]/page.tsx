@@ -9,12 +9,10 @@ import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { Container } from '@/src/components/layout'
 import { Calendar, Filter, Icontype, LoadingAnimation } from '@/src/components/ui';
 import FavoriteButton from '@/src/components/ui/FavoriteButton';
-import { Listing, Reservation, User } from '@prisma/client';
+import { Listing, Reservation } from '@prisma/client';
 import React, { ReactElement, useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { useCountries, useErrorMessage, useLoading } from '@/src/hooks';
-import { useRecoilValue } from 'recoil';
-import { loggedInUserState } from '@/src/recoil';
+import { useCountries, useCurrentUser, useErrorMessage, useLoading } from '@/src/hooks';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { IconType } from 'react-icons';
@@ -54,7 +52,7 @@ type Country = {
 };
 
 const ListingPage = ({ params }: { params: { id: string} }) => {
-  const user_token = useRecoilValue(loggedInUserState);
+  const { currentUser: user } = useCurrentUser();
   const [listing, setListing] = useState<Listing | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const router = useRouter();
@@ -65,7 +63,6 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
   const { getByValue } = useCountries();
   const [location, setLocation] = useState<Country | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const [categoryIcon, setCategoryIcon] = useState<ReactElement<IconType> | null>(null);
 
   const getListing = async () => {
@@ -87,15 +84,6 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     setLocation(country);
   };
 
-  const getUser = async (userId: string) => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${userId}`, {
-      method: 'GET'
-    });
-    const u = await res.json();
-    setUser(u);
-    return u;
-  };
-
   const getCategoryIcon = (cat: string) => {
     const icons = iconComponents.filter(({ category }) => category === cat);
     if (icons.length === 0) {
@@ -108,7 +96,6 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
 
   const getData = async () => {
     const list = await getListing();
-    const user = await getUser(list.userId);
     getLocation(list.locationValue);
     getCategoryIcon(list.category);
     const resvs = await getReservations();
@@ -118,18 +105,18 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     getData();
   }, []);
 
-  const isValidReservation = dateRange !== undefined && dateRange.start !== undefined && dateRange.end !== undefined && user_token?.user.id && listing?.id && totalPrice > 0;
+  const isValidReservation = dateRange !== undefined && dateRange.start !== undefined && dateRange.end !== undefined && user?.id && listing?.id && totalPrice > 0;
 
   const makeReservation = async () => {
     setIsLoading(true);
     if (isValidReservation) {
-      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user_token?.user.id}/reservations`, {
+      const res = await fetch(window.location.origin + `/api/users/${user.id}/reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userId: user_token?.user.id,
+          userId: user?.id,
           listingId: listing?.id,
           startDate: dateValueToDate(dateRange.start!),
           endDate: dateValueToDate(dateRange.end!),
@@ -138,7 +125,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
       });
       const reservation = await res.json();
       setDateRange(initialDateRange);
-      router.push(`/users/${user_token?.user.id}/reservations/${reservation.id}`);
+      router.push(`/users/${user?.id}/reservations/${reservation.id}`);
       setIsLoading(false);
       return reservation;
     }
