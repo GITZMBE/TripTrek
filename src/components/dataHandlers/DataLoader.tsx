@@ -5,8 +5,8 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { LoadingAnimation } from '../ui';
 
 interface DataLoaderProps {
-  fetchData: () => Promise<any[]>;
-  renderData: (data: any) => JSX.Element;
+  fetchData: () => Promise<any>;
+  renderData: (data: any) => JSX.Element | JSX.Element[];
   noDataContent: ReactNode;
 }
 
