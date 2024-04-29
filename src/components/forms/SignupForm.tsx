@@ -10,10 +10,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { signIn } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { login } from "@/src/storage";
-import { useSetRecoilState } from "recoil";
-import { loggedInUserState } from "@/src/recoil";
-import { User } from "@prisma/client";
 
 type FormFields = {
   email: string;
@@ -23,7 +19,6 @@ type FormFields = {
 
 export const SignupForm = () => {
   const router = useRouter();
-  const setLoggedInUser = useSetRecoilState(loggedInUserState);
   const { register, handleSubmit, formState: { errors }, setError } = useForm<FormFields>();
   const { isLoading, setIsLoading } = useLoading();
 
@@ -71,8 +66,7 @@ export const SignupForm = () => {
       return;
     }
 
-    login(user_token.user);
-    setLoggedInUser(user_token.user);
+    signIn('credentials', data);
     router.push("/");
     setIsLoading(false);
   };

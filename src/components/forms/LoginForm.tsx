@@ -10,9 +10,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoading } from "@/src/hooks";
-import { login } from "@/src/storage";
-import { useSetRecoilState } from "recoil";
-import { loggedInUserState } from "@/src/recoil";
 
 type FormFields = {
   email: string;

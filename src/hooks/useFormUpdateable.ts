@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { getLoggedInUser } from "../storage";
+import useCurrentUser from "./useCurrentUser";
 
 export const useFormUpdateable = (formData: any) => {
-  const user = getLoggedInUser();
+  const { currentUser: user } = useCurrentUser();
   const [updateable, setUpdateable] = useState(false);
 
   useEffect(() => {
