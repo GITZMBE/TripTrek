@@ -1,10 +1,9 @@
 'use client';
 
-import { getCurrentUser } from '@/src/actions';
 import { useCurrentUser } from '@/src/hooks';
-import { Listing, User } from '@prisma/client';
-import { signIn, useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react'
+import { Listing } from '@prisma/client';
+import { signIn } from 'next-auth/react';
+import React from 'react'
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 interface FavoriteButtonProps {
@@ -12,22 +11,7 @@ interface FavoriteButtonProps {
 };
 
 const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
-  // const { data: session } = useSession();
-  // const [user, setUser] = useState<User | null>(null);
   const { currentUser: user } = useCurrentUser();
-
-  // useEffect(() => {
-  //   const fetchCurrentUser = async () => {
-  //     // why can't I use this function (because it calls prisma directly?)
-  //     const user = await getCurrentUser();
-
-  //     setUser(user);
-  //   };
-
-  //   fetchCurrentUser();
-  // }, []);
-
-  // let user: User;
 
   const isFavorite = () => {
     const favorites = user?.favoriteIds || [];
