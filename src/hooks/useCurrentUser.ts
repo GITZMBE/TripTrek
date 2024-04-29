@@ -1,21 +1,34 @@
 import prisma from "@/prisma";
+import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const useCurrentUser = () => {
   const { data: session } = useSession();
-  const currentUser = useMemo(async () => {
-    if (!session || !session.user || !session.user.email) return null;
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  
+  useEffect(() => {
+    const getUser = async () => {
+      if (!session?.user?.email) return null;
 
-    const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email
-      }
-    });
+      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users`, { 
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ 
+          email: session.user.email 
+        })
+      });
+      const user = await res.json();
 
-    if (!user) return null;
+      if (!user) return null;
 
-    return user;
+      setCurrentUser(user);
+      return user;
+    };
+
+    getUser();
   }, [session]);
 
   return { currentUser };
