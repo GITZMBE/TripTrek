@@ -4,7 +4,6 @@ import React, { Dispatch } from 'react'
 import NavLink from './NavLink';
 import { User } from '@prisma/client';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { useToggleMenu } from '@/src/hooks';
 import { signOut } from 'next-auth/react';
 
 interface DropDownMenu {
@@ -14,8 +13,6 @@ interface DropDownMenu {
 }
 
 const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
-  // const { isOpen, setIsOpen, navComponent } = useToggleMenu();
-
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -79,7 +76,9 @@ const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
             />
             <hr className='border-primary border-thin mx-4' />
             <button
-              onClick={(_) => signOut({ callbackUrl: '/login' })}
+              onClick={() => {
+                signOut({ callbackUrl: '/login' })
+              }}
               className='text-left px-4 py-2 bg-secondary hover:bg-primary text-light transition'
             >
               Log out
