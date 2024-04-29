@@ -1,13 +1,10 @@
 'use client';
 
-import { loggedInUserState } from '@/src/recoil';
 import { Listing, Reservation } from '@prisma/client';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { ComponentPropsWithoutRef, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { format } from 'date-fns';
-import { getLoggedInUser } from '@/src/storage';
+import { useCurrentUser } from '@/src/hooks';
 
 interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
   reservation: Reservation;
@@ -15,17 +12,17 @@ interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
 
 export const ReservationCard = ({ reservation, ...props }: ReservationCardProps) => {
   const router = useRouter();
-  const [user, setUser] = useState(getLoggedInUser());
+  const { currentUser: user } = useCurrentUser();
   const [listing, setListing] = useState<Listing>();
-  const getListing = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/listings/${reservation.listingId}`);
-    const list: Listing = await res.json();
-    setListing(list);
-    return list;
-  };
 
   useEffect(() => {
-    setUser(getLoggedInUser());
+    const getListing = async () => {
+      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/listings/${reservation.listingId}`);
+      const list: Listing = await res.json();
+      setListing(list);
+      return list;
+    };
+
     getListing();
   }, []);
 

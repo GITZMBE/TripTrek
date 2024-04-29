@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FormInput } from "./ui";
 import FormFileInput from "./ui/FormFileInput";
 import { FormButton } from "./ui";
-import { useFormUpdateable, useLoading } from "@/src/hooks";
+import { useCurrentUser, useFormUpdateable, useLoading } from "@/src/hooks";
 import { useForm } from "react-hook-form";
-import { getLoggedInUser, login } from "@/src/storage";
 import { User } from "@prisma/client";
-import { useSetRecoilState } from "recoil";
-import { loggedInUserState } from "@/src/recoil";
+import { signIn } from "next-auth/react";
 
 interface UserFormProps {
   id: string;
@@ -33,8 +31,7 @@ export const UserForm = ({ id }: UserFormProps) => {
     watch,
   } = useForm<FormFields>();
   const currentFormData = watch();
-  const setLoggedInUser = useSetRecoilState(loggedInUserState);
-  const [user, setUser] = useState(getLoggedInUser());
+  const { currentUser: user } = useCurrentUser();
   const { updateable, setUpdateable } = useFormUpdateable(false);
   const { isLoading, setIsLoading } = useLoading();
 
@@ -91,9 +88,7 @@ export const UserForm = ({ id }: UserFormProps) => {
         return;
       }
 
-      login(newUser);
-      setLoggedInUser(newUser);
-      setUser(newUser);
+      signIn('credentials', newUser);
     } catch(error: any) {
       return;      
     } finally {
