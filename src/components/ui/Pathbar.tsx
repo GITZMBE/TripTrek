@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { getLoggedInUser } from "@/src/storage";
-import { useRecoilValue } from "recoil";
-import { loggedInUserState } from "@/src/recoil";
-import { useSession } from "next-auth/react";
+import { useCurrentUser } from "@/src/hooks";
 
 const Pathbar = () => {
   const router = useRouter();
@@ -14,11 +11,9 @@ const Pathbar = () => {
   let paths = pathName.split("/");
   paths.shift();
   const currentPath = paths.findLast((_) => true);
-  const { data: session } = useSession();
+  const { currentUser: user } = useCurrentUser();
 
   useEffect(() => {
-    console.log(session)
-    const user = session?.user;
     const isLoggedIn = user !== undefined && user !== null;
 
     if (!isLoggedIn && pathName !== "/login" && pathName !== "/signup") {
@@ -28,7 +23,7 @@ const Pathbar = () => {
     if (isLoggedIn && (pathName === "/login" || pathName === "/signup")) {
       router.push('/');
     }
-  }, [pathName]);
+  }, [pathName, user]);
 
   return (
     <div className='flex gap-2'>

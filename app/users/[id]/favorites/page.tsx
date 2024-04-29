@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 
 import { DataLoader } from '@/src/components/dataHandlers';
 import { Container } from '@/src/components/layout';

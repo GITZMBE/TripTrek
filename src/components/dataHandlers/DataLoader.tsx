@@ -6,7 +6,7 @@ import { LoadingAnimation } from '../ui';
 
 interface DataLoaderProps {
   fetchData: () => Promise<any[]>;
-  renderData: (data: any) => JSX.Element[];
+  renderData: (data: any[]) => JSX.Element[];
   noDataContent: ReactNode;
 }
 

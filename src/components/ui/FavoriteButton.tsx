@@ -1,18 +1,33 @@
 'use client';
 
-import { loggedInUserState } from '@/src/recoil';
-import { getLoggedInUser, login } from '@/src/storage';
-import { Listing } from '@prisma/client';
+import { getCurrentUser } from '@/src/actions';
+import { useCurrentUser } from '@/src/hooks';
+import { Listing, User } from '@prisma/client';
+import { signIn, useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react'
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
-import { useRecoilState } from 'recoil';
 
 interface FavoriteButtonProps {
   listing: Listing;
 };
 
 const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
-  const [user, setUser] = useState(getLoggedInUser());
+  // const { data: session } = useSession();
+  // const [user, setUser] = useState<User | null>(null);
+  const { currentUser: user } = useCurrentUser();
+
+  // useEffect(() => {
+  //   const fetchCurrentUser = async () => {
+  //     // why can't I use this function (because it calls prisma directly?)
+  //     const user = await getCurrentUser();
+
+  //     setUser(user);
+  //   };
+
+  //   fetchCurrentUser();
+  // }, []);
+
+  // let user: User;
 
   const isFavorite = () => {
     const favorites = user?.favoriteIds || [];
@@ -33,7 +48,7 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       body: JSON.stringify({ listingId: listing.id })
     });
     const updatedUser = await res.json();
-    login(updatedUser);
+    signIn('credentials', updatedUser);
   };
 
   const handleRemoveFavorite = async () => {
@@ -45,12 +60,8 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       body: JSON.stringify({ listingId: listing.id })
     });
     const updatedUser = await res.json();
-    login(updatedUser);
+    signIn('credentials', updatedUser);
   };
-
-  useEffect(() => {
-    setUser(getLoggedInUser());
-  }, []);
 
   return (
     <>
