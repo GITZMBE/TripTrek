@@ -3,6 +3,7 @@
 import { useCurrentUser } from '@/src/hooks';
 import { Listing } from '@prisma/client';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React from 'react'
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
@@ -11,6 +12,7 @@ interface FavoriteButtonProps {
 };
 
 const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
+  const router = useRouter();
   const { currentUser: user } = useCurrentUser();
 
   const isFavorite = () => {
@@ -32,7 +34,8 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       body: JSON.stringify({ listingId: listing.id })
     });
     const updatedUser = await res.json();
-    signIn('credentials', updatedUser);
+    // signIn('credentials', updatedUser);
+    router.refresh();
   };
 
   const handleRemoveFavorite = async () => {
@@ -44,7 +47,8 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       body: JSON.stringify({ listingId: listing.id })
     });
     const updatedUser = await res.json();
-    signIn('credentials', updatedUser);
+    // signIn('credentials', updatedUser);
+    router.refresh();
   };
 
   return (
