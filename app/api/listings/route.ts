@@ -7,12 +7,19 @@ export const GET = async (req: Request) => {
   const category = searchParams.get('category');
   let listings;
   if (category === null || category === '') {
-    listings = await prisma.listing.findMany();
+    listings = await prisma.listing.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
   } else {
     listings = await prisma.listing.findMany({ 
       where: { 
         category: category 
-      } 
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
   }
   

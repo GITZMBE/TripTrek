@@ -11,3 +11,14 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
 
   return NextResponse.json(reservation);
 };
+
+export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {
+  const { id } = params;
+  const reservation = await prisma.reservation.delete({ 
+    where: { 
+      id 
+    } 
+  });
+
+  return NextResponse.json(reservation);
+};

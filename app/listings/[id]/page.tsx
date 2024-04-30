@@ -101,28 +101,32 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const isValidReservation = dateRange !== undefined && dateRange.start !== undefined && dateRange.end !== undefined && user?.id && listing?.id && totalPrice > 0;
 
   const makeReservation = async () => {
-    setIsLoading(true);
-    if (isValidReservation) {
-      const res = await fetch(window.location.origin + `/api/users/${user.id}/reservations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          listingId: listing?.id,
-          startDate: dateValueToDate(dateRange.start!),
-          endDate: dateValueToDate(dateRange.end!),
-          totalPrice: totalPrice
-        })
-      });
-      const reservation = await res.json();
+    try {
+      if (isValidReservation) {
+        setIsLoading(true);
+        const res = await fetch(window.location.origin + `/api/users/${user.id}/reservations`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: user?.id,
+            listingId: listing?.id,
+            startDate: dateValueToDate(dateRange.start!),
+            endDate: dateValueToDate(dateRange.end!),
+            totalPrice: totalPrice
+          })
+        });
+        const reservation = await res.json();
+        router.push(`/users/${user?.id}/reservations/${reservation.id}`);
+        return reservation;
+      }
+    } catch (err: any) {
+      setErrorMessage(err);
+    } finally {
       setDateRange(initialDateRange);
-      router.push(`/users/${user?.id}/reservations/${reservation.id}`);
       setIsLoading(false);
-      return reservation;
     }
-    setIsLoading(false);
   };
 
   return (
