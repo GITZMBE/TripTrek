@@ -15,7 +15,7 @@ export const ImageStep = ({ unregister, setValue, watch, setError, clearErrors, 
   return (
     <div className='max-w-[700px] min-h-[65vh]'>
       <h1 className='text-light text-2xl text-center pb-4'>Add some photos of your listing?</h1>
-      <div className='flex flex-col center gap-4 p-4 w-[700px] h-[60vh]'>
+      <div className='w-full flex flex-col center gap-4 p-4 h-[60vh]'>
         <UploadImage unregister={unregister} setValue={setValue} watch={watch} setError={setError} clearErrors={clearErrors} errors={errors} />
       </div>
     </div>
