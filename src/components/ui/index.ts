@@ -9,3 +9,4 @@ export * from "./Datepicker";
 export * from './Icontype';
 export * from './Calendar';
 export * from './ReservationCard';
+export * from './BookedCard';
