@@ -6,8 +6,8 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
 
   try {
     const {
-      category, 
-      location, 
+      categoryValue, 
+      locationValue, 
       guestCount, 
       roomCount, 
       bathroomCount, 
@@ -18,11 +18,11 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     } = await req.json();
 
     const formData = {
-      category: category.category,
-      locationValue: location.value,
-      guestCount,
-      roomCount,
-      bathroomCount,
+      category: categoryValue,
+      locationValue: locationValue,
+      guestCount: parseInt(guestCount),
+      roomCount: parseInt(roomCount),
+      bathroomCount: parseInt(bathroomCount),
       imageSrc: image,
       title,
       description,
@@ -31,18 +31,18 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
 
     const dataToUpdate: any = {};
     if (formData.category && formData.category.trim() !== '') {
-      dataToUpdate.category = category;
+      dataToUpdate.category = formData.category;
     }
     if (formData.locationValue && formData.locationValue.trim() !== '') {
       dataToUpdate.locationValue = formData.locationValue;
     }
-    if (formData.guestCount && formData.guestCount.trim() > 0) {
+    if (formData.guestCount && formData.guestCount > 0) {
       dataToUpdate.guestCount = formData.guestCount;
     }
-    if (formData.roomCount && formData.roomCount.trim() > 0) {
+    if (formData.roomCount && formData.roomCount > 0) {
       dataToUpdate.roomCount = formData.roomCount;
     }
-    if (formData.bathroomCount && formData.bathroomCount.trim() > 0) {
+    if (formData.bathroomCount && formData.bathroomCount > 0) {
       dataToUpdate.bathroomCount = formData.bathroomCount;
     }
     if (formData.imageSrc && formData.imageSrc.trim() !== '') {
@@ -58,14 +58,14 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
       dataToUpdate.price = formData.price;
     }
 
-    const updatedUser = await prisma.user.update({
+    const updatedListing = await prisma.listing.update({
       where: {
         id: id,
       },
       data: dataToUpdate
     });
 
-    return NextResponse.json(updatedUser);
+    return NextResponse.json(updatedListing);
   } catch (error: any) {
     return NextResponse.json({ message: error.message.toString() });
   }

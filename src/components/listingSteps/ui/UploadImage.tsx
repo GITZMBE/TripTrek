@@ -64,7 +64,7 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
   useEffect(() => { (file !== null && file !== undefined) && clearErrors('image')}, [file]);
 
   return (
-    <div className='flex flex-col items-center gap-8'>
+    <div className='w-full flex flex-col items-center gap-8'>
       <div className="relative flex justify-center items-center w-full h-[30vh] shadow-inner">
         {
           image !== undefined ? (
@@ -94,7 +94,6 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
           <RxCross2 size={24} className="opacity-0 text-grey hover:text-light group-hover:opacity-100 cursor-pointer" onClick={handleRemoveFile} />
         </p>
       )}
-      {/* hide input and open it by clicking the container were the image should be. make filter over that container too when image is not uploaded yet */}
       <input
         {...getInputProps}
         ref={input}
