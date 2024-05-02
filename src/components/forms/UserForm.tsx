@@ -1,64 +1,58 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FormInput } from "./ui";
-import FormFileInput from "./ui/FormFileInput";
 import { FormButton } from "./ui";
-import { useCurrentUser, useFormUpdateable, useLoading } from "@/src/hooks";
+import { useCurrentUser, useLoading } from "@/src/hooks";
 import { useForm } from "react-hook-form";
 import { User } from "@prisma/client";
-import { signIn } from "next-auth/react";
+import { UploadImage } from "../listingSteps/ui";
+import { useRouter } from  "next/navigation";
+import { TfiReload } from "react-icons/tfi";
 
 interface UserFormProps {
-  id: string;
+  
 }
 
 type FormFields = {
   name: string;
   email: string;
   password: string;
-  avatar: FileList;
-  avatarUrl: string
+  image: string | null | undefined;
 };
 
-export const UserForm = ({ id }: UserFormProps) => {
+export const UserForm = ({}: UserFormProps) => {
+  const router = useRouter();
+  const { currentUser: user } = useCurrentUser();
+  const defaultValues = useMemo(() => { return {
+    name: user?.name || '',
+    email: user?.email || '',
+    password: '',
+    image: user?.avatar || null
+  }}, [user]);
   const {
+    unregister,
     register,
     handleSubmit,
     setValue,
     setError,
+    clearErrors,
     formState: { errors },
     watch,
-  } = useForm<FormFields>();
+    reset
+  } = useForm<FormFields>({ defaultValues: defaultValues });
   const currentFormData = watch();
-  const { currentUser: user } = useCurrentUser();
-  const { updateable, setUpdateable } = useFormUpdateable(false);
+  const updateable = (
+    (currentFormData.name !== user?.name && currentFormData.name !== "") ||
+    (currentFormData.email !== user?.email && currentFormData.email !== "") ||
+    (currentFormData.password !== "") ||
+    (currentFormData.image !== undefined && currentFormData !== null && currentFormData.image !== '' && currentFormData.image !== user?.avatar)
+  );
   const { isLoading, setIsLoading } = useLoading();
-
-  const uploadImage = async (file: File) => {
-    setIsLoading(true);
-    const imageData = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + "/api/images/upload",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": file.type || "image/*",
-          "accept": "image/*"
-        },
-        body: file,
-      }
-    );
-    const savedImage = await imageData.json();
-    if (savedImage.message) {
-      return savedImage;
-    }
-    setValue("avatarUrl", savedImage.url);
-    setIsLoading(false);
-  };
 
   const updateUserInfo = async (data: FormFields) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASEURL}/api/users/${id}/update`,
+      `${window.location.origin}/api/users/${user?.id}/update`,
       {
         method: "PUT",
         headers: {
@@ -72,15 +66,8 @@ export const UserForm = ({ id }: UserFormProps) => {
   };
 
   const onSubmit = async (data: FormFields) => {
-    setIsLoading(true);
-    
     try {
-      if (data.avatar.length > 0 && typeof data.avatar !== 'string') {
-        const uploadedImage = await uploadImage(data.avatar[0]);
-        if (uploadedImage && uploadedImage.message) {
-          return;
-        }
-      }
+      setIsLoading(true);
 
       const newUser = await updateUserInfo(data);
       if ('message' in newUser) {
@@ -88,67 +75,73 @@ export const UserForm = ({ id }: UserFormProps) => {
         return;
       }
 
-      signIn('credentials', newUser);
+      router.refresh();
     } catch(error: any) {
-      return;      
+      setError('root', { message: error.message })
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    let samePassword = false;
-    
-    if (currentFormData.avatar && currentFormData.avatar.length > 0 && currentFormData.avatarUrl === undefined) {
-      uploadImage(currentFormData.avatar[0])
-    }
-
-    if (
-      (currentFormData.name !== user?.name &&
-        currentFormData.name !== "") ||
-      (currentFormData.email !== user?.email &&
-        currentFormData.email !== "") ||
-      (!samePassword && currentFormData.password !== "") ||
-      (currentFormData.avatarUrl !== undefined && currentFormData.avatarUrl !== user?.avatar)
-    ) {
-      setUpdateable(true);
-      return;
-    }
-    setUpdateable(false);
-  }, [currentFormData]);
+  const handleReload = () => {
+    setIsLoading(true);
+    reset(defaultValues);
+    setTimeout(() => {setIsLoading(false)}, 1000);
+  };
 
   return (
     <form
-      className='w-full h-full flex flex-col items-center gap-4'
+      className='flex justify-center items-center flex-col sm:flex-row gap-8 w-full'
       onSubmit={handleSubmit(onSubmit)}
     >
-      <FormInput
-        placeholder='Name'
-        register={register("name")}
-        propName="name"
-        errors={errors}
-      />
-      <FormInput
-        placeholder='Email'
-        register={register("email")}
-        propName="email"
-        errors={errors}
-      />
-      <FormInput
-        placeholder='Password'
-        register={register("password")}
-        propName="password"
-        errors={errors}
-      />
-      <FormFileInput register={register("avatar")} propName='avatar' errors={errors} />
+      <div className='w-full'>
+        <h2 className='text-xl text-grey mb-2'>Avatar</h2>
+        <UploadImage unregister={unregister} setValue={setValue} watch={watch} setError={setError} clearErrors={clearErrors} errors={errors} />
+      </div>
+      <div className='w-full h-full flex flex-col items-center gap-4'>
+        <div className="w-full flex justify-end">
+          <TfiReload onClick={handleReload} size={24} className={`text-grey cursor-pointer ${ isLoading && 'animate-spin' }`} />
+        </div>
+        <div className='w-full space-y-2'>
+          <label className='w-full text-grey'>Name</label>
+          <FormInput 
+            placeholder='Name'
+            register={register("name")}
+            propName="name"
+            errors={errors}
+          />          
+        </div>
+        <div className='w-full space-y-2'>
+          <label className='w-full text-grey mb-2'>Email</label>
+          <FormInput
+            placeholder='Email'
+            register={register("email")}
+            propName="email"
+            errors={errors}
+          />          
+        </div>
+        <div className='w-full space-y-2'>
+          <label className='w-full text-grey mb-2'>Password</label>
+          <FormInput
+            placeholder='Password'
+            register={register("password")}
+            propName="password"
+            errors={errors}
+          />          
+        </div>
+        <FormButton
+          type='submit'
+          label='Update'
+          outline={!updateable}
+          disabled={!updateable}
+          isLoading={isLoading}
+        />
+      </div>
+
+      {/* <FormFileInput register={register("avatar")} propName='avatar' errors={errors} /> */}
+      
       {errors.root && <p className='text-error'>{errors.root.message}</p>}
-      <FormButton
-        type='submit'
-        label='Update'
-        outline={!updateable}
-        disabled={!updateable}
-        isLoading={isLoading}
-      />
+      
     </form>
   );
 };

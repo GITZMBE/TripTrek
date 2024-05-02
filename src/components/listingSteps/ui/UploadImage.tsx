@@ -25,24 +25,28 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
   const input = useRef<HTMLInputElement>(null);
 
   const uploadImage = async (file: File) => {
-    setIsLoading(true);
-    const imageData = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + "/api/images/upload",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": file.type || "image/*",
-          "accept": "image/*"
-        },
-        body: file,
-      }
-    );
-    const savedImage = await imageData.json();
-    if (savedImage.message) {
-      return savedImage;
+    try {
+      setIsLoading(true);
+      // const imageData = await fetch(
+      //   process.env.NEXT_PUBLIC_BASEURL + "/api/images/upload",
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": file.type || "image/*",
+      //       "accept": "image/*"
+      //     },
+      //     body: file,
+      //   }
+      // );
+      // const savedImage = await imageData.json();
+      // if (savedImage.message) {
+      //   return savedImage;
+      // }
+      // setValue("image", savedImage.url);
+      setValue('image', 'https://images.unsplash.com/photo-1697498435309-2c7864cfd607?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    } finally {
+      setIsLoading(false);
     }
-    setValue("image", savedImage.url);
-    setIsLoading(false);
   };
 
   const handleClickSelectImage = () => {
@@ -71,14 +75,14 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
             <>
               <img src={ image } className="w-full h-full object-cover object-center" alt='' />
               <div className="group absolute flex justify-center items-center w-full h-full hover:bg-black/50 transition-all duration-300 cursor-pointer" onClick={() => unregister('image')}>
-                <h2 className="text-xl text-light opacity-0 transition-all duration-300 group-hover:opacity-100">Click to remove image</h2>
+                <h2 className="text-xl text-light text-center opacity-0 transition-all duration-300 group-hover:opacity-100">Click to remove image</h2>
               </div>
             </>
           ) : isLoading ? (
               <LoadingAnimation width={80} height={80} />
           ) : (
             <>
-              { isDragActive ? <p className="font-bold text-3xl text-secondary cursor-pointer">Drop the image</p> : <p className="font-bold text-3xl text-secondary cursor-pointer">Click or Drag & Drop</p> }
+              { isDragActive ? <p className="font-bold text-3xl text-secondary text-center cursor-pointer">Drop the image</p> : <p className="font-bold text-3xl text-center text-secondary cursor-pointer">Click or Drag & Drop</p> }
               <div {...getRootProps()} className="absolute flex justify-center items-center w-full h-full bg-black opacity-0 hover:opacity-25 transition-all duration-300 cursor-pointer" onClick={handleClickSelectImage}>
                 <HiCursorClick size={80} className="text-light" />
               </div>            
