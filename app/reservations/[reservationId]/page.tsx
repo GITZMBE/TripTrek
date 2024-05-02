@@ -69,7 +69,7 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
             <FaAngleDoubleLeft size={24} />
             <span>Back Home</span>
             </Link>
-          <Link href={`/users/${user?.id}/reservations`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
+          <Link href={`/reservations`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
             <span>Your reservations</span>
             <FaAngleDoubleRight size={24} />
           </Link>
