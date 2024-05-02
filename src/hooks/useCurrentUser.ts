@@ -11,7 +11,7 @@ export const useCurrentUser = () => {
     const getUser = async () => {
       if (!session?.user?.email) return null;
 
-      const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users`, { 
+      const res = await fetch(`${window.location.origin}/api/users`, { 
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json' 
@@ -23,7 +23,6 @@ export const useCurrentUser = () => {
       const user = await res.json();
 
       if (!user) return null;
-
       setCurrentUser(user);
       return user;
     };
