@@ -18,7 +18,8 @@ export const GET = async (req: Request) => {
   const reservations = await prisma.reservation.findMany({
     where: query,
     include: {
-      listing: true
+      listing: true,
+      user: true
     },
     orderBy: {
       createdAt: 'desc'
