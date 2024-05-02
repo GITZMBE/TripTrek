@@ -12,11 +12,10 @@ const TripsPage = () => {
   const { currentUser: user } = useCurrentUser();
 
   const getUserReservations = async () => {
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user?.id}/reservations`,
-      { method: "GET" }
-    );
-    const userRes: Reservation[] = (await res.json()) || [];
+    const res = await fetch(`${window.location.origin}/api/reservations?userId=${user?.id}`, {
+      method: 'GET',
+    });
+    const userRes: Reservation[] = await res.json() || [];
     return userRes;
   };
 

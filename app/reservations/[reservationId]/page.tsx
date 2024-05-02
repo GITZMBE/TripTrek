@@ -7,15 +7,16 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaArrowDown } from 'react-icons/fa';
 import jsPDF from 'jspdf';
-import { useLoading } from '@/src/hooks';
+import { useCurrentUser, useLoading } from '@/src/hooks';
 import { LoadingAnimation } from '@/src/components/ui';
 
-const ReservationPage = ({ params }: { params: { id: string, reservationId: string } }) => {
+const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
+  const { currentUser: user } = useCurrentUser();
   const [reservation, setReservation] = useState<Reservation>();
   const {isLoading, setIsLoading} = useLoading();
   const getReservation = async () => {
     setIsLoading(true);
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/reservations/${params.reservationId}`);
+    const res = await fetch(`${window.location.origin}/api/reservations/${params.reservationId}`);
     const reserv: Reservation = await res.json();
     setReservation(reserv);
     setIsLoading(false);
@@ -68,7 +69,7 @@ const ReservationPage = ({ params }: { params: { id: string, reservationId: stri
             <FaAngleDoubleLeft size={24} />
             <span>Back Home</span>
             </Link>
-          <Link href={`/users/${params.id}/reservations`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
+          <Link href={`/users/${user?.id}/reservations`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
             <span>Your reservations</span>
             <FaAngleDoubleRight size={24} />
           </Link>
