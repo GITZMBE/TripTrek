@@ -104,7 +104,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     try {
       if (isValidReservation) {
         setIsLoading(true);
-        const res = await fetch(window.location.origin + `/api/users/${user.id}/reservations`, {
+        const res = await fetch(window.location.origin + `/api/reservations`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
           })
         });
         const reservation = await res.json();
-        router.push(`/users/${user?.id}/reservations/${reservation.id}`);
+        router.push(`/reservations/${reservation.id}`);
         return reservation;
       }
     } catch (err: any) {

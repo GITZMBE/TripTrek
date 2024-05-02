@@ -60,7 +60,7 @@ const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
               onClick={() => setIsOpen(false)}
             />
             <NavLink
-              href={`/users/${user.id}/reservations`}
+              href={`/reservations`}
               label='Reservations'
               onClick={() => setIsOpen(false)}
             />

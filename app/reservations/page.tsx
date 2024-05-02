@@ -3,17 +3,19 @@
 import { DataLoader } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
 import { BookedCard } from "@/src/components/ui";
+import { useCurrentUser } from "@/src/hooks";
 import { Reservation } from "@prisma/client";
 import Link from "next/link";
 import React from "react";
 
-const ReservationsPage = ({ params }: { params: { id: string } }) => {
+const ReservationsPage = () => {
+  const { currentUser: user } = useCurrentUser();
+
   const getUserReservations = async () => {
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + `/api/users/${params.id}/reservations?userId=${params.id}`,
-      { method: "GET" }
-    );
-    const userRes: Reservation[] = (await res.json()) || [];
+    const res = await fetch(`${window.location.origin}/api/reservations?authorId=${user?.id}`,{ 
+      method: "GET",
+    });
+    const userRes: Reservation[] = await res.json() || [];
     return userRes;
   };
 
