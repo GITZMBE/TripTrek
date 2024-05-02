@@ -6,7 +6,11 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   const listing = await prisma.listing.findUnique({ 
     where: { 
       id: id 
-    } 
+    },
+    include: {
+      reservations: true,
+      user: true
+    }
   });
   return NextResponse.json(listing);
 };

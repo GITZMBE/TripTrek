@@ -4,7 +4,7 @@ import { DataLoader } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
 import { BookedCard } from "@/src/components/ui";
 import { useCurrentUser } from "@/src/hooks";
-import { Reservation } from "@prisma/client";
+import { Listing, Reservation, User } from "@prisma/client";
 import Link from "next/link";
 import React from "react";
 
@@ -19,8 +19,8 @@ const ReservationsPage = () => {
     return userRes;
   };
 
-  const renderReservations = (data: Reservation[]) => {
-    return data.map((reservation: Reservation) => (
+  const renderReservations = (data: (Reservation & { listing: Listing, user: User })[]) => {
+    return data.map((reservation) => (
       <BookedCard key={reservation.id} reservation={reservation} />
     ));
   };

@@ -9,7 +9,7 @@ import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { Container } from '@/src/components/layout'
 import { Calendar, Filter, Icontype, LoadingAnimation } from '@/src/components/ui';
 import FavoriteButton from '@/src/components/ui/FavoriteButton';
-import { Listing, Reservation } from '@prisma/client';
+import { Listing, Reservation, User } from '@prisma/client';
 import React, { ReactElement, useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { useCountries, useCurrentUser, useErrorMessage, useLoading } from '@/src/hooks';
@@ -46,8 +46,7 @@ const initialDateRange = undefined;
 
 const ListingPage = ({ params }: { params: { id: string} }) => {
   const { currentUser: user } = useCurrentUser();
-  const [listing, setListing] = useState<Listing | null>(null);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [listing, setListing] = useState<(Listing & { reservations: Reservation[], user: User}) | null>(null);
   const router = useRouter();
   const { isLoading, setIsLoading } = useLoading();
   const {errorMessage, setErrorMessage} = useErrorMessage(null);
@@ -60,16 +59,9 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
 
   const getListing = async () => {
     const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/listings/${ params.id }`, { method: "GET", cache: 'no-cache' });
-    const list: Listing = await res.json();
+    const list: Listing & { reservations: Reservation[], user: User} = await res.json();
     setListing(list);
     return list;
-  };
-
-  const getReservations = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/listings/${params.id}/reservations`);
-    const data: Reservation[] = await res.json();
-    setReservations(data);
-    return data;
   };
 
   const getLocation = (value: string) => {
@@ -91,7 +83,6 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     const list = await getListing();
     getLocation(list.locationValue);
     getCategoryIcon(list.category);
-    const resvs = await getReservations();
   };
 
   useEffect(() => {
@@ -156,7 +147,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
               { user && (
                 <div className='w-full flex items-center gap-2'>
                   <span className='text-light'>{ user.name }</span>
-                  <img src={ user.avatar || '' } className='w-8 aspect-square rounded-full' alt="" />
+                  <img src={ user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
                 </div>
               )}
               <div className='w-full flex gap-4 text-grey text-base'>
@@ -184,7 +175,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                   setTotalPrice={setTotalPrice}
                   onChangeDate={setDateRange}
                   dateRange={dateRange}
-                  reservations={reservations}
+                  reservations={listing?.reservations}
                 />
               </div>              
             </div>
