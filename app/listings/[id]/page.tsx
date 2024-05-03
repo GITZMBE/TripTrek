@@ -144,12 +144,10 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                 </>
               )}
               <hr className='w-full border-secondary my-4' />
-              { user && (
-                <div className='w-full flex items-center gap-2'>
-                  <span className='text-light'>{ user.name }</span>
-                  <img src={ user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
-                </div>
-              )}
+              <div className='w-full flex items-center gap-2'>
+                <span className='text-light'>{ listing.user.name }</span>
+                <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
+              </div>
               <div className='w-full flex gap-4 text-grey text-base'>
                 <span>{ listing.guestCount } guests</span>
                 <span>{ listing.roomCount } rooms</span>
