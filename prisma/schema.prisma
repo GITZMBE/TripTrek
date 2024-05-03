@@ -6,7 +6,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
+  
 model User {
   id             String        @id @default(cuid())
   name           String
@@ -15,8 +15,11 @@ model User {
   avatar         String?
   favoriteIds    String[]
   accounts       Account[]
+  ownChats       Chat[]        @relation("owner")
   listings       Listing[]
+  messages       Message[]
   reservations   Reservation[]
+  memberChats    Chat[]        @relation("members")
 }
 
 model Account {
@@ -68,8 +71,32 @@ model Listing {
   locationValue String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  chats         Chat[]
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations  Reservation[]
 
   @@index([userId])
+}
+
+model Chat {
+  id        String    @id @default(cuid())
+  ownerId   String
+  listingId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  listing   Listing   @relation(fields: [listingId], references: [id])
+  owner     User      @relation("owner", fields: [ownerId], references: [id])
+  messages  Message[]
+  members   User[]    @relation("members")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  text      String
+  userId    String
+  chatId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
