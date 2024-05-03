@@ -15,7 +15,7 @@ const ReservationsPage = () => {
     const res = await fetch(`${window.location.origin}/api/reservations?authorId=${user?.id}`,{ 
       method: "GET",
     });
-    const userRes: Reservation[] = await res.json() || [];
+    const userRes: (Reservation & { listing: Listing, user: User })[] = await res.json() || [];
     return userRes;
   };
 
