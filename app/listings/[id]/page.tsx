@@ -58,7 +58,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [categoryIcon, setCategoryIcon] = useState<ReactElement<IconType> | null>(null);
 
   const getListing = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/listings/${ params.id }`, { method: "GET", cache: 'no-cache' });
+    const res = await fetch(`${window.location.origin}/api/listings/${ params.id }`, { method: "GET", cache: 'no-cache' });
     const list: Listing & { reservations: Reservation[], user: User} = await res.json();
     setListing(list);
     return list;

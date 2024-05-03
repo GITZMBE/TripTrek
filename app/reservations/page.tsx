@@ -19,26 +19,36 @@ const ReservationsPage = () => {
     return userRes;
   };
 
-  const renderReservations = (data: (Reservation & { listing: Listing, user: User })[]) => {
-    return data.map((reservation) => (
+  const renderUnhandledReservations = (data: (Reservation & { listing: Listing, user: User })[]) => {
+    return data.map((reservation) => reservation.isAccepted === undefined ? (
       <BookedCard key={reservation.id} reservation={reservation} />
-    ));
+    ) : <></>);
   };
 
-  const noDataContent = (
+  const renderAcceptedReservations = (data: (Reservation & { listing: Listing, user: User })[]) => {
+    return data.map((reservation) => reservation.isAccepted ? (
+      <BookedCard key={reservation.id} reservation={reservation} />
+    ) : <></>);
+  };
+
+  const noUnhandledReservations = (
     <div className='w-full flex flex-col items-center gap-8'>
-      <img src='/data_not_found.png' className='w-48 opacity-50' alt='' />
-      <h1 className='text-light text-2xl'>No Reservations of your listings found</h1>
-      <Link href='/' className='text-grey hover:text-light'>
-        Go back to main page
-      </Link>
+      <img src='/nothing_unhandled.png' className='w-32 opacity-50' alt='' />
+      <h1 className='text-light text-2xl'>No Reservations of your listings are unhandled</h1>
     </div>
   );
 
   return (
     <Container extraPadding>
       <h1 className='text-4xl text-light leading-[60px]'>Reservations of your listings</h1>
-      <DataLoader fetchData={getUserReservations} renderData={renderReservations} noDataContent={noDataContent} />
+      <div className="w-full flex flex-col gap-2">
+        <h2 className="w-full text-2xl text-grey">Unhandled Reservations</h2>
+        <DataLoader fetchData={getUserReservations} renderData={renderUnhandledReservations} noDataContent={noUnhandledReservations} />
+      </div>
+      <div className="w-full flex flex-col gap-2">
+        <h2 className="w-full text-2xl text-grey">Accepted Reservations</h2>
+        <DataLoader fetchData={getUserReservations} renderData={renderAcceptedReservations} noDataContent={<></>} />
+      </div>      
     </Container>
   );
 };
