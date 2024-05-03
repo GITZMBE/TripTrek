@@ -48,6 +48,7 @@ model Reservation {
   startDate  DateTime
   endDate    DateTime
   totalPrice Float
+  isAccepted Boolean?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
