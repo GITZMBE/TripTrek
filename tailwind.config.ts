@@ -19,6 +19,7 @@ const config: Config = {
         love: "#E41B17",
         accept: "#00D100",
         cancel: "#ED5E68",
+        verified: "#1DCAFF"
       },
     },
   },
