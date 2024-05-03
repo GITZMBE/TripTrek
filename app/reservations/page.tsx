@@ -20,21 +20,23 @@ const ReservationsPage = () => {
   };
 
   const renderUnhandledReservations = (data: (Reservation & { listing: Listing, user: User })[]) => {
-    return data.map((reservation) => reservation.isAccepted === undefined ? (
+    const filter = data.filter(reservation => (reservation.isAccepted === undefined || reservation.isAccepted === null))
+    return filter.map((reservation) => (
       <BookedCard key={reservation.id} reservation={reservation} />
-    ) : <></>);
+    ));
   };
 
   const renderAcceptedReservations = (data: (Reservation & { listing: Listing, user: User })[]) => {
-    return data.map((reservation) => reservation.isAccepted ? (
+    const filter = data.filter(reservation => reservation.isAccepted);
+    return filter.map((reservation) => (
       <BookedCard key={reservation.id} reservation={reservation} />
-    ) : <></>);
+    ));
   };
 
   const noUnhandledReservations = (
     <div className='w-full flex flex-col items-center gap-8'>
-      <img src='/nothing_unhandled.png' className='w-32 opacity-50' alt='' />
-      <h1 className='text-light text-2xl'>No Reservations of your listings are unhandled</h1>
+      <img src='/nothing_unhandled.png' className='w-24 opacity-50' alt='' />
+      <h1 className='text-grey text-2xl'>No Unhandled Reservations</h1>
     </div>
   );
 

@@ -13,6 +13,32 @@ interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
 export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
   const router = useRouter();
 
+  const handleAccept = () => {
+    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, { 
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        accept: true
+      })
+    });
+    router.refresh();
+  };
+
+  const handleDecline = () => {
+    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, { 
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        accept: false
+      })
+    });
+    router.refresh();
+  };
+
   return (
     <button
       onClick={() => router.push(`/reservations/${reservation.id}`)}
@@ -20,7 +46,7 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
       className='group relative flex flex-col gap-4 w-64 aspect-square rounded-xl shadow-lg overflow-hidden'
     >
       <div
-        className={`absolute top-0 bottom-0 group-hover:bottom-[132px] w-full transition-all overflow-hidden rounded-xl z-10`}
+        className={`absolute top-0 bottom-0 group-hover:bottom-[168px] w-full transition-all overflow-hidden rounded-xl z-10`}
       >
         <img
           src={reservation.listing.imageSrc}
@@ -46,9 +72,21 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
             <span className="max-w-24 text-nowrap overflow-ellipsis overflow-hidden">
               {reservation.user.name}
             </span>
-              <img src={ reservation.user.avatar || '' } className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
-            </span>
+            <img src={ reservation.user.avatar || '' } className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
+          </span>
         </p>
+        <div className="flex gap-2 pt-2">
+          { (reservation.isAccepted === undefined || reservation.isAccepted === null) ? (
+            <>
+              <span className="bg-transparent border-2 border-accept hover:bg-accept text-light w-full rounded-lg transition" onClick={e => { e.stopPropagation(); handleAccept() }}>Accept</span>
+              <span className="bg-transparent border-2 border-love hover:bg-love text-light w-full rounded-lg transition" onClick={e => { e.stopPropagation(); handleDecline() }}>Decline</span>            
+            </>
+          ) : reservation.isAccepted ? (
+            <p className="text-center text-light">Accepted</p>
+          ) : (
+            <p className="text-center text-light">Declined</p>
+          )}
+        </div>
       </div>
     </button>
   );

@@ -17,7 +17,9 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
   const { accept } = await req.json();
 
   const handledAcception = await prisma.reservation.update({
-    where: { id },
+    where: { 
+      id 
+    },
     data: {
       isAccepted: accept 
     }

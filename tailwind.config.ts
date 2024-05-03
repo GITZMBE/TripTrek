@@ -17,6 +17,7 @@ const config: Config = {
         grey: "#555D6B",
         error: "#cc0000",
         love: "#E41B17",
+        accept: "#00D100",
         cancel: "#ED5E68",
       },
     },
