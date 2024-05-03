@@ -10,3 +10,6 @@ export * from './Icontype';
 export * from './Calendar';
 export * from './ReservationCard';
 export * from './BookedCard';
+export * from './ChatRecord';
+export * from './ChatLogs';
+export * from './TextMessage';

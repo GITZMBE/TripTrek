@@ -1,7 +1,7 @@
 'use client';
 
 import { GiBarn, GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, GiForestCamp, GiIsland, GiWindmill } from 'react-icons/gi';
-import { MdOutlineVilla } from 'react-icons/md';
+import { MdOutlineChatBubble, MdOutlineVilla } from 'react-icons/md';
 import { FaSkiing } from 'react-icons/fa';
 import { BsSnow } from 'react-icons/bs';
 import { IoDiamond } from 'react-icons/io5';
@@ -144,9 +144,12 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                 </>
               )}
               <hr className='w-full border-secondary my-4' />
-              <div className='w-full flex items-center gap-2'>
-                <span className='text-light'>{ listing.user.name }</span>
-                <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
+              <div className='group w-full flex justify-between items-center'>
+                <div className='w-full flex items-center gap-2'>
+                  <span className='text-light'>{ listing.user.name }</span>
+                  <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
+                </div>
+                <MdOutlineChatBubble size={24} className='hidden group-hover:block text-secondary hover:text-grey cursor-pointer' onClick={() => router.push(`${window.location.origin}/chatroom?chatWithUserId=${listing.user.id}&listingId=${listing.id}`)} />
               </div>
               <div className='w-full flex gap-4 text-grey text-base'>
                 <span>{ listing.guestCount } guests</span>
