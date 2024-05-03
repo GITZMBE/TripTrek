@@ -1,7 +1,7 @@
 'use client';
 
 import { Container } from '@/src/components/layout';
-import { Reservation } from '@prisma/client';
+import { Listing, Reservation } from '@prisma/client';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -12,12 +12,12 @@ import { LoadingAnimation } from '@/src/components/ui';
 
 const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
   const { currentUser: user } = useCurrentUser();
-  const [reservation, setReservation] = useState<Reservation>();
+  const [reservation, setReservation] = useState<Reservation & { listing: Listing }>();
   const {isLoading, setIsLoading} = useLoading();
   const getReservation = async () => {
     setIsLoading(true);
     const res = await fetch(`${window.location.origin}/api/reservations/${params.reservationId}`);
-    const reserv: Reservation = await res.json();
+    const reserv: Reservation & { listing: Listing } = await res.json();
     setReservation(reserv);
     setIsLoading(false);
     return reserv;
@@ -26,9 +26,42 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
   const handleDownload = () => {
     if (reservation) {
       const doc = new jsPDF();
-      
-      const reservationJSON = JSON.stringify(reservation, null, 2);
-      doc.text(reservationJSON, 10, 10);
+
+      // Add logo image
+      const logoWidth = 60; // Set the width of the logo
+      const logoHeight = 14; // Set the height of the logo
+      const xPosition = 10; // Set the X position of the logo
+      const yPosition = 10; // Set the Y position of the logo
+      doc.addImage('/logo.png', 'PNG', xPosition, yPosition, logoWidth, logoHeight);
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+
+      const paddingTop = 35;
+      let currentYPosition = paddingTop;
+
+      doc.text('Reservation Details', 10, currentYPosition);
+      currentYPosition += 10;
+
+      const { id, startDate, endDate, totalPrice, listing } = reservation;
+      doc.text(`Reservation ID: ${id}`, 10, currentYPosition);
+      currentYPosition += 10;
+      doc.text(`Start Date: ${ format(startDate, "MMMM d'th' yyyy") }`, 10, currentYPosition);
+      currentYPosition += 10;
+      doc.text(`End Date: ${ format(endDate, "MMMM d'th' yyyy")}`, 10, currentYPosition);
+      currentYPosition += 10;
+      doc.text(`Total Price: ${totalPrice}`, 10, currentYPosition);
+      currentYPosition += 10;
+      doc.text(`Listing Details:`, 10, currentYPosition);
+      currentYPosition += 10;
+      doc.text(`Title: ${listing.title}`, 15, currentYPosition);
+      currentYPosition += 10;
+      doc.text(`Description: ${listing.description}`, 15, currentYPosition);
+      currentYPosition += 10;
+
+      // Add a line separator
+      doc.line(10, currentYPosition, 200, currentYPosition);
+
       doc.save(`reservation_${ reservation.id }.pdf`);
     }
   };
@@ -45,12 +78,12 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
           <>
             <div className='flex flex-col gap-2 w-full text-grey'>
               <span>ID: { reservation.id }</span>
-              <span>Arrival Date: { format(reservation.startDate, 'yy-MM-dd') }</span>
-              <span>Last Date: { format(reservation.endDate, 'yy-MM-dd') }</span>
+              <span>Arrival Date: { format(reservation.startDate, "MMMM d'th' yyyy") }</span>
+              <span>Last Date: { format(reservation.endDate, "MMMM d'th' yyyy") }</span>
               <span>Reserved by: { reservation.userId }</span>
             </div>
             <div className='w-full flex justify-start'>
-              <button className='flex items-center gap-2 text-grey border-grey border-2 py-2 px-4 hover:text-light hover:border-light' onClick={handleDownload}>
+              <button className={`flex items-center gap-2 text-grey border-grey border-2 py-2 px-4 disabled:cursor-not-allowed ${ reservation.isAccepted && 'hover:text-light hover:border-light' }`} onClick={handleDownload} disabled={!reservation.isAccepted} >
                 <span>Download as PDF</span>
                 <FaArrowDown size={20} className='pl-2 border-grey border-l-[1px]' />
               </button>              

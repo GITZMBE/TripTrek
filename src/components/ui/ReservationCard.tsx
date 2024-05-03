@@ -38,7 +38,7 @@ export const ReservationCard = ({ reservation, ...props }: ReservationCardProps)
   };
 
   return (
-    <button onClick={() => router.push(`/reservations/${reservation.id}`)} { ...props } className={`group relative flex flex-col gap-4 w-64 aspect-square rounded-xl shadow-lg overflow-hidden ${ !reservation.isAccepted && 'opacity-50' }`}>
+    <button onClick={() => reservation.isAccepted && router.push(`/reservations/${reservation.id}`)} { ...props } className={`group relative flex flex-col gap-4 w-64 aspect-square rounded-xl shadow-lg overflow-hidden ${ !reservation.isAccepted && 'opacity-50' }`}>
       { listing && (
         <>
           <div className={`absolute top-0 bottom-0 group-hover:bottom-[164px] w-full transition-all overflow-hidden rounded-xl z-10 ${ reservation.isAccepted === false && 'bg-cancel' }`}>
