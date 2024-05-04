@@ -33,7 +33,11 @@ export const GET = async (req: Request) => {
       owner: true,
       members: true,
       listing: true,
-      messages: true,
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        }
+      },
     }
   });
 

@@ -21,7 +21,6 @@ const Chatroompage = () => {
   const setUsersChats = async () => {
     const res = await fetch(`${window.location.origin}/api/chats?userId=${user?.id}`, { method: 'GET' });
     const chats: Chat[] & { listing: Listing, members: User[] }[] = await res.json() || [];
-    console.log(chats)
     setUserChats(chats);
   };
 
@@ -53,8 +52,8 @@ const Chatroompage = () => {
   }
 
   const setQueryParams = () => {
-    const chatWithUserId = searchParams.get('chatWithUserId');
-    setChatWith(chatWithUserId);
+    const chatToId = searchParams.get('chatToId');
+    setChatWith(chatToId);
 
     const listId = searchParams.get('listingId');
     setListingId(listId);
@@ -64,7 +63,10 @@ const Chatroompage = () => {
     if (!user) return;
 
     setQueryParams();
-    openChatWithUser();
+    setUsersChats();
+    if (chatWith && listingId) {
+      openChatWithUser();
+    }
   }, [searchParams, user, chatWith, listingId]);
 
   return (
