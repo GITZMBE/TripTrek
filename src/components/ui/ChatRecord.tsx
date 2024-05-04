@@ -14,9 +14,9 @@ export const ChatRecord = ({ chat, setCurrentChat }: IProps) => {
   const { currentUser: user } = useCurrentUser();
 
   return (
-    <button className='w-full flex justify-between py-2 px-4 border-b-1 border-secondary' onClick={() => setCurrentChat(chat)}>
+    <button className='w-full flex justify-between gap-2 py-2 px-4 border-b-2 border-b-secondary bg-transparent hover:bg-secondary opacity-50 hover:opacity-100 transition' onClick={() => setCurrentChat(chat)}>
       {/* <p>{ chat.title ? chat.title : `${chat.ownerId}'s chat${ chat.listingId && ` for ${ chat.listing.title }` }` }</p> */}
-      <p>{ chat.title ? chat.title : `${chat.ownerId}'s chat` }</p>
+      <p className='text-grey overflow-hidden text-ellipsis text-nowrap'>{ chat.title ? chat.title : `${chat.ownerId}'s chat` }</p>
       { user?.id === chat.ownerId && (
         <MdVerified size={24} className='text-verified' />
       )}

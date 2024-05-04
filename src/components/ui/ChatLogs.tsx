@@ -31,13 +31,13 @@ export const ChatLogs = ({ currentChat }: IProps) => {
 
   return (
     <div className={`${ currentChat ? 'w-2/3' : 'w-0' } flex flex-col flex-grow-1 overflow-x-hidden transition border-l-2 border-secondary`}>
-      <div className='w-full flex flex-col flex-grow-1'>
+      <div className='w-full flex flex-col flex-grow-1 h-full'>
         { currentChat && (
           <>
-            <div className='w-full py-2 px-4'>
-              <p className='text-nowrap text-ellipsis text-light'>{ currentChat.title ? currentChat.title : `${ currentChat.owner.name }'s chat${ currentChat.listingId && ` for ${ currentChat.listing.title }` }` }</p>
+            <div className='w-full py-2 px-4 border-b-2 border-b-secondary'>
+              <p className='overflow-hidden text-nowrap text-ellipsis text-light'>{ currentChat.title ? currentChat.title : `${ currentChat.owner.name }'s chat${ currentChat.listingId && ` for '${ currentChat.listing.title }'` }` }</p>
             </div>
-            <div className='flex flex-col flex-grow-1 min-h-full py-4 px-2 overflow-y-auto'>
+            <div className='flex flex-col flex-grow-1 justify-end gap-2 min-h-max py-4 px-2 overflow-y-auto'>
               {
                 currentChat.messages.map(message => (
                   <TextMessage message={message} />
@@ -60,8 +60,9 @@ export const ChatLogs = ({ currentChat }: IProps) => {
             </span>
           </div>
         )}
-        <div className='p-4'>
-          <input type="text" className='w-full text-grey py-1 px-2 bg-secondary rounded-full outline-none' placeholder='type...' onChange={e => setInputValue(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSendMessage()} />
+        <hr className='border-secondary' />
+        <div className='bg-primary p-4'>
+          <input type="text" className='w-full text-grey py-1 px-2 bg-secondary rounded-full outline-none' placeholder='type...' value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSendMessage()} />
         </div>        
       </div>
     </div>

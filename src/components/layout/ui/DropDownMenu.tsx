@@ -70,6 +70,11 @@ const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
               onClick={() => setIsOpen(false)}
             />
             <NavLink
+              href='/chatroom'
+              label='Messages'
+              onClick={() => setIsOpen(false)}
+            />
+            <NavLink
               href='/'
               label='Home'
               onClick={() => setIsOpen(false)}

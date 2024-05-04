@@ -149,7 +149,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                   <span className='text-light'>{ listing.user.name }</span>
                   <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
                 </div>
-                <MdOutlineChatBubble size={24} className='hidden group-hover:block text-secondary hover:text-grey cursor-pointer' onClick={() => router.push(`${window.location.origin}/chatroom?chatWithUserId=${listing.user.id}&listingId=${listing.id}`)} />
+                <MdOutlineChatBubble size={24} className='hidden group-hover:block text-secondary hover:text-grey cursor-pointer' onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)} />
               </div>
               <div className='w-full flex gap-4 text-grey text-base'>
                 <span>{ listing.guestCount } guests</span>
