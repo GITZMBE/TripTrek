@@ -28,10 +28,7 @@ const Chatroompage = () => {
     const res = await fetch(`${window.location.origin}/api/chats?userId=${user?.id}&chatToId=${chatWith}&listingId=${listingId}`, { method: 'GET' });
     const chats: Chat[] & { listing: Listing, owner: User, members: User[], messages: Message[] }[] | { message: string } = await res.json();
 
-    if ('message' in chats) {
-      console.log(chats.message);
-      return;
-    }
+    if ('message' in chats) return;
 
     if (chats.length <= 0 && user?.id && chatWith && listingId ) {
       const res = await fetch(`${window.location.origin}/api/chats`, { 

@@ -13,7 +13,7 @@ const TextMessage = ({ message }: IProps) => {
 
   return user && (
     <div className={`w-full flex ${ message.userId === user?.id ? 'justify-end' : 'justify-start' }`}>
-      <p className='max-w-[60%] text-grey text-wrap text-left bg-secondary p-2 rounded-lg'>{ message.text }</p>
+      <p className='max-w-[60%] text-light text-wrap text-left bg-secondary p-2 rounded-lg'>{ message.text }</p>
     </div>
   )
 }
