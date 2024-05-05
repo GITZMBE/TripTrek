@@ -6,6 +6,7 @@ import TextMessage from './TextMessage';
 import { useCurrentUser } from '@/src/hooks';
 import { useRouter } from 'next/navigation';
 import { MdEdit, MdKeyboardArrowRight } from 'react-icons/md';
+import { FaAngleDoubleRight } from 'react-icons/fa';
 
 interface IProps {
   currentChat: Chat & { listing: Listing, owner: User, members: User[], messages: Message[] } | null;
@@ -79,14 +80,14 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
         { currentChat && (
           <>
             <div className='flex items-center w-full border-b-2 border-b-secondary'>
-              <MdKeyboardArrowRight size={40} className='text-secondary hover:text-grey p-1 cursor-pointer' onClick={() => setCurrentChat(null)} />
+              <FaAngleDoubleRight  size={40} className='text-secondary hover:text-grey p-2 cursor-pointer' onClick={() => setCurrentChat(null)} />
               <div className='group flex items-center gap-2 w-full'>
                 { editTitle ? (
                   <div className='w-full h-full py-2'>
                     <input type="text" autoFocus className='w-full py-1 px-2 outline-none' value={titleInputValue} onChange={e => setTitleInputValue(e.target.value)} onBlur={handleBlurEditTitleInput} />
                   </div>
                 ) : (
-                  <span className='w-full overflow-hidden text-nowrap text-ellipsis text-light py-2'>{ currentChat.title ? currentChat.title : currentChat?.owner ? `${ currentChat.owner.name }'s chat${ currentChat.listing && ` for '${ currentChat.listing.title }'` }` : '' }</span>
+                  <span className='w-full overflow-hidden text-nowrap text-ellipsis text-light font-semibold py-2'>{ currentChat.title ? currentChat.title : currentChat?.owner ? `${ currentChat.owner.name }'s chat${ currentChat.listing && ` for '${ currentChat.listing.title }'` }` : '' }</span>
                 ) }
                 <div className='h-10 aspect-square'>
                   <MdEdit size={40} className='hidden group-hover:block h-full aspect-square text-secondary hover:text-grey p-2 cursor-pointer' onClick={handleOpenTitle} />
