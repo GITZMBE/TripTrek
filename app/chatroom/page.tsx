@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 
 const Chatroompage = () => {
   const { currentUser: user } = useCurrentUser();
-  const [userChats, setUserChats] = useState<Chat[] & { listing: Listing, members: User[] }[]>([]);
+  const [userChats, setUserChats] = useState<Chat[] & { listing: Listing, members: User[], owner: User }[]>([]);
 
   // query params
   const [listingId, setListingId] = useState<string | null>(null);
@@ -19,8 +19,8 @@ const Chatroompage = () => {
   const searchParams = useSearchParams();
 
   const setUsersChats = async () => {
-    const res = await fetch(`${window.location.origin}/api/chats?userId=${user?.id}`, { method: 'GET' });
-    const chats: Chat[] & { listing: Listing, members: User[] }[] = await res.json() || [];
+    const res = await fetch(`${window.location.origin}/api/chats?userId=${user?.id}`, { method: 'GET', cache: 'no-cache' });
+    const chats: Chat[] & { listing: Listing, members: User[], owner: User }[] = await res.json() || [];
     setUserChats(chats);
   };
 
@@ -71,15 +71,18 @@ const Chatroompage = () => {
 
   return (
     <Container extraPadding>
-      <div className='w-full flex min-h-[80vh] max-w-[1200px] bg-primary border-2 border-secondary shadow-secondary shadow-lg'>
-        <div className='w-full flex-grow-1 flex flex-col justify-start'>
-          { userChats.length > 0 && (
+      <div className='w-full flex justify-end min-h-[80vh] lg:max-w-[1200px] bg-primary border-2 border-secondary shadow-secondary shadow-lg'>
+        <div className={`${ currentChat ? 'w-0 md:w-1/3' : 'w-full' } flex-grow-1 flex flex-col justify-start overflow-x-hidden transition-size`}>
+          { 
             userChats.map((chat) => (
-              <ChatRecord chat={chat} setCurrentChat={setCurrentChat} />
+              <ChatRecord key={chat.id} currentChat={currentChat} chat={chat as Chat & { listing: Listing, members: User[], owner: User }} setCurrentChat={setCurrentChat} />
             ))
-          )}
+          }
         </div>
-        <ChatLogs currentChat={currentChat} />
+        <div className={`${ currentChat ? 'hidden md:block' : 'hidden' } flex-grow-1 w-[2px] bg-secondary`} />
+        <div className={`${ currentChat ? 'w-full md:w-2/3' : 'w-0' } flex-grow-1 overflow-x-hidden transition-size`}>
+          <ChatLogs currentChat={currentChat} setCurrentChat={setCurrentChat} />
+        </div>
       </div>
     </Container>
   )
