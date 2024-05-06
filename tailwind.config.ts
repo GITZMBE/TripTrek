@@ -21,6 +21,33 @@ const config: Config = {
         cancel: "#ED5E68",
         verified: "#1DCAFF"
       },
+      keyframes: {
+        fadeIn: {
+          from: {
+            opacity: '0',
+            transform: 'translateY(100%)'
+          }, 
+          '20%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          },
+          '80%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          },
+          '90%': {
+            opacity: '0',
+            transform: 'translateY(100%)'
+          }, 
+          to: {
+            opacity: '0',
+            transform: 'translateY(100%)'
+          }
+        }
+      },
+      animation: {
+        fadeIn: 'fadeIn 5000ms ease-in-out'
+      }
     },
   },
   darkMode: "class",
