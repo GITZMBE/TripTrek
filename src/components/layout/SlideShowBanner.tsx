@@ -3,8 +3,10 @@
 import { Listing } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import { Filter } from '../ui';
+import { useRouter } from 'next/navigation';
 
 const SlideShowBanner = () => {
+  const router = useRouter();
   const [listings, setListings] = useState<Listing[]>([]);
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
   const [slideCount, setSlideCount] = useState(0);
@@ -49,17 +51,17 @@ const SlideShowBanner = () => {
         </div>
       }
       <Filter center>
-        <div className='h-full flex flex-col justify-between items-center py-4'>
-          <div></div>
-          { currentListing && (
+        { currentListing && (
+          <button className='w-full h-full flex flex-col justify-between items-center py-4' onClick={() => {router.push(`${window.location.origin}/listings/${currentListing?.id}`)}}>
+            <div></div>
             <h1 className={`text-6xl font-bold text-center text-light tracking-wider ${ currentListing ? 'animate-fadeIn' : '' }`}>{ currentListing.title }</h1>
-          )}
-          <div className='flex gap-4'>{ listings.length > 0 && 
-            listings.map((_, i) => (
-              i === currentListingIndex ? <span key={i} className='w-3 h-3 rounded-full border-2 border-accent bg-accent'></span> : <span key={i} className='w-3 h-3 rounded-full border-2 border-accent cursor-pointer' onClick={() => setCurrentListingIndex(i)}></span>
-            ))
-          }</div>
-        </div>
+            <div className='flex gap-4'>{ listings.length > 0 && 
+              listings.map((_, i) => (
+                i === currentListingIndex ? <span key={i} className='w-3 h-3 rounded-full border-2 border-accent bg-accent'></span> : <span key={i} className='w-3 h-3 rounded-full border-2 border-accent cursor-pointer' onClick={e => {e.stopPropagation(); setCurrentListingIndex(i)}}></span>
+              ))
+            }</div>
+          </button>
+        )}
       </Filter>
     </div>
   )
