@@ -2,6 +2,7 @@
 
 import { DataLoader } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
+import SlideShowBanner from "@/src/components/layout/SlideShowBanner";
 import { ListingCard } from "@/src/components/ui";
 import Categorybar from "@/src/components/ui/Categorybar";
 import { Listing } from "@prisma/client";
@@ -50,6 +51,7 @@ export default function Home() {
 
   return (
     <Container className='min-h-screen'>
+      <SlideShowBanner />
       <Categorybar />
       <DataLoader fetchData={getListings} renderData={renderListings} noDataContent={noDataContent} />
     </Container>
