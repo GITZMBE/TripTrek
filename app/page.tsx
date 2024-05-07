@@ -14,18 +14,11 @@ export default function Home() {
   const searchParams = useSearchParams();
   const [category, setCategory] = useState<string | null>(null);
   const getListings = async () => {
-    const res =
-      (await fetch(
-        process.env.NEXT_PUBLIC_BASEURL +
-          `/api/listings${
-            category === null || category === "" ? "" : `?category=${category}`
-          }`,
-        {
-          method: "GET",
-          cache: "no-cache",
-        }
-      )) || [];
-    const listings: Listing[] = await res.json();
+    const res = await fetch(`${window.location.origin}/api/listings${(category === null || category === "") ? "" : `?category=${category}`}`, {
+      method: "GET",
+      cache: "no-cache",
+    });
+    const listings: Listing[] = await res.json() || [];
     return listings;
   };
 
