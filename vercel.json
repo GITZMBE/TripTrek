@@ -3,7 +3,7 @@
     {
       "src": "package.json",
       "use": "@vercel/node",
-      "config": { "commands": ["npx prisma generate && npm run build"] }
+      "config": { "commands": ["prisma generate && npm run build"] }
     }
   ],
   "routes": [
