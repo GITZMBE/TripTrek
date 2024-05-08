@@ -185,7 +185,10 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
             </span>
           </button>
           {(isClickable && step === Steps.Price) ? (
-              <button type="submit" className="flex items-center gap-4 px-2 py-1 bg-accent/80 hover:bg-accent rounded-lg text-xl text-light" disabled={!isClickable}>Post your listing { isLoading && <LoadingAnimation width={32} height={32} /> }</button>
+              <button type="submit" className="relative min-w-64 px-8 py-2 bg-accent/80 hover:bg-accent rounded-lg text-xl text-light text-center" disabled={!isClickable}>
+                Post your listing 
+                { isLoading && <LoadingAnimation className="absolute -top-1 right-2" width={64} height={64} /> }
+              </button>
             ) : (
               <button
                 type="button"
