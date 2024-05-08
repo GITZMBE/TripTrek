@@ -31,7 +31,7 @@ export const DataLoader = ({ fetchData, renderData, noDataContent }: DataLoaderP
   }, [fetchData]);
 
   return (
-    <div className='w-full flex flex-wrap justify-start gap-4 py-4'>
+    <div className='w-full flex flex-wrap justify-center md:justify-start gap-4 py-4'>
       {isLoading ? (
         <div className='flex justify-center w-full'>
           <LoadingAnimation className='w-28 aspect-square' />

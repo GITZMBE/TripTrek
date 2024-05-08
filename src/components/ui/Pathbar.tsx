@@ -26,7 +26,7 @@ const Pathbar = () => {
   }, [pathName, user]);
 
   return (
-    <div className='flex gap-2'>
+    <div className='flex gap-2 overflow-x-auto scrollbar-hidden'>
       {pathName !== "/" && (
         <Link href='/' className='text-grey hover:text-light'>
           Start
