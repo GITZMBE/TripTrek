@@ -9,6 +9,8 @@ import { User } from "@prisma/client";
 import { UploadImage } from "../listingSteps/ui";
 import { useRouter } from  "next/navigation";
 import { TfiReload } from "react-icons/tfi";
+import { signOut } from "next-auth/react";
+import { LoadingAnimation } from "../ui";
 
 interface UserFormProps {
   
@@ -89,59 +91,71 @@ export const UserForm = ({}: UserFormProps) => {
     setTimeout(() => {setIsLoading(false)}, 1000);
   };
 
+  const deleteUser = async () => {
+    setIsLoading(true);
+    fetch(`${window.location.origin}/api/users/${user?.id}`, { method: 'DELETE' });
+    signOut({ callbackUrl: '/login' });
+    setIsLoading(false);
+  };
+
   return (
     <form
-      className='flex justify-center items-center flex-col sm:flex-row gap-8 w-full'
+      className='flex flex-col justify-center items-center gap-8 w-full'
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className='w-full'>
-        <h2 className='text-xl text-grey mb-2'>Avatar</h2>
-        <UploadImage unregister={unregister} setValue={setValue} watch={watch} setError={setError} clearErrors={clearErrors} errors={errors} />
+      <div className="w-full flex gap-8">
+        <div className='w-full'>
+          <h2 className='text-xl text-grey mb-2'>Avatar</h2>
+          <UploadImage unregister={unregister} setValue={setValue} watch={watch} setError={setError} clearErrors={clearErrors} errors={errors} />
+        </div>
+        <div className='w-full h-full flex flex-col items-center gap-4'>
+          <div className="w-full flex justify-end">
+            <TfiReload onClick={handleReload} size={24} className={`text-grey cursor-pointer ${ isLoading && 'animate-spin' }`} />
+          </div>
+          <div className='w-full space-y-2'>
+            <label className='w-full text-grey'>Name</label>
+            <FormInput 
+              placeholder='Name'
+              register={register("name")}
+              propName="name"
+              errors={errors}
+            />          
+          </div>
+          <div className='w-full space-y-2'>
+            <label className='w-full text-grey mb-2'>Email</label>
+            <FormInput
+              placeholder='Email'
+              register={register("email")}
+              propName="email"
+              errors={errors}
+            />          
+          </div>
+          <div className='w-full space-y-2'>
+            <label className='w-full text-grey mb-2'>Password</label>
+            <FormInput
+              placeholder='Password'
+              register={register("password")}
+              propName="password"
+              errors={errors}
+            />          
+          </div>
+          <FormButton
+            type='submit'
+            label='Update'
+            outline={!updateable}
+            disabled={!updateable}
+            isLoading={isLoading}
+          />
+          <button className="relative w-full py-3 px-4 hover:bg-cancel border-2 border-cancel bg-cancel text-light opacity-50 hover:opacity-100 font-semibold rounded-lg transition" onClick={deleteUser}>
+            Delete User
+            { isLoading && (
+              <LoadingAnimation width={64} height={64} className="absolute right-4 -top-2" />
+            )}
+          </button>
+        </div>        
       </div>
-      <div className='w-full h-full flex flex-col items-center gap-4'>
-        <div className="w-full flex justify-end">
-          <TfiReload onClick={handleReload} size={24} className={`text-grey cursor-pointer ${ isLoading && 'animate-spin' }`} />
-        </div>
-        <div className='w-full space-y-2'>
-          <label className='w-full text-grey'>Name</label>
-          <FormInput 
-            placeholder='Name'
-            register={register("name")}
-            propName="name"
-            errors={errors}
-          />          
-        </div>
-        <div className='w-full space-y-2'>
-          <label className='w-full text-grey mb-2'>Email</label>
-          <FormInput
-            placeholder='Email'
-            register={register("email")}
-            propName="email"
-            errors={errors}
-          />          
-        </div>
-        <div className='w-full space-y-2'>
-          <label className='w-full text-grey mb-2'>Password</label>
-          <FormInput
-            placeholder='Password'
-            register={register("password")}
-            propName="password"
-            errors={errors}
-          />          
-        </div>
-        <FormButton
-          type='submit'
-          label='Update'
-          outline={!updateable}
-          disabled={!updateable}
-          isLoading={isLoading}
-        />
-      </div>
-
       {/* <FormFileInput register={register("avatar")} propName='avatar' errors={errors} /> */}
-      
       {errors.root && <p className='text-error'>{errors.root.message}</p>}
-      
     </form>
   );
 };
