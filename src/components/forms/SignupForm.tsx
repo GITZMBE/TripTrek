@@ -23,7 +23,7 @@ export const SignupForm = () => {
   const { isLoading, setIsLoading } = useLoading();
 
   const findUser = async (formData: FormFields) => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/login", {
+    const res = await fetch(`${window.location.origin}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
