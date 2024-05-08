@@ -116,8 +116,6 @@ const ListingForm = ({ listing, location, category }: ListingFormProps) => {
       setIsLoading(false);
     }
   };
-  
-  useEffect(() => {console.log(formData)}, [formData])
 
   return (
     <form
