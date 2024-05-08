@@ -26,7 +26,7 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
   }
 
   const handleLikeListing = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user?.id}/favorites`, { 
+    const res = await fetch(`${window.location.origin}/api/users/${user?.id}/favorites`, { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
   };
 
   const handleRemoveFavorite = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${user?.id}/favorites`, {
+    const res = await fetch(`${window.location.origin}/api/users/${user?.id}/favorites`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
