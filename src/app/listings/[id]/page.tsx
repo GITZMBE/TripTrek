@@ -70,7 +70,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   };
 
   const getCategoryIcon = (cat: string) => {
-    const icons = iconComponents.filter(({ category }) => category === cat);
+    const icons = iconComponents.filter(({ category }) => category === cat.toLowerCase());
     if (icons.length === 0) {
       return;
     };
@@ -157,7 +157,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                 <span>{ listing.bathroomCount } bathrooms</span>
               </div>
               <hr className='w-full border-secondary my-4' />
-              <div className='flex gap-2 items-end'>
+              <div className='flex gap-2 items-center sm:items-end'>
                 <Icontype icon={categoryIcon} />
                 <span className='text-light capitalize leading-7'>{ listing.category }</span>
               </div>

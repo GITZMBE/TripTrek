@@ -1,7 +1,7 @@
 'use client';
 
 import { Listing } from '@prisma/client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Filter } from '../ui';
 import { useRouter } from 'next/navigation';
 import { user } from '@nextui-org/react';
@@ -14,6 +14,8 @@ const SlideShowBanner = () => {
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
   const [slideCount, setSlideCount] = useState(0);
   const [currentListing, setCurrentListing] = useState<Listing | null>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   const isOwner = () => {
     return currentListing?.userId === user?.id;
@@ -48,6 +50,26 @@ const SlideShowBanner = () => {
     }, 550);
   }, [currentListingIndex]);
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current - touchEndX.current > 50) {
+      // Swiped left
+      const newIndex = (currentListingIndex + 1) % listings.length;
+      setCurrentListingIndex(newIndex);
+    } else if (touchEndX.current - touchStartX.current > 50) {
+      // Swiped right
+      const newIndex = currentListingIndex === 0 ? listings.length - 1 : currentListingIndex - 1;
+      setCurrentListingIndex(newIndex);
+    }
+  };
+
   return (
     <div className='relative w-full h-[50vh] overflow-x-hidden'>
       { listings.length > 0 && 
@@ -59,7 +81,13 @@ const SlideShowBanner = () => {
       }
       <Filter center>
         { currentListing && (
-          <button className='w-full h-full flex flex-col justify-between items-center py-4' onClick={() => { isOwner() ? router.push(`${window.location.origin}/users/${user?.id}/listings/${currentListing.id}`) : router.push(`${window.location.origin}/listings/${currentListing?.id}`)}}>
+          <div 
+            className='w-full h-full flex flex-col justify-between items-center py-4'
+            onClick={() => { isOwner() ? router.push(`${window.location.origin}/users/${user?.id}/listings/${currentListing.id}`) : router.push(`${window.location.origin}/listings/${currentListing?.id}`)}}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={e => {e.stopPropagation(); handleTouchEnd()}}
+          >
             <div></div>
             <h1 className={`text-6xl font-bold text-center text-light tracking-wider ${ currentListing ? 'animate-fadeIn' : '' }`}>{ currentListing.title }</h1>
             <div className='flex gap-4'>{ listings.length > 0 && 
@@ -67,7 +95,7 @@ const SlideShowBanner = () => {
                 i === currentListingIndex ? <span key={i} className='w-3 h-3 rounded-full border-2 border-accent bg-accent'></span> : <span key={i} className='w-3 h-3 rounded-full border-2 border-accent cursor-pointer' onClick={e => {e.stopPropagation(); setCurrentListingIndex(i)}}></span>
               ))
             }</div>
-          </button>
+          </div>
         )}
       </Filter>
     </div>
