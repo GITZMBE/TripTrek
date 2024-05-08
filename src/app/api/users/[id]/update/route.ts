@@ -19,9 +19,10 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     }
     if (password && password.trim() !== '') {
       const isSamePassword = await bcrypt.compare(password, user.hashedPassword);
-      if (isSamePassword) return;
-      const hashedPassword = bcrypt.hashSync(password, 10);
-      dataToUpdate.hashedPassword = hashedPassword;
+      if (!isSamePassword) {
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        dataToUpdate.hashedPassword = hashedPassword;        
+      };
     }
     if (image && image.trim() !== '' && image !== null && image !== undefined && image !== user.avatar) {
       dataToUpdate.avatar = image;
