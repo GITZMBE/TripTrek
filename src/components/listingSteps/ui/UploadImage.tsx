@@ -89,8 +89,7 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
           )
         }        
       </div>
-        <p className="text-error">{ errors.image?.message as string || '' }</p>
-      
+      <p className="text-error">{ errors.image?.message as string || '' }</p>
       { file !== null && (
         <p className="group flex justify-between items-center w-full text-grey">
           <span>{ file?.name } { prettyBytes(file?.size) }</span>
