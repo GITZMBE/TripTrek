@@ -6,6 +6,9 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   const usersListings = await prisma.listing.findMany({
     where: { 
       userId: id 
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
   return NextResponse.json(usersListings);
