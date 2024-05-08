@@ -6,15 +6,15 @@ export const GET = async (req: Request) => {
   const searchParams = new URLSearchParams(url.searchParams);
   const email = searchParams.get('email');
 
-  if (!email) return null;
+  if (!email) {
+    return NextResponse.json({ message: "No params provided" });
+  };
 
   const user = await prisma.user.findUnique({ 
     where: {
       email
     }
   });
-
-  if (!user) return null;
 
   return NextResponse.json(user);
 };
