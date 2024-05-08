@@ -20,7 +20,7 @@ import { DateValue, RangeValue } from '@nextui-org/react';
 import CategoryReactIconModel from '@/src/models/CategoryReactIconModel';
 import { dateValueToDate } from '@/src/utils';
 import { CountryModel } from '@/src/models';
-const Map = dynamic(() => import('../../../src/components/listingSteps/ui/Map'), {
+const Map = dynamic(() => import('@/src/components/listingSteps/ui/Map'), {
   ssr: false,
 });
 
