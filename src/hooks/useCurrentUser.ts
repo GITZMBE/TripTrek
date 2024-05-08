@@ -1,7 +1,6 @@
-import prisma from "@/prisma";
 import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useCurrentUser = () => {
   const { data: session } = useSession();
@@ -11,18 +10,11 @@ export const useCurrentUser = () => {
     const getUser = async () => {
       if (!session?.user?.email) return null;
 
-      const res = await fetch(`${window.location.origin}/api/users`, { 
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({ 
-          email: session.user.email 
-        })
+      const res = await fetch(`${window.location.origin}/api/users?email=${session.user.email}`, { 
+        method: 'GET'
       });
-      const user = await res.json();
+      const user = await res.json() || null;
 
-      if (!user) return null;
       setCurrentUser(user);
       return user;
     };
