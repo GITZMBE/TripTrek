@@ -45,8 +45,6 @@ const Categorybar = ({}: CategorybarProps) => {
   const [categories, setCategories] = useState<CategoryIconModel[]>([]);
 
   const getCategories = async () => {
-    // const res = await fetch(process.env.BASEURL + '/api/categories', { method: 'GET' });
-    // const categories = await res.json();
     setCategories(categoryIcons);
   };
 
