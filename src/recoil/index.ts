@@ -1,6 +1,5 @@
 import { atom } from "recoil";
 import { User } from "@prisma/client";
-import { getLoggedInUser } from "../storage";
 
 type UserToken = { 
   user: User; 
@@ -9,5 +8,5 @@ type UserToken = {
 
 export const loggedInUserState = atom<User | undefined>({
   key: "userState",
-  default: getLoggedInUser(),
+  default: undefined,
 });
