@@ -4,13 +4,20 @@ import { Listing } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import { Filter } from '../ui';
 import { useRouter } from 'next/navigation';
+import { user } from '@nextui-org/react';
+import { useCurrentUser } from '@/src/hooks';
 
 const SlideShowBanner = () => {
   const router = useRouter();
+  const { currentUser: user } = useCurrentUser();
   const [listings, setListings] = useState<Listing[]>([]);
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
   const [slideCount, setSlideCount] = useState(0);
   const [currentListing, setCurrentListing] = useState<Listing | null>(null);
+
+  const isOwner = () => {
+    return currentListing?.userId === user?.id;
+  }
 
   useEffect(() => {
     const getListings = async () => {
@@ -52,7 +59,7 @@ const SlideShowBanner = () => {
       }
       <Filter center>
         { currentListing && (
-          <button className='w-full h-full flex flex-col justify-between items-center py-4' onClick={() => {router.push(`${window.location.origin}/listings/${currentListing?.id}`)}}>
+          <button className='w-full h-full flex flex-col justify-between items-center py-4' onClick={() => { isOwner() ? router.push(`${window.location.origin}/users/${user?.id}/listings/${currentListing.id}`) : router.push(`${window.location.origin}/listings/${currentListing?.id}`)}}>
             <div></div>
             <h1 className={`text-6xl font-bold text-center text-light tracking-wider ${ currentListing ? 'animate-fadeIn' : '' }`}>{ currentListing.title }</h1>
             <div className='flex gap-4'>{ listings.length > 0 && 
