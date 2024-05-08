@@ -33,7 +33,7 @@ export const SignupForm = () => {
   };
 
   const signup = async (formData: FormFields) => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/signup", {
+    const res = await fetch(`${window.location.origin}/api/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
