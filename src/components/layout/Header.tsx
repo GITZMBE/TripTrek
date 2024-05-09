@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "./Navbar";
-import Pathbar from "../ui/Pathbar";
+import Pathbar from "./Pathbar";
 import Link from "next/link";
 import { User } from "@prisma/client";
 

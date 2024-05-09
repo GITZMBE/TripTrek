@@ -9,7 +9,7 @@ import React from 'react';
 
 const FavoritesPage = ({ params }: { params: { id: string} }) => {
   const getListings = async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + `/api/users/${params.id}/favorites`, {
+    const res = await fetch(`${window.location.origin}/api/users/${params.id}/favorites`, {
       method: "GET",
       cache: 'no-cache'
     });
