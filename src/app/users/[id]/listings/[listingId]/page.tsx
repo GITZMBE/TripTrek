@@ -40,7 +40,7 @@ const ListingOwnerPage = ({ params }: { params: { listingId: string } }) => {
 
   const getListing = async () => {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + `/api/listings/${params.listingId}`,
+      `${window.location.origin}/api/listings/${params.listingId}`,
       { method: "GET", cache: "no-cache" }
     );
     const list: Listing = await res.json();

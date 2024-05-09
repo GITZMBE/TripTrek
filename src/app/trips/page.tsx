@@ -2,9 +2,9 @@
 
 import { DataLoader } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
-import { ListingCard, ReservationCard } from "@/src/components/ui";
+import { ReservationCard } from "@/src/components/ui";
 import { useCurrentUser } from "@/src/hooks";
-import { Listing, Reservation } from "@prisma/client";
+import { Listing, Reservation, User } from "@prisma/client";
 import Link from "next/link";
 import React from "react";
 
@@ -15,13 +15,13 @@ const TripsPage = () => {
     const res = await fetch(`${window.location.origin}/api/reservations?userId=${user?.id}`, {
       method: 'GET',
     });
-    const userRes: Reservation[] = await res.json() || [];
+    const userRes: Reservation[] & { listing: Listing, user: User }[] = await res.json() || [];
     return userRes;
   };
 
-  const renderReservations = (data: Reservation[]) => {
-    return data.map((reservation: Reservation) => (
-      <ReservationCard key={reservation.id} reservation={reservation} />
+  const renderReservations = (data: Reservation[] & { listing: Listing, user: User }[]) => {
+    return data.map((reservation) => (
+      <ReservationCard key={reservation.id} reservation={reservation as Reservation & { listing: Listing, user: User }} />
     ));
   };
 

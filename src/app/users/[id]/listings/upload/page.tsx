@@ -96,7 +96,7 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
   };
 
   const uploadListing = async (data: FormFields) => {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASEURL + "/api/listings/upload", {
+    const res = await fetch(`${window.location.origin}/api/listings/upload`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

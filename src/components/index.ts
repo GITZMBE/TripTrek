@@ -1,1 +1,1 @@
-export * from "./ui/Pathbar";
+export * from "./layout/Pathbar";
