@@ -9,8 +9,7 @@ import { DataLoader } from "@/src/components/dataHandlers";
 
 const UserListingsPage = ({ params }: { params: { id: string } }) => {
   const getUsersListings = async () => {
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_BASEURL + `/api/users/${params.id}/listings`,
+    const res = await fetch(`${window.location.origin}/api/users/${params.id}/listings`,
       { method: "GET", cache: "no-cache" }
     );
     const list: Listing[] = (await res.json()) || [];

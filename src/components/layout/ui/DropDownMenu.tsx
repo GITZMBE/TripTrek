@@ -5,6 +5,7 @@ import NavLink from './NavLink';
 import { User } from '@prisma/client';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { signOut } from 'next-auth/react';
+import { RxAvatar } from 'react-icons/rx';
 
 interface DropDownMenu {
   user: User | null;
@@ -44,6 +45,19 @@ const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
           </>
         ) : (
           <>
+            <div className='flex sm:hidden gap-2 md:gap-4 items-center py-2 px-4'>
+              <p className="w-full text-white text-ellipsis">{user.name || user.email}</p>
+              {user.avatar ? (
+                <img
+                  src={user.avatar || ""}
+                  className='w-8 aspect-square object-cover object-center rounded-full'
+                  alt=''
+                />
+              ) : (
+                <RxAvatar size={32} className='text-grey' />
+              )}
+            </div>
+            <hr className='block sm:hidden border-primary border-thin mx-4' />
             <NavLink
               href={`/users/${user.id}`}
               label='My Account'

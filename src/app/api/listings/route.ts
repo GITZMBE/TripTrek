@@ -27,7 +27,10 @@ export const GET = async (req: Request) => {
   } else {
     listings = await prisma.listing.findMany({ 
       where: { 
-        category: category 
+        category: {
+          equals: category,
+          mode: 'insensitive'
+        }
       },
       orderBy: {
         createdAt: 'desc'
