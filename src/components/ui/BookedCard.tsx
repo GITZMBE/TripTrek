@@ -2,9 +2,9 @@
 
 import { Listing, Reservation, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import React, { ComponentPropsWithoutRef, useEffect, useState } from "react";
+import React, { ComponentPropsWithoutRef } from "react";
 import { format } from "date-fns";
-import { useCurrentUser } from "@/src/hooks";
+import { RxAvatar } from "react-icons/rx";
 
 interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
   reservation: Reservation & { listing: Listing; user: User };
@@ -72,7 +72,11 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
             <span className="max-w-24 text-nowrap overflow-ellipsis overflow-hidden">
               {reservation.user.name}
             </span>
-            <img src={ reservation.user.avatar || '' } className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
+            { reservation.user.avatar ? (
+              <img src={ reservation.user.avatar } className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
+            ): (
+              <RxAvatar size={32} className='text-grey' />
+            )}
           </span>
         </p>
         <div className="flex gap-2 pt-2">

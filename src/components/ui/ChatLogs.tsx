@@ -94,7 +94,7 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
                 </div>
               </div>
             </div>
-            <div className='flex flex-col items-end gap-2 p-2 flex-grow overflow-y-auto scrollbar-hidden'>
+            <div className='flex flex-col justify-end gap-2 p-2 flex-grow overflow-y-auto scrollbar-hidden'>
               {currentChat.messages && currentChat.messages.map(message => (
                 <TextMessage key={message.id} message={message} />
               ))}

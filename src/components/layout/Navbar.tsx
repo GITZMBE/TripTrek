@@ -19,7 +19,7 @@ export const Navbar = ({ currentUser }: NavbarProps) => {
       {currentUser && (
         <Link
           href={`/users/${currentUser?.id}`}
-          className='hidden sm:flex gap-4 items-center'
+          className='hidden sm:flex gap-2 md:gap-4 items-center'
         >
           {currentUser.avatar ? (
             <img
