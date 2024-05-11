@@ -50,7 +50,7 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
       currentYPosition += 10;
       doc.text(`End Date: ${ format(endDate, "MMMM d'th' yyyy")}`, 10, currentYPosition);
       currentYPosition += 10;
-      doc.text(`Total Price: ${totalPrice}`, 10, currentYPosition);
+      doc.text(`Total Price: $${totalPrice}`, 10, currentYPosition);
       currentYPosition += 10;
       doc.text(`Listing Details:`, 10, currentYPosition);
       currentYPosition += 10;
