@@ -68,8 +68,8 @@ export const Datepicker = ({
         className='w-full bg-secondary text-light'
         onOpenChange={isOpen => !isOpen && setHasClosed(true)}
         isRequired
-        selectorIcon={!dateRange && <BiSolidCalendar size={20} />}
-        endContent={dateRange && <IoClose size={20} onClick={() => {onChangeDate({ start: undefined, end: undefined }); setNightCount(0)}} />}
+        selectorIcon={(!dateRange || (!dateRange.start && !dateRange.end)) && <BiSolidCalendar size={20} />}
+        endContent={(dateRange && dateRange.start && dateRange.end) && <IoClose size={20} onClick={() => {onChangeDate({ start: undefined, end: undefined }); setNightCount(0); setHasClosed(false)}} />}
         isInvalid={!isValid}
         errorMessage={ !isValid && 'Please select a valid stay duration.' }
         isDateUnavailable={noneBockedDates}
