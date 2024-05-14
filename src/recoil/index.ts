@@ -1,12 +1,7 @@
 import { atom } from "recoil";
 import { User } from "@prisma/client";
 
-type UserToken = { 
-  user: User; 
-  token: string;
-};
-
-export const loggedInUserState = atom<User | undefined>({
+export const currentUserState = atom<User | null>({
   key: "userState",
-  default: undefined,
+  default: null,
 });
