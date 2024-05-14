@@ -32,7 +32,10 @@ export const GET = async (req: Request) => {
 export const POST = async (req: Request) => {
   const body = await req.json();
   const reservation = await prisma.reservation.create({
-    data: body
+    data: body,
+    include: {
+      listing: true,
+    }
   });
 
   return NextResponse.json(reservation);

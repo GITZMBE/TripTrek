@@ -11,6 +11,7 @@ import { useRouter } from  "next/navigation";
 import { TfiReload } from "react-icons/tfi";
 import { signOut } from "next-auth/react";
 import { LoadingAnimation } from "../ui";
+import { toast } from "react-toastify";
 
 interface UserFormProps {
   
@@ -77,6 +78,7 @@ export const UserForm = ({}: UserFormProps) => {
         return;
       }
 
+      toast.success('User updated successfully');
       router.refresh();
     } catch(error: any) {
       setError('root', { message: error.message })
@@ -94,6 +96,7 @@ export const UserForm = ({}: UserFormProps) => {
   const deleteUser = async () => {
     setIsLoading(true);
     fetch(`${window.location.origin}/api/users/${user?.id}`, { method: 'DELETE' });
+    toast.success('User deleted');
     signOut({ callbackUrl: '/login' });
     setIsLoading(false);
   };
@@ -154,7 +157,6 @@ export const UserForm = ({}: UserFormProps) => {
           </button>
         </div>        
       </div>
-      {/* <FormFileInput register={register("avatar")} propName='avatar' errors={errors} /> */}
       {errors.root && <p className='text-error'>{errors.root.message}</p>}
     </form>
   );

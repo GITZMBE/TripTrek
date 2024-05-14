@@ -46,7 +46,7 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
       className='group relative flex flex-col gap-4 w-64 aspect-square rounded-xl shadow-lg overflow-hidden'
     >
       <div
-        className={`absolute top-0 bottom-0 group-hover:bottom-[168px] w-full transition-all overflow-hidden rounded-xl z-10`}
+        className={`absolute top-0 bottom-[168px] sm:bottom-0 group-hover:bottom-[168px] w-full transition-all overflow-hidden rounded-xl z-10`}
       >
         <img
           src={reservation.listing.imageSrc}
