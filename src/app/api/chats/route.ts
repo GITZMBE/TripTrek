@@ -1,4 +1,5 @@
 import prisma from "@/prisma";
+import { Chat } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
@@ -47,18 +48,30 @@ export const GET = async (req: Request) => {
 export const POST = async (req: Request) => {
   const { title, userId, chatToId, listingId } = await req.json();
 
-  if (!userId || !chatToId || !listingId) {
+  if (!userId && !chatToId && !listingId) {
     return NextResponse.json({ message: "Required properties weren't provided" });
   }
 
-  const newChat = await prisma.chat.create({
-    data: {
-      title: title,
-      ownerId: userId,
-      listingId: listingId,
-      memberIds: [userId, chatToId],
-    }
-  });
+  let newChat;
+
+  if (userId && chatToId && listingId) {
+    newChat = await prisma.chat.create({
+      data: {
+        title: title,
+        ownerId: userId,
+        listingId: listingId,
+        memberIds: [userId, chatToId],
+      }
+    });
+  } else if (userId && chatToId) {
+    newChat = await prisma.chat.create({
+      data: {
+        title: title,
+        ownerId: userId,
+        memberIds: [userId, chatToId]
+      }
+    });
+  }
 
   return NextResponse.json(newChat);
 };

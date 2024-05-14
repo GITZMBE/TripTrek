@@ -12,10 +12,12 @@ import InfoStep from "@/src/components/listingSteps/InfoStep";
 import { CountrySelectValue } from "@/src/components/listingSteps/ui";
 import { LoadingAnimation } from "@/src/components/ui";
 import { useLoading } from "@/src/hooks";
+import { Listing } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 enum Steps {
   Category = 0,
@@ -103,7 +105,7 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
       },
       body: JSON.stringify(data),
     });
-    const newListing = await res.json();
+    const newListing: Listing = await res.json();    
     return newListing;
   };
 
@@ -112,6 +114,7 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
     try {
       setIsLoading(true);
       const listing = await uploadListing(data);
+      toast.success(`'${listing.title}' uploaded successfully`);
       router.push('/');
     } catch(error: any) {
       setIsLoading(false);
