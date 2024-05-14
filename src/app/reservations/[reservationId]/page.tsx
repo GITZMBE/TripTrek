@@ -1,7 +1,7 @@
 'use client';
 
 import { Container } from '@/src/components/layout';
-import { Listing, Reservation } from '@prisma/client';
+import { Listing, Reservation, User } from '@prisma/client';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -9,22 +9,23 @@ import { FaAngleDoubleLeft, FaAngleDoubleRight, FaArrowDown } from 'react-icons/
 import jsPDF from 'jspdf';
 import { useCurrentUser, useLoading } from '@/src/hooks';
 import { LoadingAnimation } from '@/src/components/ui';
+import { toast } from 'react-toastify';
 
 const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
   const { currentUser: user } = useCurrentUser();
-  const [reservation, setReservation] = useState<Reservation & { listing: Listing }>();
+  const [reservation, setReservation] = useState<Reservation & { listing: Listing, user: User }>();
   const {isLoading, setIsLoading} = useLoading();
   const getReservation = async () => {
     setIsLoading(true);
     const res = await fetch(`${window.location.origin}/api/reservations/${params.reservationId}`);
-    const reserv: Reservation & { listing: Listing } = await res.json();
+    const reserv: Reservation & { listing: Listing, user: User } = await res.json();
     setReservation(reserv);
     setIsLoading(false);
     return reserv;
   };
 
   const handleDownload = () => {
-    if (reservation) {
+    if (reservation?.isAccepted) {
       const doc = new jsPDF();
 
       // Add logo image
@@ -63,6 +64,8 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
       doc.line(10, currentYPosition, 200, currentYPosition);
 
       doc.save(`reservation_${ reservation.id }.pdf`);
+    } else {
+      toast.info("You can't download the reservation before the owner has accepted you're reservation.");
     }
   };
 
@@ -77,10 +80,10 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
         { reservation ? (
           <>
             <div className='flex flex-col gap-2 w-full text-grey'>
-              <span>ID: { reservation.id }</span>
+              <p>ID: { reservation.id }</p>
               <span>Arrival Date: { format(reservation.startDate, "MMMM d'th' yyyy") }</span>
               <span>Last Date: { format(reservation.endDate, "MMMM d'th' yyyy") }</span>
-              <span>Reserved by: { reservation.userId }</span>
+              <span className='flex items-center gap-2'>Reserved by: <Link href={`/users/${ reservation.userId }`} className='flex items-center gap-2'><img src={reservation.user?.avatar || '/male_default_avatar.png'} className='w-8 aspect-square object-center object-cover rounded-full' />{ reservation.user.name }</Link></span>
             </div>
             <div className='w-full flex justify-start'>
               <button className={`flex items-center gap-2 text-grey border-grey border-2 py-2 px-4 disabled:cursor-not-allowed ${ reservation.isAccepted && 'hover:text-light hover:border-light' }`} onClick={handleDownload} disabled={!reservation.isAccepted} >
@@ -88,6 +91,16 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
                 <FaArrowDown size={20} className='pl-2 border-grey border-l-[1px]' />
               </button>              
             </div>
+            <p className='w-full text-left text-light'>
+              <span className='text-grey'>Status: </span>
+              { reservation.isAccepted === undefined || reservation.isAccepted === null ? (
+                <span>Pending...</span>
+              ) : reservation.isAccepted ? (
+                <span>Accepted</span>
+              ) : (
+                <span>Declined</span>
+              )}              
+            </p>
           </>
         ) : isLoading ? (
             <LoadingAnimation className='w-28 aspect-square' />
@@ -97,15 +110,22 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
             <p className='text-2xl'>No reservation found</p>
           </div>
         )}
-        <div className='flex justify-between w-full'>
+        <div className='flex justify-between gap-4 w-full'>
           <Link href='/' className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
             <FaAngleDoubleLeft size={24} />
-            <span>Back Home</span>
-            </Link>
-          <Link href={`/trips`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
-            <span>Your reservations</span>
-            <FaAngleDoubleRight size={24} />
+            <span className='w-full text-nowrap text-ellipsis'>Back Home</span>
           </Link>
+          { reservation?.userId === user?.id ? (
+            <Link href={`/trips`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-right text-grey hover:text-light'>
+              <span className='w-full text-nowrap text-ellipsis overflow-hidden'>Your trips</span>
+              <FaAngleDoubleRight size={24} />
+            </Link>
+          ) : reservation?.listing.userId === user?.id ? (
+            <Link href={`/reservations`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-right text-grey hover:text-light'>
+              <span className='w-full text-nowrap text-ellipsis overflow-hidden'>Your reservations</span>
+              <FaAngleDoubleRight size={24} />
+            </Link>
+          ) : (<></>)}
         </div>        
       </div>      
     </Container>

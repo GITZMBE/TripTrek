@@ -33,8 +33,6 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       },
       body: JSON.stringify({ listingId: listing.id })
     });
-    const updatedUser = await res.json();
-    // signIn('credentials', updatedUser);
     router.refresh();
   };
 
@@ -46,8 +44,6 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       },
       body: JSON.stringify({ listingId: listing.id })
     });
-    const updatedUser = await res.json();
-    // signIn('credentials', updatedUser);
     router.refresh();
   };
 

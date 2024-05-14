@@ -14,6 +14,7 @@ import { CategorySelector } from "./ui";
 import { LoadingAnimation } from "../ui";
 import CategoryReactIconModel from "@/src/models/CategoryReactIconModel";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 type FormFields = {
   category: CategoryReactIconModel | null;
@@ -109,6 +110,7 @@ const ListingForm = ({ listing, location, category }: ListingFormProps) => {
       if (updatedListing?.message) {
         setError('root', { message: updatedListing });
       }
+      toast.success(`'${updatedListing.title}' updated successfully`);
       router.refresh();
     } catch (error: any) {
       setError('root', { message: error.message.toString() });

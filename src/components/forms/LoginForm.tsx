@@ -5,11 +5,12 @@ import React from "react";
 import { FormInput } from "./ui";
 import { FormButton } from "./ui";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { SignInResponse, signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoading } from "@/src/hooks";
+import { toast } from "react-toastify";
 
 type FormFields = {
   email: string;
@@ -22,10 +23,16 @@ export const LoginForm = () => {
   const { isLoading, setIsLoading } = useLoading();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    setIsLoading(true);
-    signIn('credentials', data);
-    router.push("/");
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await signIn('credentials', data);
+      toast.success('Login Successful');
+      router.push("/");
+    } catch(error: any) {
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
