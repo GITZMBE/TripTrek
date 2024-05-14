@@ -7,6 +7,8 @@ import NextuiProvider from "@/src/components/providers/NextuiProvider";
 import NextAuthProvider from "@/src/components/providers/NextAuthProvider";
 import { getServerSession } from "next-auth";
 import { getCurrentUser } from "@/src/actions";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,6 +38,7 @@ export default async function RootLayout({
         <NextAuthProvider session={session}>
           <NextuiProvider>
             <RecoilProvider>
+              <ToastContainer position="top-center" theme="dark" autoClose={3000} />
               <Header currentUser={currentUser} />
               {children}
             </RecoilProvider>

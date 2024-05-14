@@ -10,6 +10,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { signIn } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormFields = {
   email: string;
@@ -51,9 +52,11 @@ export const SignupForm = () => {
         type: 'manual',
         message: registeredUser.message
       })
+      toast.error(registeredUser.message);
       setIsLoading(false);
       return;
     }
+    toast.success('Registration Successful');
 
     const user_token = await findUser(data);
 

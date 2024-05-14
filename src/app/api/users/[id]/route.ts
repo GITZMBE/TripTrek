@@ -9,6 +9,10 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
     } 
   });
 
+  if (!user) {
+    return NextResponse.json({ message: "User with that id doesn't exist" });
+  }
+
   return NextResponse.json(user);
 };
 

@@ -8,7 +8,7 @@ export const useCurrentUser = () => {
   
   useEffect(() => {
     const getUser = async () => {
-      if (!session?.user?.email) return null;
+      if (!session?.user?.email || session?.user?.email === currentUser?.email) return null;
 
       const res = await fetch(`${window.location.origin}/api/users?email=${session.user.email}`, { 
         method: 'GET'

@@ -20,6 +20,8 @@ import { DateValue, RangeValue } from '@nextui-org/react';
 import CategoryReactIconModel from '@/src/models/CategoryReactIconModel';
 import { dateValueToDate } from '@/src/utils';
 import { CountryModel } from '@/src/models';
+import { toast } from 'react-toastify';
+import ListingForm from '@/src/components/forms/ListingForm';
 const Map = dynamic(() => import('@/src/components/listingSteps/ui/Map'), {
   ssr: false,
 });
@@ -47,6 +49,8 @@ const initialDateRange = undefined;
 const ListingPage = ({ params }: { params: { id: string} }) => {
   const { currentUser: user } = useCurrentUser();
   const [listing, setListing] = useState<(Listing & { reservations: Reservation[], user: User}) | null>(null);
+  const [location, setLocation] = useState<CountryModel | null>(null);
+  const [category, setCategory] = useState<CategoryReactIconModel | null>(null);
   const router = useRouter();
   const { isLoading, setIsLoading } = useLoading();
   const {errorMessage, setErrorMessage} = useErrorMessage(null);
@@ -54,7 +58,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [totalPrice, setTotalPrice] = useState<number>(listing?.price || 0);
   const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
   const { getByValue } = useCountries();
-  const [location, setLocation] = useState<CountryModel | null>(null);
+  
   const [categoryIcon, setCategoryIcon] = useState<ReactElement<IconType> | null>(null);
 
   const getListing = async () => {
@@ -79,9 +83,16 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     return icon;
   }
 
+  const getCategory = async (cat: string) => {
+    const val = iconComponents.filter(c => c.category === cat)[0];
+    setCategory(val);
+    return val;
+  };
+
   const getData = async () => {
     const list = await getListing();
     getLocation(list.locationValue);
+    getCategory(list.category);
     getCategoryIcon(list.category);
   };
 
@@ -108,7 +119,8 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
             totalPrice: totalPrice
           })
         });
-        const reservation = await res.json();
+        const reservation: Reservation & { listing: Listing } = await res.json();
+        toast.success(`Reservation made for '${reservation.listing.title}'`);
         router.push(`/reservations/${reservation.id}`);
         return reservation;
       }
@@ -121,78 +133,82 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   };
 
   return (
-    <Container banner>
-      { listing && (
-        <div className='w-full min-h-screen'>
-          <div className={`relative w-full h-[80vh] md:h-[50vh] bg-cover bg-center bg-no-repeat`} style={{ backgroundImage: `url('${listing.imageSrc}')` }}>
-            <Filter center>
-              <h1 className='text-4xl sm:text-6xl text-light text-center font-bold text-wrap leading-[80px]'>{ listing.title }</h1>
-              <FavoriteButton listing={listing} /> 
-            </Filter>
-          </div>
-          <div className='flex flex-col items-center py-4 px-4 sm:px-8 md:px-12'>
-            <div className='w-full max-w-[900px]'>
-              { location && (
-                <>
-                  <div className='text-2xl text-light'>
-                    <span>{ listing.title }</span>
-                    <span className='capitalize'>, { listing.category }</span>
-                  </div>
-                  <div className='w-full text-grey text-base'>
-                    <span>{ location.region }, { location.label }</span>
-                  </div>
-                </>
-              )}
-              <hr className='w-full border-secondary my-4' />
-              <div className='group w-full flex justify-between items-center'>
-                <div className='w-full flex items-center gap-2'>
-                  <span className='text-light'>{ listing.user.name }</span>
-                  <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
-                </div>
-                <MdOutlineChatBubble size={24} className='hidden group-hover:block text-secondary hover:text-grey cursor-pointer' onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)} />
-              </div>
-              <div className='w-full flex gap-4 text-grey text-base'>
-                <span>{ listing.guestCount } guests</span>
-                <span>{ listing.roomCount } rooms</span>
-                <span>{ listing.bathroomCount } bathrooms</span>
-              </div>
-              <hr className='w-full border-secondary my-4' />
-              <div className='flex gap-2 items-center sm:items-end'>
-                <Icontype icon={categoryIcon} />
-                <span className='text-light capitalize leading-7'>{ listing.category }</span>
-              </div>
-              <hr className='w-full border-secondary my-4' />
-              <p className='text-grey font-bold'>{ listing.description }</p>
-              <hr className='w-full border-secondary my-4' />
-              <div className='w-full flex flex-col md:flex-row flex-nowrap gap-4'>
+    <Container banner={user?.id !== listing?.userId} extraPadding={user?.id === listing?.userId}>
+      { (listing && location) && (
+        user?.id === listing?.userId ? (
+          <ListingForm listing={listing} location={location} category={category} />
+        ) : (
+          <div className='w-full min-h-screen'>
+            <div className={`relative w-full h-[80vh] md:h-[50vh] bg-cover bg-center bg-no-repeat`} style={{ backgroundImage: `url('${listing.imageSrc}')` }}>
+              <Filter center>
+                <h1 className='text-4xl sm:text-6xl text-light text-center font-bold text-wrap leading-[80px]'>{ listing.title }</h1>
+                <FavoriteButton listing={listing} /> 
+              </Filter>
+            </div>
+            <div className='flex flex-col items-center py-4 px-4 sm:px-8 md:px-12'>
+              <div className='w-full max-w-[900px]'>
                 { location && (
-                  <Map center={location.latlng} />
+                  <>
+                    <div className='text-2xl text-light'>
+                      <span>{ listing.title }</span>
+                      <span className='capitalize'>, { listing.category }</span>
+                    </div>
+                    <div className='w-full text-grey text-base'>
+                      <span>{ location.region }, { location.label }</span>
+                    </div>
+                  </>
                 )}
-                <Calendar 
-                  price={listing.price}
-                  nightCount={nightCount}
-                  setNightCount={setNightCount}
-                  totalPrice={totalPrice}
-                  setTotalPrice={setTotalPrice}
-                  onChangeDate={setDateRange}
-                  dateRange={dateRange}
-                  reservations={listing?.reservations}
-                />
-              </div>              
+                <hr className='w-full border-secondary my-4' />
+                <div className='w-full flex justify-between items-center'>
+                  <button className='w-fit flex items-center gap-2 cursor-pointer' onClick={e => {e.stopPropagation(); router.push(`/users/${ listing.user.id }`)}}>
+                    <span className='text-light'>{ listing.user.name }</span>
+                    <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
+                  </button>
+                  <MdOutlineChatBubble size={24} className='text-secondary hover:text-grey cursor-pointer' onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)} />
+                </div>
+                <div className='w-full flex gap-4 text-grey text-base'>
+                  <span>{ listing.guestCount } guests</span>
+                  <span>{ listing.roomCount } rooms</span>
+                  <span>{ listing.bathroomCount } bathrooms</span>
+                </div>
+                <hr className='w-full border-secondary my-4' />
+                <div className='flex gap-2 items-center sm:items-end'>
+                  <Icontype icon={categoryIcon} />
+                  <span className='text-light capitalize leading-7'>{ listing.category }</span>
+                </div>
+                <hr className='w-full border-secondary my-4' />
+                <p className='text-grey font-bold'>{ listing.description }</p>
+                <hr className='w-full border-secondary my-4' />
+                <div className='w-full flex flex-col md:flex-row flex-nowrap gap-4'>
+                  { location && (
+                    <Map center={location.latlng} />
+                  )}
+                  <Calendar 
+                    price={listing.price}
+                    nightCount={nightCount}
+                    setNightCount={setNightCount}
+                    totalPrice={totalPrice}
+                    setTotalPrice={setTotalPrice}
+                    onChangeDate={setDateRange}
+                    dateRange={dateRange}
+                    reservations={listing?.reservations}
+                  />
+                </div>              
+              </div>
+            </div>
+            <p className='text-error'>{ errorMessage }</p>
+            <div className='w-full flex justify-center items-center mt-8'>
+              <button 
+                className={`flex gap-4 text-grey py-2 px-4 rounded-lg transition bg-secondary ${ (isLoading || !isValidReservation) ? 'hover:text-grey hover:bg-secondary cursor-not-allowed' : 'hover:text-light hover:bg-grey' }`} 
+                disabled={isLoading || !isValidReservation} 
+                onClick={() => (isLoading || !isValidReservation) ? setErrorMessage('Choose date range before making reservation') : makeReservation()}
+              >
+                <span>Rent listing</span>
+                { isLoading && <LoadingAnimation className='w-12 aspect-square' /> }
+              </button>
             </div>
           </div>
-          <p className='text-error'>{ errorMessage }</p>
-          <div className='w-full flex justify-center items-center mt-8'>
-            <button 
-              className={`flex gap-4 text-grey py-2 px-4 rounded-lg transition bg-secondary ${ (isLoading || !isValidReservation) ? 'hover:text-grey hover:bg-secondary cursor-not-allowed' : 'hover:text-light hover:bg-grey' }`} 
-              disabled={isLoading || !isValidReservation} 
-              onClick={() => (isLoading || !isValidReservation) ? setErrorMessage('Choose date range before making reservation') : makeReservation()}
-            >
-              <span>Rent listing</span>
-              { isLoading && <LoadingAnimation className='w-12 aspect-square' /> }
-            </button>
-          </div>
-        </div>
+        )
       )}
     </Container>
   )
