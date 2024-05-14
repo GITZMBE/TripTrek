@@ -1,10 +1,12 @@
 import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { currentUserState } from "../recoil";
 
 export const useCurrentUser = () => {
   const { data: session } = useSession();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   
   useEffect(() => {
     const getUser = async () => {
