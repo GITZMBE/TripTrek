@@ -6,7 +6,7 @@ import TextMessage from './TextMessage';
 import { useCurrentUser } from '@/src/hooks';
 import { useRouter } from 'next/navigation';
 import { MdEdit, MdKeyboardArrowRight } from 'react-icons/md';
-import { FaAngleDoubleRight } from 'react-icons/fa';
+import { FaAngleDoubleRight, FaUserCircle } from 'react-icons/fa';
 
 interface IProps {
   currentChat: Chat & { listing: Listing, owner: User, members: User[], messages: Message[] } | null;
@@ -87,7 +87,16 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
                     <input type="text" autoFocus className='w-full py-1 px-2 outline-none' value={titleInputValue} onChange={e => setTitleInputValue(e.target.value)} onBlur={handleBlurEditTitleInput} />
                   </div>
                 ) : (
-                  <span className='w-full overflow-hidden text-nowrap text-ellipsis text-light font-semibold py-2'>{currentChat.title ? currentChat.title : currentChat?.owner ? `${currentChat.owner.name}'s chat${currentChat.listing && ` for '${currentChat.listing.title}'`}` : ''}</span>
+                  <p className='flex items-center gap-2 w-full overflow-hidden text-nowrap text-ellipsis text-light font-semibold py-2'>
+                    {currentChat.title ? currentChat.title : currentChat?.owner ? `${currentChat.owner.name}'s chat${currentChat.listing && ` for '${currentChat.listing.title}'`}` : ''}
+                    <span>
+                      { currentChat.members && currentChat.members.map(member => member?.avatar ? (
+                        <img src={member.avatar} className='w-10 aspect-square rounded-full object-center object-cover' alt="" />
+                      ) : (
+                        <FaUserCircle size={40} className='text-grey' />
+                      ))}
+                    </span>
+                  </p>
                 )}
                 <div className='h-10 aspect-square'>
                   <MdEdit size={40} className='lg:hidden lg:group-hover:block h-full aspect-square text-secondary focus:text-grey lg:hover:text-grey p-2 cursor-pointer' onClick={handleOpenTitle} />
