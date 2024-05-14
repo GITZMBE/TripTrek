@@ -50,6 +50,7 @@
     "react-slideshow-image": "^4.3.1",
     "react-toastify": "^10.0.5",
     "recoil": "^0.7.7",
+    "three": "^0.164.1",
     "world-countries": "^5.0.0"
   },
   "devDependencies": {
@@ -62,6 +63,7 @@
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dates": "^21.8.6",
     "@types/react-dom": "^18",
+    "@types/three": "^0.164.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "^14.2.2",
