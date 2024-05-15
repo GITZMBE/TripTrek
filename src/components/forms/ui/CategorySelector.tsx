@@ -9,6 +9,9 @@ import { MdOutlineVilla } from 'react-icons/md';
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { UseFormSetValue, UseFormUnregister, UseFormWatch } from 'react-hook-form';
 
+/**
+ * Should never have to do this. I would define an UI component <Icon icon="" />, with the icon prop being a union of strings that corresponds to a react-icons component.
+ */
 const iconComponents: CategoryReactIconModel[] = [
   new CategoryReactIconModel("beach", <TbBeach className='text-grey w-4 h-4' />),
   new CategoryReactIconModel("windmills", <GiWindmill className='text-grey w-4 h-4' />),
@@ -27,8 +30,17 @@ const iconComponents: CategoryReactIconModel[] = [
   new CategoryReactIconModel("lux", <IoDiamond className='text-grey w-4 h-4' />),
 ];
 
+/**
+ * In my opinion, if your component has any react-hook-form imports it is disqualifed as an UI component.
+ * I think a better approach would be to pass in [value, setValue] from the React useState hook. An example interface could look like this:
+ *
+ * interface Props {
+ *  value: string; // represents current value
+ *  setValue: Dispatch<SetStateAction<string>>;
+ * }
+ */
 interface CategorySelectorProps {
-  unregister: UseFormUnregister<any>;
+  unregister: UseFormUnregister<any>; // why do we need unregister?
   watch: UseFormWatch<any>;
   setValue: UseFormSetValue<any>;
 }
@@ -38,12 +50,12 @@ export const CategorySelector = ({ unregister, watch, setValue }: CategorySelect
 
   return (
     <div className='w-full z-10'>
-      <Select 
+      <Select
         placeholder='Category'
         isClearable
-        options={iconComponents} 
+        options={iconComponents}
         value={selectedCountry}
-        onChange={(value) => value !== null ? setValue('category', value) : unregister('category') }
+        onChange={(value) => value !== null ? setValue('category', value) : unregister('category')}
         formatOptionLabel={
           (option: CategoryReactIconModel) => (
             <div className='flex items-center gap-3'>

@@ -10,6 +10,10 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+/**
+ * Dont define React function components inside other components
+ */
+
 export default function Home() {
   const searchParams = useSearchParams();
   const [category, setCategory] = useState<string | null>(null);

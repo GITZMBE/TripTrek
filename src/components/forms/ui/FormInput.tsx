@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Same as other form components.
+ */
+
 import React, { ComponentPropsWithoutRef, useState } from "react";
 import { FieldErrors, UseFormRegisterReturn } from "react-hook-form";
 import { IconType } from "react-icons";
@@ -27,9 +31,8 @@ export const FormInput = ({
   return (
     <div className="w-full flex flex-col">
       <div
-        className={`relative flex justify-end items-center w-full cursor-default ${
-          Icon !== undefined ? "" : ""
-        }`}
+        className={`relative flex justify-end items-center w-full cursor-default ${Icon !== undefined ? "" : ""
+          }`}
       >
         <input
           {...props}

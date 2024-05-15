@@ -1,5 +1,8 @@
 "use client";
 
+/**
+ * Remind me about this
+ */
 import { Listing, Reservation, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { ComponentPropsWithoutRef } from "react";
@@ -14,7 +17,7 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
   const router = useRouter();
 
   const handleAccept = () => {
-    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, { 
+    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -27,7 +30,7 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
   };
 
   const handleDecline = () => {
-    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, { 
+    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -67,23 +70,23 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
           <span>{format(reservation.endDate, "yy-MM-dd")}</span>
         </div>
         <p className='flex justify-between items-center gap-2 w-full text-left text-grey text-nowrap overflow-hidden'>
-          Booked by: 
-          <span className="flex items-center gap-2" onClick={e => {e.stopPropagation(); router.push(`${window.location.origin}/users/${reservation.user.id}`)}}>
+          Booked by:
+          <span className="flex items-center gap-2" onClick={e => { e.stopPropagation(); router.push(`${window.location.origin}/users/${reservation.user.id}`) }}>
             <span className="max-w-24 text-nowrap overflow-ellipsis overflow-hidden">
               {reservation.user.name}
             </span>
-            { reservation.user.avatar ? (
-              <img src={ reservation.user.avatar } className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
-            ): (
+            {reservation.user.avatar ? (
+              <img src={reservation.user.avatar} className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
+            ) : (
               <RxAvatar size={32} className='text-grey' />
             )}
           </span>
         </p>
         <div className="flex gap-2 pt-2">
-          { (reservation.isAccepted === undefined || reservation.isAccepted === null) ? (
+          {(reservation.isAccepted === undefined || reservation.isAccepted === null) ? (
             <>
               <span className="bg-transparent border-2 border-accept hover:bg-accept text-light w-full rounded-lg transition" onClick={e => { e.stopPropagation(); handleAccept() }}>Accept</span>
-              <span className="bg-transparent border-2 border-love hover:bg-love text-light w-full rounded-lg transition" onClick={e => { e.stopPropagation(); handleDecline() }}>Decline</span>            
+              <span className="bg-transparent border-2 border-love hover:bg-love text-light w-full rounded-lg transition" onClick={e => { e.stopPropagation(); handleDecline() }}>Decline</span>
             </>
           ) : reservation.isAccepted ? (
             <p className="text-center text-light">Accepted</p>

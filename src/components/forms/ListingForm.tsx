@@ -15,6 +15,10 @@ import { LoadingAnimation } from "../ui";
 import CategoryReactIconModel from "@/src/models/CategoryReactIconModel";
 import { useRouter } from "next/navigation";
 
+/**
+ *  
+ */
+
 type FormFields = {
   category: CategoryReactIconModel | null;
   categoryValue: string;
@@ -189,17 +193,16 @@ const ListingForm = ({ listing, location, category }: ListingFormProps) => {
           </div>
         </div>
       </div>
-      { (errors?.root?.message) && (
-        <p className='text-error text-center'>{ errors?.root?.message }</p>
+      {(errors?.root?.message) && (
+        <p className='text-error text-center'>{errors?.root?.message}</p>
       )}
       <div className='w-full flex justify-center items-center mt-8'>
         <button
           type={isLoading || !isUpdateable ? "button" : "submit"}
-          className={`flex gap-4 text-grey py-2 px-4 border-2 rounded-lg transition ${
-            isLoading || !isUpdateable
+          className={`flex gap-4 text-grey py-2 px-4 border-2 rounded-lg transition ${isLoading || !isUpdateable
               ? "text-secondary border-secondary cursor-not-allowed"
               : "text-grey hover:text-light border-grey hover:bg-grey"
-          }`}
+            }`}
           onClick={() =>
             (isLoading || !isUpdateable) &&
             setError('root', { message: "Change something in listing before saving" })

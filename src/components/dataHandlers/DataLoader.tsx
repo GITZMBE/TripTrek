@@ -5,14 +5,18 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { LoadingAnimation } from '../ui';
 
 interface DataLoaderProps {
-  fetchData: () => Promise<any>;
+  fetchData: () => Promise<any>; // Why not use a generic here
   renderData: (data: any) => JSX.Element | JSX.Element[];
   noDataContent: ReactNode;
 }
 
+/**
+ * Pass in asynchronous state to this component and render appropriate components depending on the state (loading, error, success etc)
+ * No any in the interface :D
+ */
 export const DataLoader = ({ fetchData, renderData, noDataContent }: DataLoaderProps) => {
   const [data, setData] = useState<any>();
-  const {isLoading, setIsLoading} = useLoading(true);
+  const { isLoading, setIsLoading } = useLoading(true);
 
   useEffect(() => {
     const getData = async () => {

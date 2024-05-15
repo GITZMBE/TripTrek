@@ -31,6 +31,9 @@ export default async function RootLayout({
   const currentUser = await getCurrentUser();
 
   return (
+    /**
+     * Why suppressHydrationWarning
+     */
     <html lang='en' suppressHydrationWarning>
       <body >
         <NextAuthProvider session={session}>
@@ -39,7 +42,7 @@ export default async function RootLayout({
               <Header currentUser={currentUser} />
               {children}
             </RecoilProvider>
-          </NextuiProvider>          
+          </NextuiProvider>
         </NextAuthProvider>
       </body>
     </html>

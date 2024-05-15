@@ -39,9 +39,9 @@ const categoryIcons: CategoryIconModel[] = [
   new CategoryIconModel("lux", IoDiamond),
 ];
 
-interface CategorybarProps {}
+interface CategorybarProps { }
 
-const Categorybar = ({}: CategorybarProps) => {
+const Categorybar = ({ }: CategorybarProps) => {
   const [categories, setCategories] = useState<CategoryIconModel[]>([]);
 
   const getCategories = async () => {

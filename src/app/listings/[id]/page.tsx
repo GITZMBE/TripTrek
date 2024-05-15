@@ -24,6 +24,9 @@ const Map = dynamic(() => import('@/src/components/listingSteps/ui/Map'), {
   ssr: false,
 });
 
+/**
+ * See comment on this in forms/ui/categoryselect component. General Icon UI component.
+ */
 const iconComponents: CategoryReactIconModel[] = [
   new CategoryReactIconModel("beach", <TbBeach className='text-grey w-12 h-12' />),
   new CategoryReactIconModel("windmills", <GiWindmill className='text-grey w-12 h-12' />),
@@ -44,12 +47,16 @@ const iconComponents: CategoryReactIconModel[] = [
 
 const initialDateRange = undefined;
 
-const ListingPage = ({ params }: { params: { id: string} }) => {
+/**
+ * A lot of useState here.
+ * I think react-hook-form should be used here instead. This will help with validation etc
+ */
+const ListingPage = ({ params }: { params: { id: string } }) => {
   const { currentUser: user } = useCurrentUser();
-  const [listing, setListing] = useState<(Listing & { reservations: Reservation[], user: User}) | null>(null);
+  const [listing, setListing] = useState<(Listing & { reservations: Reservation[], user: User }) | null>(null);
   const router = useRouter();
   const { isLoading, setIsLoading } = useLoading();
-  const {errorMessage, setErrorMessage} = useErrorMessage(null);
+  const { errorMessage, setErrorMessage } = useErrorMessage(null);
   const [nightCount, setNightCount] = useState(0);
   const [totalPrice, setTotalPrice] = useState<number>(listing?.price || 0);
   const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
@@ -57,13 +64,20 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [location, setLocation] = useState<CountryModel | null>(null);
   const [categoryIcon, setCategoryIcon] = useState<ReactElement<IconType> | null>(null);
 
+  /**
+   * I would recommend creating a generic fetch utility function that accepts a generic type.
+   * From an API design perspective, if you have to create an intersection type from three different models, something is probably wrong. Remind me to have a look at this :)
+   */
   const getListing = async () => {
-    const res = await fetch(`${window.location.origin}/api/listings/${ params.id }`, { method: "GET", cache: 'no-cache' });
-    const list: Listing & { reservations: Reservation[], user: User} = await res.json();
+    const res = await fetch(`${window.location.origin}/api/listings/${params.id}`, { method: "GET", cache: 'no-cache' });
+    const list: Listing & { reservations: Reservation[], user: User } = await res.json();
     setListing(list);
     return list;
   };
 
+  /**
+   * In this page component there are alot of functions defined that are for getting data related to a listing. These functions are not really related to the page itself, but rather a specific listing. Somewhere in the code base there should probably be a directory containing all of this.
+   */
   const getLocation = (value: string) => {
     const country = getByValue(value) || null;
     setLocation(country);
@@ -95,6 +109,18 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     try {
       if (isValidReservation) {
         setIsLoading(true);
+        /**
+         * window.location.origin is nice when you are developing locally and you want to use the local API. But what if you are developing the frontend locally and you want to use the API hosted elsewhere? You might have a dev/test/stage/prod environment that you want to use from localhost. This is another good reason for the generic request function. In the actual fetch call inside the request function, you can prepend the hostname to your endpoint, so consuming it would look like..
+         *
+         *  request<Reservation>("/api/reservations")
+         *
+         *  And in the request function you make the fetch call like something
+         *
+         *  request(endpoint: string) {
+         *    fetch(NEXT_PUBLIC_API_HOST + endpoint)
+         *    etc etc..
+         *  }
+         */
         const res = await fetch(window.location.origin + `/api/reservations`, {
           method: 'POST',
           headers: {
@@ -122,53 +148,53 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
 
   return (
     <Container banner>
-      { listing && (
+      {listing && (
         <div className='w-full min-h-screen'>
           <div className={`relative w-full h-[80vh] md:h-[50vh] bg-cover bg-center bg-no-repeat`} style={{ backgroundImage: `url('${listing.imageSrc}')` }}>
             <Filter center>
-              <h1 className='text-4xl sm:text-6xl text-light text-center font-bold text-wrap leading-[80px]'>{ listing.title }</h1>
-              <FavoriteButton listing={listing} /> 
+              <h1 className='text-4xl sm:text-6xl text-light text-center font-bold text-wrap leading-[80px]'>{listing.title}</h1>
+              <FavoriteButton listing={listing} />
             </Filter>
           </div>
           <div className='flex flex-col items-center py-4 px-4 sm:px-8 md:px-12'>
             <div className='w-full max-w-[900px]'>
-              { location && (
+              {location && (
                 <>
                   <div className='text-2xl text-light'>
-                    <span>{ listing.title }</span>
-                    <span className='capitalize'>, { listing.category }</span>
+                    <span>{listing.title}</span>
+                    <span className='capitalize'>, {listing.category}</span>
                   </div>
                   <div className='w-full text-grey text-base'>
-                    <span>{ location.region }, { location.label }</span>
+                    <span>{location.region}, {location.label}</span>
                   </div>
                 </>
               )}
               <hr className='w-full border-secondary my-4' />
               <div className='group w-full flex justify-between items-center'>
                 <div className='w-full flex items-center gap-2'>
-                  <span className='text-light'>{ listing.user.name }</span>
-                  <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
+                  <span className='text-light'>{listing.user.name}</span>
+                  <img src={listing.user.avatar || ''} className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
                 </div>
                 <MdOutlineChatBubble size={24} className='hidden group-hover:block text-secondary hover:text-grey cursor-pointer' onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)} />
               </div>
               <div className='w-full flex gap-4 text-grey text-base'>
-                <span>{ listing.guestCount } guests</span>
-                <span>{ listing.roomCount } rooms</span>
-                <span>{ listing.bathroomCount } bathrooms</span>
+                <span>{listing.guestCount} guests</span>
+                <span>{listing.roomCount} rooms</span>
+                <span>{listing.bathroomCount} bathrooms</span>
               </div>
               <hr className='w-full border-secondary my-4' />
               <div className='flex gap-2 items-center sm:items-end'>
                 <Icontype icon={categoryIcon} />
-                <span className='text-light capitalize leading-7'>{ listing.category }</span>
+                <span className='text-light capitalize leading-7'>{listing.category}</span>
               </div>
               <hr className='w-full border-secondary my-4' />
-              <p className='text-grey font-bold'>{ listing.description }</p>
+              <p className='text-grey font-bold'>{listing.description}</p>
               <hr className='w-full border-secondary my-4' />
               <div className='w-full flex flex-col md:flex-row flex-nowrap gap-4'>
-                { location && (
+                {location && (
                   <Map center={location.latlng} />
                 )}
-                <Calendar 
+                <Calendar
                   price={listing.price}
                   nightCount={nightCount}
                   setNightCount={setNightCount}
@@ -178,18 +204,18 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                   dateRange={dateRange}
                   reservations={listing?.reservations}
                 />
-              </div>              
+              </div>
             </div>
           </div>
-          <p className='text-error'>{ errorMessage }</p>
+          <p className='text-error'>{errorMessage}</p>
           <div className='w-full flex justify-center items-center mt-8'>
-            <button 
-              className={`flex gap-4 text-grey py-2 px-4 rounded-lg transition bg-secondary ${ (isLoading || !isValidReservation) ? 'hover:text-grey hover:bg-secondary cursor-not-allowed' : 'hover:text-light hover:bg-grey' }`} 
-              disabled={isLoading || !isValidReservation} 
+            <button
+              className={`flex gap-4 text-grey py-2 px-4 rounded-lg transition bg-secondary ${(isLoading || !isValidReservation) ? 'hover:text-grey hover:bg-secondary cursor-not-allowed' : 'hover:text-light hover:bg-grey'}`}
+              disabled={isLoading || !isValidReservation}
               onClick={() => (isLoading || !isValidReservation) ? setErrorMessage('Choose date range before making reservation') : makeReservation()}
             >
               <span>Rent listing</span>
-              { isLoading && <LoadingAnimation className='w-12 aspect-square' /> }
+              {isLoading && <LoadingAnimation className='w-12 aspect-square' />}
             </button>
           </div>
         </div>
