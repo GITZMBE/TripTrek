@@ -1,0 +1,11 @@
+Model Information:
+* title:	airpods_max_silver_ios14_rev1
+* source:	https://sketchfab.com/3d-models/airpods-max-silver-ios14-rev1-cd43b7dde4f74f16903de78e91a709d0
+* author:	Jackey&Design (https://sketchfab.com/1394725324zhang)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "airpods_max_silver_ios14_rev1" (https://sketchfab.com/3d-models/airpods-max-silver-ios14-rev1-cd43b7dde4f74f16903de78e91a709d0) by Jackey&Design (https://sketchfab.com/1394725324zhang) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
