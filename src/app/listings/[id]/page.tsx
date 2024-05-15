@@ -59,7 +59,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
   const { getByValue } = useCountries();
   
-  const [categoryIcon, setCategoryIcon] = useState<ReactElement<IconType> | null>(null);
+  const [categoryIcon, setCategoryIcon] = useState<string | null>(null);
 
   const getListing = async () => {
     const res = await fetch(`${window.location.origin}/api/listings/${ params.id }`, { method: "GET", cache: 'no-cache' });
@@ -78,7 +78,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     if (icons.length === 0) {
       return;
     };
-    const icon = icons[0].icon;
+    const icon = icons[0].category;
     setCategoryIcon(icon);
     return icon;
   }
