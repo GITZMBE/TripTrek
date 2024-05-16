@@ -12,7 +12,8 @@ import InfoStep from "@/src/components/listingSteps/InfoStep";
 import { CountrySelectValue } from "@/src/components/listingSteps/ui";
 import { LoadingAnimation } from "@/src/components/ui";
 import { useLoading } from "@/src/hooks";
-import { Listing } from "@prisma/client";
+import { request } from "@/src/utils";
+import { Category, Listing } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -29,7 +30,7 @@ enum Steps {
 }
 
 type FormFields = {
-  category: string;
+  category: Category;
   location: CountrySelectValue;
   guestCount: number;
   roomCount: number;
@@ -98,14 +99,19 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
   };
 
   const uploadListing = async (data: FormFields) => {
-    const res = await fetch(`${window.location.origin}/api/listings/upload`, {
+    const host = window.location.origin;
+    const uri = '/api/listings/upload';
+    const options: RequestInit = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
-    });
-    const newListing: Listing = await res.json();    
+      body: JSON.stringify({
+        ...data,
+        categoryId: data.category.id
+      }),
+    };
+    const newListing = await request<Listing>(host, uri, options);    
     return newListing;
   };
 
@@ -116,12 +122,9 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
       const listing = await uploadListing(data);
       toast.success(`'${listing.title}' uploaded successfully`);
       router.push('/');
-    } catch(error: any) {
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    setIsLoading(false);
   };
 
   const onError = (e: any) => console.log(e)
@@ -190,7 +193,7 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
           {(isClickable && step === Steps.Price) ? (
               <button type="submit" className="relative min-w-64 px-8 py-2 bg-accent/80 hover:bg-accent rounded-lg text-xl text-light text-center" disabled={!isClickable}>
                 Post your listing 
-                { isLoading && <LoadingAnimation className="absolute -top-1 right-2" width={64} height={64} /> }
+                { isLoading && <LoadingAnimation className="absolute -top-[3px] right-1" width={64} height={64} /> }
               </button>
             ) : (
               <button

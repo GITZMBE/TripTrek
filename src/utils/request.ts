@@ -1,8 +1,6 @@
 
 
-export const request = async <T>(endpoint: string, options: RequestInit) => {
-  const host = process.env.NEXT_PUBLIC_API_HOST;
-
+export const request = async <T>(host: string, endpoint: string, options: RequestInit) => {
   const res = await fetch(host + endpoint, options);
 
   if (res.ok) {

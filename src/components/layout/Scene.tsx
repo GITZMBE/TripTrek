@@ -3,9 +3,13 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import React, { useEffect, useRef } from "react";
+import React, { ComponentPropsWithRef, useEffect, useRef } from "react";
 
-export const ScenePage = () => {
+interface SceneProps extends ComponentPropsWithRef<"div"> {
+  path: string;
+}
+
+export const Scene = ({ path, ...props }: SceneProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +32,7 @@ export const ScenePage = () => {
     controls.maxPolarAngle = 3 * Math.PI / 4;
     controls.autoRotate = true;
     controls.rotateSpeed = .3;
-    controls.enableZoom = true;
+    controls.enableZoom = false;
     controls.target = new THREE.Vector3(0, -5, 0);
     controls.update();
 
@@ -72,7 +76,7 @@ export const ScenePage = () => {
       }
     };
 
-    loader.load("models_3D/stylised_sky_player_home_dioroma/scene.gltf", (gltf) => {
+    loader.load("models_3D" + path, (gltf) => {
       model = gltf.scene;
       model.traverse((child) => {
         if (child instanceof THREE.Mesh) {
@@ -104,12 +108,8 @@ export const ScenePage = () => {
   }, []);
 
   return (
-    <>
-      <div className="w-full min-h-[150vh] bg-primary"></div>
-      <div ref={ref} className='w-full max-h-[100vh] overflow-hidden'></div>
-      <div className="w-full min-h-[150vh] bg-primary"></div>
-    </>
+    <div ref={ref} className='w-full max-h-[100vh] overflow-hidden' {...props}></div>
   );
 };
 
-export default ScenePage;
+export default Scene;

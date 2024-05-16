@@ -1,5 +1,4 @@
 import prisma from "@/prisma";
-import { Chat } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export const GET = async (req: Request) => {
@@ -33,7 +32,11 @@ export const GET = async (req: Request) => {
     include: {
       owner: true,
       members: true,
-      listing: true,
+      listing: {
+        include: {
+          category: true
+        }
+      },
       messages: {
         orderBy: {
           createdAt: 'asc',
@@ -61,6 +64,16 @@ export const POST = async (req: Request) => {
         ownerId: userId,
         listingId: listingId,
         memberIds: [userId, chatToId],
+      },
+      include: {
+        owner: true,
+        members: true,
+        listing: {
+          include: {
+            category: true
+          }
+        },
+        messages: true
       }
     });
   } else if (userId && chatToId) {
@@ -69,6 +82,16 @@ export const POST = async (req: Request) => {
         title: title,
         ownerId: userId,
         memberIds: [userId, chatToId]
+      },
+      include: {
+        owner: true,
+        members: true,
+        listing: {
+          include: {
+            category: true
+          }
+        },
+        messages: true
       }
     });
   }

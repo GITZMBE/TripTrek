@@ -9,7 +9,8 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
     },
     include: {
       reservations: true,
-      user: true
+      user: true,
+      category: true
     }
   });
   return NextResponse.json(listing);

@@ -1,44 +1,56 @@
 'use client';
 
-import { DataLoader } from "@/src/components/dataHandlers";
+import { DataLoader, NoDataContent } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
-import { ReservationCard } from "@/src/components/ui";
+import { LoadingAnimation, ReservationCard } from "@/src/components/ui";
 import { useCurrentUser } from "@/src/hooks";
+import { request } from "@/src/utils";
 import { Listing, Reservation, User } from "@prisma/client";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const TripsPage = () => {
   const { currentUser: user } = useCurrentUser();
+  const [isLoading, setIsLoading] = useState(false);
+  const [reservations, setReservations] = useState<Reservation[] & { listing: Listing, user: User }[]>([]);
 
   const getUserReservations = async () => {
-    const res = await fetch(`${window.location.origin}/api/reservations?userId=${user?.id}`, {
+    const host = window.location.origin;
+    const uri = `/api/reservations?userId=${user?.id}`;
+    const options: RequestInit = {
       method: 'GET',
-    });
-    const userRes: Reservation[] & { listing: Listing, user: User }[] = await res.json() || [];
-    return userRes;
+    };
+    const userReservations = await request<Reservation[] & { listing: Listing, user: User }[]>(host, uri, options) || [];
+    return userReservations;
   };
 
-  const renderReservations = (data: Reservation[] & { listing: Listing, user: User }[]) => {
-    return data.map((reservation) => (
-      <ReservationCard key={reservation.id} reservation={reservation as Reservation & { listing: Listing, user: User }} />
-    ));
-  };
-
-  const noDataContent = (
-    <div className='w-full flex flex-col items-center gap-8'>
-      <img src='/data_not_found.png' className='w-48 opacity-50' alt='' />
-      <h1 className='text-light text-2xl'>No Reservations found</h1>
-      <Link href='/' className='text-grey hover:text-light'>
-        Go back to main page
-      </Link>
-    </div>
-  );
+  useEffect(() => {
+    try {
+      setIsLoading(true);
+      getUserReservations().then(setReservations);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return (
     <Container extraPadding>
       <h1 className='text-4xl text-light leading-[60px]'>My Trips</h1>
-      <DataLoader fetchData={getUserReservations} renderData={renderReservations} noDataContent={noDataContent} />
+      <DataLoader>
+        { isLoading ? (
+          <LoadingAnimation className="w-full" />
+        ) : reservations.length !== 0 ? (
+          reservations.map((reservation, i) => (
+            <ReservationCard key={i} reservation={reservation as Reservation & { listing: Listing, user: User }} />
+          ))
+        ) : (
+          <NoDataContent label='No Reservations found' image="/data_not_found.png" >
+            <Link href='/' className='text-grey hover:text-light'>
+              Go back to main page
+            </Link>
+          </NoDataContent>
+        )}
+      </DataLoader>
     </Container>
   );
 };

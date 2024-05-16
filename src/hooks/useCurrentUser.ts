@@ -2,6 +2,8 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { currentUserState } from "../recoil";
+import { request } from "../utils";
+import { User } from "@prisma/client";
 
 export const useCurrentUser = () => {
   const { data: session } = useSession();
@@ -11,10 +13,13 @@ export const useCurrentUser = () => {
     const getUser = async () => {
       if (!session?.user?.email || session?.user?.email === currentUser?.email) return null;
 
-      const res = await fetch(`${window.location.origin}/api/users?email=${session.user.email}`, { 
-        method: 'GET'
-      });
-      const user = await res.json() || null;
+      const host = window.location.origin;
+      const uri = `/api/users?email=${session.user.email}`;
+      const options: RequestInit = { 
+        method: 'GET',
+        cache: 'no-cache'
+      }
+      const user = await request<User>(host, uri, options) || null;
 
       setCurrentUser(user);
       return user;

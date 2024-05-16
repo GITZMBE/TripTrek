@@ -1,22 +1,35 @@
 import Link from "next/link";
-import { Icontype } from "../ui";
+import { Icon } from "../ui";
+import { ReactNode } from "react";
 
 interface NoDataContentProps {
   label: string;
-  icon: string;
+  image?: string;
+  icon?: string;
+  size?: number;
+  iconClasses?: string;
+  children?: ReactNode;
 }
 
 export const NoDataContent = ({
   label,
+  image,
   icon,
+  size,
+  iconClasses,
+  children
 }: NoDataContentProps) => {
   return (
     <div className='w-full flex flex-col items-center gap-4'>
-      <Icontype icon={icon} />
-      <span className='text-2xl text-grey'>{label}</span>
-      <Link href='/' className='text-secondary hover:text-light'>
-        Clear filters
-      </Link>
+      { image ? (
+        <img src={image} className={`w-48 opacity-50 ` + iconClasses} alt="" />
+      ) : icon ? (
+        <Icon icon={icon} size={size} className={iconClasses} />
+      ) : (
+        <></>
+      )}
+      <span className='text-2xl text-grey cursor-default'>{label}</span>
+      { children }
     </div>
   );
 };

@@ -25,17 +25,19 @@ export const GET = async (req: Request) => {
       });
     }
   } else {
-    listings = await prisma.listing.findMany({ 
-      where: { 
-        category: {
-          equals: category,
-          mode: 'insensitive'
-        }
+    const findCategory = await prisma.category.findFirst({
+      where: {
+        type: category
       },
-      orderBy: {
-        createdAt: 'desc'
+      include: {
+        listings: {
+          orderBy: {
+            createdAt: 'desc'
+          }
+        }
       }
     });
+    listings = findCategory?.listings || [];
   }
   
   return NextResponse.json(listings);

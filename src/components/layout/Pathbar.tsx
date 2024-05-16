@@ -13,17 +13,17 @@ const Pathbar = () => {
   const currentPath = paths.findLast((_) => true);
   const { currentUser: user } = useCurrentUser();
 
-  // useEffect(() => {
-  //   const isLoggedIn = user !== undefined && user !== null;
+  useEffect(() => {
+    const isLoggedIn = user !== undefined && user !== null;
 
-  //   if (!isLoggedIn && pathName !== "/login" && pathName !== "/signup") {
-  //     router.push("/login");
-  //   }
+    if (!isLoggedIn && pathName !== "/login" && pathName !== "/signup") {
+      router.push("/login");
+    }
 
-  //   if (isLoggedIn && (pathName === "/login" || pathName === "/signup")) {
-  //     router.push('/');
-  //   }
-  // }, [pathName, user]);
+    if (isLoggedIn && (pathName === "/login" || pathName === "/signup")) {
+      router.push('/');
+    }
+  }, [pathName, user]);
 
   return (
     <div className='flex gap-2 overflow-x-auto scrollbar-hidden'>

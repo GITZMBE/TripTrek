@@ -1,46 +1,58 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container } from "@/src/components/layout";
-import { ListingCard } from "@/src/components/ui";
+import { ListingCard, LoadingAnimation } from "@/src/components/ui";
 import { Listing } from "@prisma/client";
 import Link from "next/link";
-import { DataLoader } from "@/src/components/dataHandlers";
+import { DataLoader, NoDataContent } from "@/src/components/dataHandlers";
+import { request } from "@/src/utils";
 
 const UserListingsPage = ({ params }: { params: { id: string } }) => {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const getUsersListings = async () => {
-    const res = await fetch(`${window.location.origin}/api/users/${params.id}/listings`,
-      { method: "GET", cache: "no-cache" }
-    );
-    const list: Listing[] = (await res.json()) || [];
+    const host = window.location.origin;
+    const uri = `/api/users/${params.id}/listings`;
+    const options: RequestInit = { 
+      method: "GET", 
+      cache: "no-cache" 
+    };
+    const list = await request<Listing[]>(host, uri, options) || [];
     return list;
   };
 
-  const renderUsersListings = (data: Listing[]) => {
-    return data.map((listing: Listing) => (
-      <ListingCard key={listing.id} listing={listing} />
-    ));
-  };
-
-  const noDataContent = (
-    <div className='w-full flex flex-col items-center gap-8'>
-      <img src='/data_not_found.png' className='w-48 opacity-50' alt='' />
-      <h1 className='text-light text-2xl'>No Listings found</h1>
-      <Link href='/' className='text-grey hover:text-light'>
-        Go back to main page
-      </Link>
-    </div>
-  );
+  useEffect(() => {
+    try {
+      setIsLoading(true);
+      getUsersListings().then(setListings);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return (
     <Container extraPadding>
       <h1 className='text-4xl text-white font-bold'>My Listings</h1>
-      <DataLoader fetchData={getUsersListings} renderData={renderUsersListings} noDataContent={noDataContent} />
+      <DataLoader >
+        { isLoading ? (
+          <LoadingAnimation className="w-full" />
+        ) : listings.length > 0 ? (
+          listings.map(listing => (
+            <ListingCard key={listing.id} listing={listing} />
+          ))
+        ) : (
+          <NoDataContent label='You haven&apos;t yet uploaded any listing' image="/data_not_found.png">
+            
+          </NoDataContent>
+        )}
+      </DataLoader>
       <Link
         href={`/users/${params.id}/listings/upload`}
         className='px-4 py-2 rounded-lg bg-accent/75 hover:bg-accent text-light hover:text-white'
       >
-        Upload new Listing
+        Upload new listing here
       </Link>
     </Container>
   );

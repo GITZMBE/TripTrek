@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export const POST = async (req: Request) => {
   const body = await req.json();
   const {
-    category,
+    categoryId,
     location,
     guestCount,
     roomCount,
@@ -20,7 +20,7 @@ export const POST = async (req: Request) => {
     if (!userId) throw new Error("You need to be logged in");
 
     const formData = {
-      category,
+      categoryId,
       locationValue: location.value,
       guestCount,
       roomCount,

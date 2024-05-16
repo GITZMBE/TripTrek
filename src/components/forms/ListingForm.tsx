@@ -1,8 +1,8 @@
 "use client";
 
 import { CountryModel } from "@/src/models";
-import { Listing } from "@prisma/client";
-import React, { useEffect } from "react";
+import { Category, Listing } from "@prisma/client";
+import React from "react";
 import { useForm } from "react-hook-form";
 import {
   CountrySelect,
@@ -12,12 +12,13 @@ import {
 import { useLoading } from "@/src/hooks";
 import { CategorySelector } from "./ui";
 import { LoadingAnimation } from "../ui";
-import CategoryReactIconModel from "@/src/models/CategoryReactIconModel";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { request } from "@/src/utils";
+import ListingWithCategory from "@/src/models/ListingWithCategory";
 
 type FormFields = {
-  category: CategoryReactIconModel | null;
+  category: Category | null;
   categoryValue: string;
   location: CountrySelectValue;
   locationValue: string;
@@ -33,7 +34,7 @@ type FormFields = {
 interface ListingFormProps {
   listing: Listing;
   location: CountryModel;
-  category: CategoryReactIconModel | null;
+  category: Category | null;
 }
 
 const ListingForm = ({ listing, location, category }: ListingFormProps) => {
@@ -64,9 +65,7 @@ const ListingForm = ({ listing, location, category }: ListingFormProps) => {
   const { isLoading, setIsLoading } = useLoading();
 
   const isUpdateable =
-    (formData.category?.category !== listing?.category &&
-      formData.category?.category !== "" &&
-      formData.category?.category !== null) ||
+    (formData.category?.id !== listing.id && formData.category !== null) ||
     (formData.location?.value !== listing?.locationValue &&
       formData.location?.value !== null &&
       formData.location?.value !== undefined) ||
@@ -84,17 +83,16 @@ const ListingForm = ({ listing, location, category }: ListingFormProps) => {
       +formData.price > 0);
 
   const updateListing = async (data: any) => {
-    const res = await fetch(
-      `${window.location.origin}/api/listings/${listing.id}/update`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
-    const updatedListing = await res.json();
+    const host = window.location.origin;
+    const uri = `/api/listings/${listing.id}/update`;
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+    const updatedListing = await request<ListingWithCategory | { message: string }>(host, uri, options);
     return updatedListing;
   };
 
@@ -104,11 +102,13 @@ const ListingForm = ({ listing, location, category }: ListingFormProps) => {
       const { category, location, ...newData } = data;
       const updatedListing = await updateListing({
         ...newData,
-        categoryValue: data.category?.category || "",
+        categoryValue: category,
         locationValue: data.location.value
       });
-      if (updatedListing?.message) {
-        setError('root', { message: updatedListing });
+      if ('message' in updatedListing) {
+        setError('root', { message: updatedListing.message });
+        toast.error("Message wasn't sent.");
+        return;
       }
       toast.success(`'${updatedListing.title}' updated successfully`);
       router.refresh();

@@ -1,7 +1,7 @@
 "use client";
 
 import { DataLoader, NoDataContent } from "@/src/components/dataHandlers";
-import { Container } from "@/src/components/layout";
+import { Container, Scene } from "@/src/components/layout";
 import SlideShowBanner from "@/src/components/layout/SlideShowBanner";
 import { ListingCard, LoadingAnimation } from "@/src/components/ui";
 import Categorybar from "@/src/components/ui/Categorybar";
@@ -11,18 +11,6 @@ import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { request } from "../utils";
 
-interface NewDataLoaderProps {
-  children: React.ReactNode;
-}
-
-const NewDataLoader = ({ children }: NewDataLoaderProps) => {
-  return (
-    <div className='w-full flex flex-wrap justify-center md:justify-start gap-4 py-4'>
-      {children}
-    </div>
-  );
-};
-
 export default function Home() {
   const searchParams = useSearchParams();
   const [category, setCategory] = useState<string | null>(null);
@@ -30,29 +18,15 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   const getListings = async () => {
-    const url = `${window.location.origin}/api/listings${category === null || category === "" ? "" : `?category=${category}`}`;
+    const host = window.location.origin;
+    const uri = `/api/listings${category === null || category === "" ? "" : `?category=${category}`}`;
     const options: RequestInit = {
       method: "GET",
       cache: "no-cache",
     };
-    const data = await request<Listing[]>(url, options);
+    const data = await request<Listing[]>(host, uri, options);
     return data;
   };
-
-  const renderListings = (data: Listing[]) => {
-    return data.map((listing: Listing) => (
-      <ListingCard key={listing.id} listing={listing} />
-    ));
-  };
-
-  const noDataContent = (
-    <div className='w-full flex flex-col items-center gap-4'>
-      <span className='text-2xl text-grey'>No Listings found</span>
-      <Link href='/' className='text-secondary hover:text-light'>
-        Clear filters
-      </Link>
-    </div>
-  );
 
   useEffect(() => {
     const category = searchParams.get("category");
@@ -60,29 +34,35 @@ export default function Home() {
   }, [searchParams]);
 
   useEffect(() => {
-    getListings().then((res) => {setListings(res); setIsLoading(false)});
+    try {
+      setIsLoading(true);
+      getListings().then(setListings);
+    } finally {
+      setIsLoading(false)
+    }
+    
   }, [category]);
 
   return (
     <Container className='min-h-screen'>
       <SlideShowBanner />
       <Categorybar />
-      {/* <DataLoader
-        fetchData={getListings}
-        renderData={renderListings}
-        noDataContent={noDataContent}
-      /> */}
-      <NewDataLoader>
+      <DataLoader>
         { isLoading ? (
-          <LoadingAnimation />
+          <LoadingAnimation className="w-full" />
         ) : listings.length !== 0 ? (
           listings.map((listing, i) => (
             <ListingCard key={i} listing={listing} />
           ))
         ) : (
-          <NoDataContent label='No Listings found' icon='' />
+          <NoDataContent label='No Listings found' >
+            <Link href='/' className='text-secondary hover:text-light'>
+              Clear filters
+            </Link>
+          </NoDataContent>
         )}
-      </NewDataLoader>
+      </DataLoader>
+      <Scene path="/stylised_sky_player_home_dioroma/scene.gltf" className="my-12" />
     </Container>
   );
 }
