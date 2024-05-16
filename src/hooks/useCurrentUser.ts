@@ -1,6 +1,5 @@
-import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { currentUserState } from "../recoil";
 
