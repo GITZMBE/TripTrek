@@ -66,7 +66,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4">
-            <h2 className="leading-[80px] text-center font-bold text-grey text-6xl">User with id &apos;{ params.id }&apos; doesn't exist</h2>
+            <h2 className="leading-[80px] text-center font-bold text-grey text-6xl">User with id &apos;{ params.id }&apos; doesn&apos;t exist</h2>
             <button onClick={() => router.back()} className="text-xl text-grey hover:text-light">Go back</button>
           </div>
         ))}
