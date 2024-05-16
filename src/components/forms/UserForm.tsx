@@ -12,6 +12,7 @@ import { TfiReload } from "react-icons/tfi";
 import { signOut } from "next-auth/react";
 import { LoadingAnimation } from "../ui";
 import { toast } from "react-toastify";
+import { request } from "@/src/utils";
 
 interface UserFormProps {
   
@@ -54,17 +55,16 @@ export const UserForm = ({}: UserFormProps) => {
   const { isLoading, setIsLoading } = useLoading();
 
   const updateUserInfo = async (data: FormFields) => {
-    const res = await fetch(
-      `${window.location.origin}/api/users/${user?.id}/update`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
-    const updatedUser: User | { message: string } = await res.json();
+    const host = window.location.origin;
+    const uri = `/api/users/${user?.id}/update`;
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+    const updatedUser = request<User | { message: string }>(host, uri, options);
     return updatedUser;
   };
 
