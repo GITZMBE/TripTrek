@@ -16,9 +16,9 @@ export const Scene = ({ path, className, ...props }: SceneProps) => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, 2 * window.innerWidth / window.innerHeight, 0.1, 3000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    // const geometry = new THREE.PlaneGeometry(0, 0);
-    // const material = new THREE.MeshStandardMaterial({ color: 0x555D6B, side: THREE.DoubleSide });
-    // const ground = new THREE.Mesh(geometry, material);
+    const geometry = new THREE.PlaneGeometry(0, 0);
+    const material = new THREE.MeshStandardMaterial({ color: 0x555D6B, side: THREE.DoubleSide });
+    const ground = new THREE.Mesh(geometry, material);
     const ambientLight = new THREE.AmbientLight(0x404040, 50);
     const spotLight = new THREE.SpotLight(0xffffff, 500);
     const loader = new GLTFLoader();
@@ -33,7 +33,7 @@ export const Scene = ({ path, className, ...props }: SceneProps) => {
     controls.autoRotate = true;
     controls.rotateSpeed = .3;
     controls.enableZoom = false;
-    controls.target = new THREE.Vector3(0, -5, 0);
+    controls.target = new THREE.Vector3(0, -45, 0);
     controls.update();
 
     renderer.setSize(window.innerWidth, window.innerHeight / 2);
@@ -44,18 +44,18 @@ export const Scene = ({ path, className, ...props }: SceneProps) => {
 
     ref.current && ref.current.appendChild(renderer.domElement);
 
-    camera.position.set(-300, 120, 0);
-    // ground.position.set(0, -25, 0);
-    // ground.rotation.x = -Math.PI / 2;
-    // ground.castShadow = false;
-    // ground.receiveShadow = true;
+    camera.position.set(1.5, -44.85, 0);
+    ground.position.set(0, -25, 0);
+    ground.rotation.x = -Math.PI / 2;
+    ground.castShadow = false;
+    ground.receiveShadow = true;
 
     spotLight.position.set(0, 6, 6);
     spotLight.castShadow = true;
     spotLight.shadow.bias = -0.0001;
     spotLight.angle = Math.PI / 4;
 
-    // scene.add(ground);
+    scene.add(ground);
     scene.add(ambientLight);
     scene.add(spotLight);
 

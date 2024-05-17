@@ -61,7 +61,7 @@ export default function Home() {
           </NoDataContent>
         )}
       </DataLoader>
-      <Scene path="/stylised_sky_player_home_dioroma/scene.gltf" className="my-12" />
+      <Scene path="/Modern_House.glb" className="my-12" />
     </Container>
   );
 }
