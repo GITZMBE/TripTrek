@@ -9,6 +9,7 @@ import { TfiReload } from "react-icons/tfi";
 import { MdOutlineChatBubble } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { LoadingAnimation } from "@/src/components/ui";
+import { request } from "@/src/utils";
 
 const UserPage = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -17,8 +18,10 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   const {isLoading, setIsLoading} = useLoading(true);
 
   const getParamUser = async () => {
-    const res = await fetch(`${window.location.origin}/api/users/${params.id}`, { method: 'GET' });
-    const u: User | { message: string } = await res.json();
+    const host = window.location.origin;
+    const uri = `/api/users/${params.id}`;
+    const options: RequestInit = { method: 'GET' };
+    const u = await request<User | { message: string }>(host, uri, options);
 
     if ('message' in u) return;
 

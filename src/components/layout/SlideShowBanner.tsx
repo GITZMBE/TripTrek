@@ -6,6 +6,7 @@ import { Filter } from '../ui';
 import { useRouter } from 'next/navigation';
 import { user } from '@nextui-org/react';
 import { useCurrentUser } from '@/src/hooks';
+import { request } from '@/src/utils';
 
 const SlideShowBanner = () => {
   const router = useRouter();
@@ -20,15 +21,19 @@ const SlideShowBanner = () => {
   const isOwner = () => {
     return currentListing?.userId === user?.id;
   }
+  
+  const getListings = async () => {
+    const host = window.location.origin;
+    const uri = '/api/listings?amount=3';
+    const options: RequestInit = { 
+      method: 'GET' 
+    };
+    const data = await request<Listing[]>(host, uri, options) || [];
+    return data;
+  };
 
   useEffect(() => {
-    const getListings = async () => {
-      const res = await fetch(`${window.location.origin}/api/listings?amount=3`, { method: 'GET' });
-      const data: Listing[] = await res.json() || [];
-      setListings(data);
-    };
-
-    getListings();
+    getListings().then(setListings);
   }, []);
 
   useEffect(() => {

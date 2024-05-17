@@ -9,7 +9,7 @@ interface SceneProps extends ComponentPropsWithRef<"div"> {
   path: string;
 }
 
-export const Scene = ({ path, ...props }: SceneProps) => {
+export const Scene = ({ path, className, ...props }: SceneProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export const Scene = ({ path, ...props }: SceneProps) => {
   }, []);
 
   return (
-    <div ref={ref} className='w-full max-h-[100vh] overflow-hidden' {...props}></div>
+    <div ref={ref} className={`w-full max-h-[100vh] overflow-hidden ${className}`} {...props}></div>
   );
 };
 

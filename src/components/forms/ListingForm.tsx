@@ -6,7 +6,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import {
   CountrySelect,
-  CountrySelectValue,
   UploadImage,
 } from "../listingSteps/ui";
 import { useLoading } from "@/src/hooks";
@@ -15,12 +14,12 @@ import { LoadingAnimation } from "../ui";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { request } from "@/src/utils";
-import ListingWithCategory from "@/src/models/ListingWithCategory";
+import { ListingWithCategory } from "@/src/models";
 
 type FormFields = {
   category: Category | null;
   categoryValue: string;
-  location: CountrySelectValue;
+  location: CountryModel;
   locationValue: string;
   guestCount: string;
   roomCount: string;
@@ -65,7 +64,7 @@ const ListingForm = ({ listing, location, category }: ListingFormProps) => {
   const { isLoading, setIsLoading } = useLoading();
 
   const isUpdateable =
-    (formData.category?.id !== listing.id && formData.category !== null) ||
+    (formData.category?.id !== listing.categoryId && formData.category !== null && formData.category !== undefined) ||
     (formData.location?.value !== listing?.locationValue &&
       formData.location?.value !== null &&
       formData.location?.value !== undefined) ||
