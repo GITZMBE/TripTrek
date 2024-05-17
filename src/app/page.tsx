@@ -1,7 +1,7 @@
 "use client";
 
 import { DataLoader, NoDataContent } from "@/src/components/dataHandlers";
-import { Container, Scene } from "@/src/components/layout";
+import { Container, Scene, SplineScene } from "@/src/components/layout";
 import SlideShowBanner from "@/src/components/layout/SlideShowBanner";
 import { ListingCard, LoadingAnimation } from "@/src/components/ui";
 import Categorybar from "@/src/components/ui/Categorybar";
@@ -62,6 +62,7 @@ export default function Home() {
         )}
       </DataLoader>
       <Scene path="/Modern_House.glb" className="my-12" />
+      <SplineScene />
     </Container>
   );
 }
