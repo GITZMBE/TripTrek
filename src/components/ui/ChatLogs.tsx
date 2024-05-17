@@ -1,15 +1,17 @@
 'use client';
 
-import { Chat, Listing, Message, User } from '@prisma/client';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Message } from '@prisma/client';
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import TextMessage from './TextMessage';
 import { useCurrentUser } from '@/src/hooks';
 import { useRouter } from 'next/navigation';
-import { MdEdit, MdKeyboardArrowRight } from 'react-icons/md';
+import { MdEdit } from 'react-icons/md';
 import { FaAngleDoubleRight, FaUserCircle } from 'react-icons/fa';
+import { request } from '@/src/utils';
+import { ExtendedChat } from '@/src/models';
 
 interface IProps {
-  currentChat: Chat & { listing: Listing, owner: User, members: User[], messages: Message[] } | null;
+  currentChat: ExtendedChat | null;
   setCurrentChat: Dispatch<SetStateAction<any>>;
 }
 
@@ -20,17 +22,21 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
   const [titleInputValue, setTitleInputValue] = useState( currentChat?.title ? currentChat?.title : (currentChat?.owner && currentChat.listing) ? `${ currentChat?.owner.name }'s chat${ currentChat?.listingId && ` for '${ currentChat?.listing.title }'` }` : '' );
   const [editTitle, setEditTitle] = useState(false);
 
+  const host = window.location.origin;
+
   const getChat = async () => {
     if(!currentChat) return;
-    const res = await fetch(`${window.location.origin}/api/chats/${currentChat?.id}`, {
+    const uri = `/api/chats/${currentChat?.id}`;
+    const options: RequestInit = {
       method: "GET",
-    });
-    const chat = await res.json();
+    };
+    const chat = await request<ExtendedChat>(host, uri, options);
     return chat;
   };
 
   const handleSendMessage = async () => {
-    const res = await fetch(`${window.location.origin}/api/chats/message`, { 
+    const uri = `/api/chats/message`;
+    const options = { 
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -38,8 +44,8 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
         userId: user?.id,
         chatId: currentChat?.id
       })
-    });
-    const newMessage = await res.json();
+    };
+    const newMessage = await request<Message>(host, uri, options);
     const chat = await getChat();
     setCurrentChat(chat);
     setTextInputValue('');
@@ -48,19 +54,20 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
 
   const updateChatTitle = async () => {
     if (!currentChat || !currentChat.id) return;
-    const res = await fetch(`${window.location.origin}/api/chats/${currentChat.id}`, {
+    const uri = `/api/chats/${currentChat.id}`;
+    const options = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         title: titleInputValue === '' ? null : titleInputValue
       })
-    });
-    const newChat = await res.json() || currentChat;
+    };
+    const newChat = await request<ExtendedChat>(host, uri, options) || currentChat;
 
     if ('message' in newChat) return;
     
     setCurrentChat(newChat);
-    setTitleInputValue(newChat.title);
+    setTitleInputValue(newChat?.title || '');
     router.refresh();
   };
 
@@ -104,7 +111,7 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
               </div>
             </div>
             <div className='flex flex-col justify-end gap-2 p-2 flex-grow overflow-y-auto scrollbar-hidden'>
-              {currentChat.messages && currentChat.messages.map(message => (
+              { currentChat.messages && currentChat.messages.map(message => (
                 <TextMessage key={message.id} message={message} />
               ))}
             </div>

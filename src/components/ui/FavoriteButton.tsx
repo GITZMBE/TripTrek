@@ -1,11 +1,13 @@
 'use client';
 
 import { useCurrentUser } from '@/src/hooks';
-import { Listing } from '@prisma/client';
-import { signIn } from 'next-auth/react';
+import { request } from '@/src/utils';
+import { Listing, User } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import React from 'react'
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import Icon from './Icon';
+import { useRecoilState } from 'recoil';
+import { currentUserState } from '@/src/recoil';
 
 interface FavoriteButtonProps {
   listing: Listing;
@@ -14,6 +16,7 @@ interface FavoriteButtonProps {
 const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
   const router = useRouter();
   const { currentUser: user } = useCurrentUser();
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
 
   const isFavorite = () => {
     const favorites = user?.favoriteIds || [];
@@ -25,26 +28,34 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
     return listing.userId === user?.id;
   }
 
+  const host = window.location.origin;
+
   const handleLikeListing = async () => {
-    const res = await fetch(`${window.location.origin}/api/users/${user?.id}/favorites`, { 
+    const uri = `/api/users/${user?.id}/favorites`;
+    const options: RequestInit = { 
       method: 'POST',
+      cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ listingId: listing.id })
-    });
-    router.refresh();
+    };
+    const data = await request<User>(host, uri, options);
+    setCurrentUser(data);
   };
 
   const handleRemoveFavorite = async () => {
-    const res = await fetch(`${window.location.origin}/api/users/${user?.id}/favorites`, {
+    const uri = `/api/users/${user?.id}/favorites`;
+    const options: RequestInit = {
       method: 'DELETE',
+      cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ listingId: listing.id })
-    });
-    router.refresh();
+    };
+    const data = await request<User>(host, uri, options);
+    setCurrentUser(data);
   };
 
   return (
@@ -53,12 +64,11 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
         <span className='absolute top-4 right-4 text-light'>Owner</span>
       ) : isFavorite() ? (
         <div className='absolute top-4 right-4' onClick={e => {e.stopPropagation(); handleRemoveFavorite()}}>
-          <FaHeart className='text-love cursor-pointer' />
+          <Icon icon='heart' className='w-4 text-love cursor-pointer' size={16} />
         </div>
-        
       ) : (
         <div className='absolute top-4 right-4' onClick={e => {e.stopPropagation(); handleLikeListing()}}>
-          <FaRegHeart className=' text-light cursor-pointer' />
+          <Icon icon='emptyheart' className='w-4 text-light cursor-pointer' size={16} />
         </div>
       ) }    
     </>

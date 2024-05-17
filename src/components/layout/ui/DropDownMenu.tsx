@@ -6,6 +6,7 @@ import { User } from '@prisma/client';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { signOut } from 'next-auth/react';
 import { RxAvatar } from 'react-icons/rx';
+import { Icon } from '../../ui';
 
 interface DropDownMenu {
   user: User | null;
@@ -20,11 +21,14 @@ const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
 
   return (
     <>
-      <GiHamburgerMenu
-        size={24}
-        className='text-light hover:text-white cursor-pointer'
-        onClick={handleToggleMenu}
-      />
+      <button onClick={handleToggleMenu}>
+        <Icon 
+          icon='menu'
+          size={24}
+          className='text-light hover:text-white cursor-pointer'
+        />
+      </button>
+      
       <div
         className={`absolute top-12 right-0 flex flex-col min-w-52 overflow-hidden rounded-lg shadow-lg shadow-primary bg-secondary z-50 ${
           !isOpen && "hidden"
@@ -54,7 +58,7 @@ const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
                   alt=''
                 />
               ) : (
-                <RxAvatar size={32} className='text-grey' />
+                <Icon icon='avatar' size={32} className='w-8' />
               )}
             </div>
             <hr className='block sm:hidden border-primary border-thin mx-4' />

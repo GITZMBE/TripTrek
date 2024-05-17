@@ -4,6 +4,7 @@ import { Listing, Reservation, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { ComponentPropsWithoutRef } from "react";
 import { format } from "date-fns";
+import { request } from "@/src/utils";
 
 interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
   reservation: Reservation & { listing: Listing; user: User };
@@ -16,11 +17,12 @@ export const ReservationCard = ({
   const router = useRouter();
 
   const cancelReservation = async () => {
-    const res = await fetch(
-      `${window.location.origin}/api/reservations/${reservation.id}`,
-      { method: "DELETE" }
-    );
-    const deletedReservation = await res.json();
+    const host = window.location.origin;
+    const uri = `/api/reservations/${reservation.id}`;
+    const options: RequestInit = { 
+      method: "DELETE" 
+    };
+    const deletedReservation = await request<Reservation>(host, uri, options);
     return deletedReservation;
   };
 

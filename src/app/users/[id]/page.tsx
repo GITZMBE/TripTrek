@@ -9,6 +9,8 @@ import { TfiReload } from "react-icons/tfi";
 import { MdOutlineChatBubble } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { LoadingAnimation } from "@/src/components/ui";
+import { request } from "@/src/utils";
+import Image3D from "@/src/components/ui/Image3D";
 
 const UserPage = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -17,12 +19,14 @@ const UserPage = ({ params }: { params: { id: string } }) => {
   const {isLoading, setIsLoading} = useLoading(true);
 
   const getParamUser = async () => {
-    const res = await fetch(`${window.location.origin}/api/users/${params.id}`, { method: 'GET' });
-    const u: User | { message: string } = await res.json();
+    const host = window.location.origin;
+    const uri = `/api/users/${params.id}`;
+    const options: RequestInit = { method: 'GET' };
+    const u = await request<User | { message: string }>(host, uri, options);
 
     if ('message' in u) return;
 
-    setParamUser(u);
+    return u;
   };
 
   const handleReload = () => {
@@ -39,7 +43,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
 
     try {
       setIsLoading(true);
-      getParamUser();
+      getParamUser().then(u => u && setParamUser(u));
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +58,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
           <LoadingAnimation className="w-64 aspect-square" />
         ) : paramUser ? (
           <div className="w-full flex gap-8">
-            <img src={ paramUser?.avatar ? paramUser.avatar : '/male_default_avatar.png'} className="w-80 aspect-square object-cover object-center rounded-full shadow-lg shadow-[#111111]" alt="" />
+            <Image3D src={paramUser?.avatar || '/male_default_avatar.png'} />
             <div className='w-full h-full flex flex-col items-center gap-4'>
               <div className="w-full flex justify-end">
                 <TfiReload onClick={handleReload} size={24} className={`text-grey cursor-pointer ${ isLoading && 'animate-spin' }`} />

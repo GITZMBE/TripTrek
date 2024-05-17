@@ -6,6 +6,7 @@ import { RxAvatar } from "react-icons/rx";
 import { useToggleMenu } from "@/src/hooks";
 import DropDownMenu from "./ui/DropDownMenu";
 import { User } from "@prisma/client";
+import { Icon } from "../ui";
 
 interface NavbarProps {
   currentUser: User | null;
@@ -28,7 +29,7 @@ export const Navbar = ({ currentUser }: NavbarProps) => {
               alt=''
             />
           ) : (
-            <RxAvatar size={32} className='text-grey' />
+            <Icon icon='avatar' size={32} className='w-8' />
           )}
 
           <p className="text-white">{currentUser.name || currentUser.email}</p>

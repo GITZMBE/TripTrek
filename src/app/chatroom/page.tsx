@@ -3,48 +3,65 @@
 import { Container } from '@/src/components/layout'
 import { ChatLogs, ChatRecord, LoadingAnimation } from '@/src/components/ui';
 import { useCurrentUser, useLoading } from '@/src/hooks';
+import { ExtendedChat, ExtendedChatNoMessages } from '@/src/models';
+import { request } from '@/src/utils';
 import { Chat, Listing, Message, User } from '@prisma/client';
 import { useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const Chatroompage = () => {
   const { currentUser: user } = useCurrentUser();
-  const [userChats, setUserChats] = useState<Chat[] & { listing: Listing, members: User[], owner: User }[]>([]);
+  const [userChats, setUserChats] = useState<ExtendedChat[]>([]);
   const { isLoading, setIsLoading } = useLoading(true);
 
   // query params
   const [listingId, setListingId] = useState<string | null>(null);
   const [chatWith, setChatWith] = useState<string | null>(null);
 
-  const [currentChat, setCurrentChat] = useState<Chat & { listing: Listing, owner: User, members: User[], messages: Message[] } | null>(null);
+  const [currentChat, setCurrentChat] = useState<ExtendedChat | null>(null);
   const searchParams = useSearchParams();
 
+  const host = window.location.origin;
+
   const setUsersChats = async () => {
-    const res = await fetch(`${window.location.origin}/api/chats?userId=${user?.id}`, { method: 'GET', cache: 'no-cache' });
-    const chats: Chat[] & { listing: Listing, members: User[], owner: User }[] = await res.json() || [];
+    const uri = `/api/chats?userId=${user?.id}`;
+    const options: RequestInit = { 
+      method: 'GET', 
+      cache: 'no-cache' 
+    };
+    const chats = await request<ExtendedChat[] | { message: string }>(host, uri, options) || [];
+
+    if ('message' in chats) return;
+
     setUserChats(chats);
   };
 
   const openChatWithUser = async () => {
-    let res;
-    let chats: Chat[] & { listing: Listing, owner: User, members: User[], messages: Message[] }[] | { message: string } = [];
+    let chats: ExtendedChat[] | { message: string } = [];
 
     if (chatWith && listingId) {
-      res = await fetch(`${window.location.origin}/api/chats?userId=${user?.id}&chatToId=${chatWith}&listingId=${listingId}`, { method: 'GET' });
-      chats = await res.json();
+      const uri = `/api/chats?userId=${user?.id}&chatToId=${chatWith}&listingId=${listingId}`;
+      const options: RequestInit = { 
+        method: 'GET' 
+      };
+      chats = await request<ExtendedChat[] | { message: string }>(host, uri, options);
     } else if (chatWith) {
-      res = await fetch(`${window.location.origin}/api/chats?userId=${user?.id}&chatToId=${chatWith}`, { method: 'GET' });
-      chats = await res.json();
+      const uri = `/api/chats?userId=${user?.id}&chatToId=${chatWith}`;
+      const options: RequestInit = { 
+        method: 'GET' 
+      };
+      chats = await request<ExtendedChat[] | { message: string }>(host, uri, options);
     }
 
     if ('message' in chats) return;
 
     if (chats.length === 0 && user?.id ) {
-      let res: Response | undefined = undefined;
-      let newChat: Chat & { listing: Listing, owner: User, members: User[], messages: Message[] };
+      let newChat: ExtendedChat | { message: string } | null = null;
+
+      const uri = '/api/chats';
 
       if (chatWith && listingId) {
-        res = await fetch(`${window.location.origin}/api/chats`, { 
+        const options: RequestInit = { 
           method: 'POST', 
           headers: {'Contend-Type': 'application/json'}, 
           body: JSON.stringify({ 
@@ -52,20 +69,22 @@ const Chatroompage = () => {
             chatToId: chatWith, 
             listingId: listingId
           })
-        });
+        };
+        newChat = await request<ExtendedChat | { message: string }>(host, uri, options);
       } else if (chatWith) {
-        res = await fetch(`${window.location.origin}/api/chats`, { 
+        const options: RequestInit = { 
           method: 'POST', 
           headers: {'Contend-Type': 'application/json'}, 
           body: JSON.stringify({ 
             userId: user?.id, 
             chatToId: chatWith
           })
-        });
+        };
+        newChat = await request<ExtendedChat | { message: string }>(host, uri, options);
       }
-      
-      if (!res) return;
-      newChat = await res.json();
+
+      if (newChat === null || 'message' in newChat) return;
+
       setCurrentChat(newChat);
       return;
     }
@@ -106,7 +125,7 @@ const Chatroompage = () => {
               <LoadingAnimation className='w-32 aspect-square' />
             ) : userChats.length > 0 ? (
               userChats.map((chat) => (
-                <ChatRecord key={chat.id} currentChat={currentChat} chat={chat as Chat & { listing: Listing, members: User[], owner: User }} setCurrentChat={setCurrentChat} />
+                <ChatRecord key={chat.id} currentChat={currentChat} chat={chat as ExtendedChatNoMessages} setCurrentChat={setCurrentChat} />
               ))
             ) : (
               <div className='flex flex-col items-center py-8 gap-2'>

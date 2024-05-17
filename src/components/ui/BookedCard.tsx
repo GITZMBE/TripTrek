@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { ComponentPropsWithoutRef } from "react";
 import { format } from "date-fns";
 import { RxAvatar } from "react-icons/rx";
+import { request } from "@/src/utils";
 
 interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
   reservation: Reservation & { listing: Listing; user: User };
@@ -13,8 +14,11 @@ interface ReservationCardProps extends ComponentPropsWithoutRef<"button"> {
 export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
   const router = useRouter();
 
+  const host = window.location.origin;
+  const uri = `/api/reservations/${reservation.id}`;
+
   const handleAccept = () => {
-    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, { 
+    const options: RequestInit = { 
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -22,12 +26,13 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
       body: JSON.stringify({
         accept: true
       })
-    });
+    };
+    request<Reservation>(host, uri, options);
     router.refresh();
   };
 
   const handleDecline = () => {
-    fetch(`${window.location.origin}/api/reservations/${reservation.id}`, { 
+    const options: RequestInit = { 
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -35,7 +40,8 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
       body: JSON.stringify({
         accept: false
       })
-    });
+    };
+    request<Reservation>(host, uri, options);
     router.refresh();
   };
 

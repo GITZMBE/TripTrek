@@ -11,6 +11,8 @@ import { FaGithub } from "react-icons/fa";
 import { signIn } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { request } from "@/src/utils";
+import { User } from "@prisma/client";
 
 type FormFields = {
   email: string;
@@ -23,23 +25,27 @@ export const SignupForm = () => {
   const { register, handleSubmit, formState: { errors }, setError } = useForm<FormFields>();
   const { isLoading, setIsLoading } = useLoading();
 
+  const host = window.location.origin;
+
   const findUser = async (formData: FormFields) => {
-    const res = await fetch(`${window.location.origin}/api/login`, {
+    const uri = '/api/login';
+    const options: RequestInit = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
-    });
-    const user_token = await res.json();
+    };
+    const user_token = await request<{ user: User, token: string } | { message: string }>(host, uri, options);
     return user_token;
   };
 
   const signup = async (formData: FormFields) => {
-    const res = await fetch(`${window.location.origin}/api/signup`, {
+    const uri = '/api/signup';
+    const options: RequestInit = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
-    });
-    const user = await res.json();
+    };
+    const user = await request<User | { message: string }>(host, uri, options);
     return user;
   };
 
@@ -47,7 +53,7 @@ export const SignupForm = () => {
     setIsLoading(true);
     const registeredUser = await signup(data);
 
-    if (registeredUser?.message) {
+    if ('message' in registeredUser) {
       setError('root', {
         type: 'manual',
         message: registeredUser.message
@@ -60,7 +66,7 @@ export const SignupForm = () => {
 
     const user_token = await findUser(data);
 
-    if (user_token?.message) {
+    if ('message' in user_token) {
       setError("root", {
         type: "manual",
         message: user_token.message

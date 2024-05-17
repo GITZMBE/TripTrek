@@ -1,5 +1,6 @@
 import prisma from "@/prisma";
 import bcrypt from "bcrypt";
+import { NextResponse } from "next/server";
 
 export const POST = async (req: Request, res: Response) => {
   const { email, username, password } = await req.json();
@@ -7,7 +8,7 @@ export const POST = async (req: Request, res: Response) => {
 
   const existingUser = await prisma.user.findUnique({ where: { email: email } })
   if (existingUser) {
-    return new Response(JSON.stringify({ message: "That email is already connected to a user" }));
+    return NextResponse.json({ message: "That email is already connected to a user" });
   };
 
   const data = {
@@ -19,5 +20,5 @@ export const POST = async (req: Request, res: Response) => {
     data: data
   });
 
-  return new Response(JSON.stringify({ data: user }), { status: 200 });
+  return NextResponse.json(user);
 };

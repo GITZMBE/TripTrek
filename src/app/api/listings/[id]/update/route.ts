@@ -62,7 +62,10 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
       where: {
         id: id,
       },
-      data: dataToUpdate
+      data: dataToUpdate,
+      include: {
+        category: true
+      }
     });
 
     return NextResponse.json(updatedListing);

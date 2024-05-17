@@ -1,56 +1,27 @@
 'use client';
 
-import { GiBarn, GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, GiForestCamp, GiIsland, GiWindmill } from 'react-icons/gi';
-import { MdOutlineChatBubble, MdOutlineVilla } from 'react-icons/md';
-import { FaSkiing } from 'react-icons/fa';
-import { BsSnow } from 'react-icons/bs';
-import { IoDiamond } from 'react-icons/io5';
-import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
 import { Container } from '@/src/components/layout'
-import { Calendar, Filter, Icontype, LoadingAnimation } from '@/src/components/ui';
+import { Calendar, Filter, Icon, LoadingAnimation } from '@/src/components/ui';
 import FavoriteButton from '@/src/components/ui/FavoriteButton';
-import { Listing, Reservation, User } from '@prisma/client';
-import React, { ReactElement, useEffect, useState } from 'react';
-import 'leaflet/dist/leaflet.css';
+import { Category, Listing, Reservation, User } from '@prisma/client';
+import React, { useEffect, useState } from 'react';
 import { useCountries, useCurrentUser, useErrorMessage, useLoading } from '@/src/hooks';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { IconType } from 'react-icons';
 import { DateValue, RangeValue } from '@nextui-org/react';
-import CategoryReactIconModel from '@/src/models/CategoryReactIconModel';
-import { dateValueToDate } from '@/src/utils';
+import { dateValueToDate, request } from '@/src/utils';
 import { CountryModel } from '@/src/models';
 import { toast } from 'react-toastify';
 import ListingForm from '@/src/components/forms/ListingForm';
+import 'leaflet/dist/leaflet.css';
 const Map = dynamic(() => import('@/src/components/listingSteps/ui/Map'), {
   ssr: false,
 });
 
-const iconComponents: CategoryReactIconModel[] = [
-  new CategoryReactIconModel("beach", <TbBeach className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("windmills", <GiWindmill className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("modern", <MdOutlineVilla className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("countryside", <TbMountain className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("pools", <TbPool className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("islands", <GiIsland className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("lake", <GiBoatFishing className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("skiing", <FaSkiing className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("castles", <GiCastle className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("camping", <GiForestCamp className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("artic", <BsSnow className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("cave", <GiCaveEntrance className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("desert", <GiCactus className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("barns", <GiBarn className='text-grey w-12 h-12' />),
-  new CategoryReactIconModel("lux", <IoDiamond className='text-grey w-12 h-12' />),
-];
-
-const initialDateRange = undefined;
-
 const ListingPage = ({ params }: { params: { id: string} }) => {
   const { currentUser: user } = useCurrentUser();
-  const [listing, setListing] = useState<(Listing & { reservations: Reservation[], user: User}) | null>(null);
+  const [listing, setListing] = useState<(Listing & { reservations: Reservation[], user: User, category: Category }) | null>(null);
   const [location, setLocation] = useState<CountryModel | null>(null);
-  const [category, setCategory] = useState<CategoryReactIconModel | null>(null);
   const router = useRouter();
   const { isLoading, setIsLoading } = useLoading();
   const {errorMessage, setErrorMessage} = useErrorMessage(null);
@@ -58,47 +29,34 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
   const [totalPrice, setTotalPrice] = useState<number>(listing?.price || 0);
   const [dateRange, setDateRange] = useState<RangeValue<DateValue>>();
   const { getByValue } = useCountries();
-  
-  const [categoryIcon, setCategoryIcon] = useState<ReactElement<IconType> | null>(null);
 
   const getListing = async () => {
-    const res = await fetch(`${window.location.origin}/api/listings/${ params.id }`, { method: "GET", cache: 'no-cache' });
-    const list: Listing & { reservations: Reservation[], user: User} = await res.json();
+    const host = window.location.origin;
+    const uri = `/api/listings/${params.id}`;
+    const options: RequestInit = {
+      method: 'GET',
+      cache: 'no-cache'
+    };
+    const list = await request<Listing & { reservations: Reservation[], user: User, category: Category }>(host, uri, options);
     setListing(list);
     return list;
   };
 
   const getLocation = (value: string) => {
     const country = getByValue(value) || null;
-    setLocation(country);
-  };
-
-  const getCategoryIcon = (cat: string) => {
-    const icons = iconComponents.filter(({ category }) => category === cat.toLowerCase());
-    if (icons.length === 0) {
-      return;
-    };
-    const icon = icons[0].icon;
-    setCategoryIcon(icon);
-    return icon;
-  }
-
-  const getCategory = async (cat: string) => {
-    const val = iconComponents.filter(c => c.category === cat)[0];
-    setCategory(val);
-    return val;
-  };
-
-  const getData = async () => {
-    const list = await getListing();
-    getLocation(list.locationValue);
-    getCategory(list.category);
-    getCategoryIcon(list.category);
+    return country;
   };
 
   useEffect(() => {
-    getData();
+    getListing().then(setListing);
   }, []);
+
+  useEffect(() => {
+    if (!listing) return;
+
+    const loc = getLocation(listing.locationValue);
+    setLocation(loc);
+  }, [listing]);
 
   const isValidReservation = dateRange !== undefined && dateRange.start !== undefined && dateRange.end !== undefined && user?.id && listing?.id && totalPrice > 0;
 
@@ -106,7 +64,9 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     try {
       if (isValidReservation) {
         setIsLoading(true);
-        const res = await fetch(window.location.origin + `/api/reservations`, {
+        const host = window.location.origin;
+        const uri = '/api/reservations';
+        const options: RequestInit = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -118,8 +78,8 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
             endDate: dateValueToDate(dateRange.end!),
             totalPrice: totalPrice
           })
-        });
-        const reservation: Reservation & { listing: Listing } = await res.json();
+        };
+        const reservation = await request<Reservation & { listing: Listing }>(host, uri, options);
         toast.success(`Reservation made for '${reservation.listing.title}'`);
         router.push(`/reservations/${reservation.id}`);
         return reservation;
@@ -127,7 +87,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     } catch (err: any) {
       setErrorMessage(err);
     } finally {
-      setDateRange(initialDateRange);
+      setDateRange(undefined);
       setIsLoading(false);
     }
   };
@@ -136,7 +96,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     <Container banner={user?.id !== listing?.userId} extraPadding={user?.id === listing?.userId}>
       { (listing && location) && (
         user?.id === listing?.userId ? (
-          <ListingForm listing={listing} location={location} category={category} />
+          <ListingForm listing={listing} location={location} category={listing.category} />
         ) : (
           <div className='w-full min-h-screen'>
             <div className={`relative w-full h-[80vh] md:h-[50vh] bg-cover bg-center bg-no-repeat`} style={{ backgroundImage: `url('${listing.imageSrc}')` }}>
@@ -151,7 +111,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                   <>
                     <div className='text-2xl text-light'>
                       <span>{ listing.title }</span>
-                      <span className='capitalize'>, { listing.category }</span>
+                      <span className='capitalize'>, { listing.category.type }</span>
                     </div>
                     <div className='w-full text-grey text-base'>
                       <span>{ location.region }, { location.label }</span>
@@ -164,7 +124,9 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                     <span className='text-light'>{ listing.user.name }</span>
                     <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
                   </button>
-                  <MdOutlineChatBubble size={24} className='text-secondary hover:text-grey cursor-pointer' onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)} />
+                  <button onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)}>
+                    <Icon icon='chatbubble' size={24} className='text-secondary hover:text-grey cursor-pointer' />
+                  </button>
                 </div>
                 <div className='w-full flex gap-4 text-grey text-base'>
                   <span>{ listing.guestCount } guests</span>
@@ -173,8 +135,8 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                 </div>
                 <hr className='w-full border-secondary my-4' />
                 <div className='flex gap-2 items-center sm:items-end'>
-                  <Icontype icon={categoryIcon} />
-                  <span className='text-light capitalize leading-7'>{ listing.category }</span>
+                  <Icon icon={ listing.category.type } size={40} className='w-10' />
+                  <span className='text-light capitalize leading-7 cursor-default'>{ listing.category?.type }</span>
                 </div>
                 <hr className='w-full border-secondary my-4' />
                 <p className='text-grey font-bold'>{ listing.description }</p>

@@ -9,6 +9,7 @@ import { getServerSession } from "next-auth";
 import { getCurrentUser } from "@/src/actions";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,6 +35,18 @@ export default async function RootLayout({
 
   return (
     <html lang='en' suppressHydrationWarning>
+      <Head>
+        <script type="importmap">
+          {`
+          {
+            "imports": {
+              "three": "https://cdn.jsdelivr.net/npm/three@<version>/build/three.module.js",
+              "three/addons/": "https://cdn.jsdelivr.net/npm/three@<version>/examples/jsm/"
+            }
+          }
+          `}
+        </script>
+      </Head>
       <body >
         <NextAuthProvider session={session}>
           <NextuiProvider>
