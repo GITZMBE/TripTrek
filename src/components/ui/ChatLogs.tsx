@@ -98,9 +98,9 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
                     {currentChat.title ? currentChat.title : currentChat?.owner ? `${currentChat.owner.name}'s chat${currentChat.listing && ` for '${currentChat.listing.title}'`}` : ''}
                     <span>
                       { currentChat.members && currentChat.members.map(member => member?.avatar ? (
-                        <img src={member.avatar} className='w-10 aspect-square rounded-full object-center object-cover' alt="" />
+                        <img key={member.id} src={member.avatar} className='w-10 aspect-square rounded-full object-center object-cover' alt="" />
                       ) : (
-                        <FaUserCircle size={40} className='text-grey' />
+                        <FaUserCircle key={member.id} size={40} className='text-grey' />
                       ))}
                     </span>
                   </p>

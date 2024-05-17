@@ -9,9 +9,9 @@ import {
   PriceStep,
 } from "@/src/components/listingSteps";
 import InfoStep from "@/src/components/listingSteps/InfoStep";
-import { CountrySelectValue } from "@/src/components/listingSteps/ui";
 import { LoadingAnimation } from "@/src/components/ui";
 import { useLoading } from "@/src/hooks";
+import { CountryModel } from "@/src/models";
 import { request } from "@/src/utils";
 import { Category, Listing } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -31,7 +31,7 @@ enum Steps {
 
 type FormFields = {
   category: Category;
-  location: CountrySelectValue;
+  location: CountryModel;
   guestCount: number;
   roomCount: number;
   bathroomCount: number;
