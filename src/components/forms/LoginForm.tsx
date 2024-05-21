@@ -26,6 +26,7 @@ export const LoginForm = () => {
     try {
       setIsLoading(true);
       const res = await signIn('credentials', data);
+      console.log(res)
       toast.success('Login Successful');
       router.push("/");
     } catch(error: any) {
@@ -61,8 +62,8 @@ export const LoginForm = () => {
         isLoading={isLoading}
       />
       <hr className="w-full border-secondary" />
-      <FormButton label="Login with Google" outline icon={FcGoogle} onClick={() => signIn('google')} />
-      <FormButton label="Login with Github" outline icon={FaGithub} onClick={() => signIn('github')} />
+      <FormButton label="Sign in with Google" outline icon={FcGoogle} onClick={() => signIn('google')} />
+      <FormButton label="Sign in with Github" outline icon={FaGithub} onClick={() => signIn('github')} />
       <Link className='text-light/50 hover:text-light' href='/signup'>
         Do not have an accout? Sign up here
       </Link>

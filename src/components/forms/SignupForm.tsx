@@ -115,13 +115,13 @@ export const SignupForm = () => {
       />
       <hr className="w-full border-secondary" />
       <FormButton
-        label='Login with Google'
+        label='Sign in with Google'
         outline
         icon={FcGoogle}
         onClick={() => signIn("google")}
       />
       <FormButton
-        label='Login with Github'
+        label='Sign in with Github'
         outline
         icon={FaGithub}
         onClick={() => signIn("github")}

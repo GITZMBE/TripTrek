@@ -16,8 +16,10 @@ model User {
   id             String        @id @default(cuid())
   name           String
   email          String        @unique
+  emailVerified  DateTime?
   hashedPassword String?
   avatar         String?
+  image          String?
   favoriteIds    String[]
   accounts       Account[]
   ownChats       Chat[]        @relation("owner")
@@ -35,7 +37,7 @@ model Account {
   providerAccountId String?
   refresh_token     String?
   access_token      String?
-  expires_at        DateTime?
+  expires_at        Int?
   token_type        String?
   scope             String?
   id_token          String?
