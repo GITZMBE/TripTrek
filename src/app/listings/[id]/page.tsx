@@ -122,7 +122,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                 <div className='w-full flex justify-between items-center'>
                   <button className='w-fit flex items-center gap-2 cursor-pointer' onClick={e => {e.stopPropagation(); router.push(`/users/${ listing.user.id }`)}}>
                     <span className='text-light'>{ listing.user.name }</span>
-                    <img src={ listing.user.avatar || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
+                    <img src={ listing.user.avatar || listing.user.image || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
                   </button>
                   <button onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)}>
                     <Icon icon='chatbubble' size={24} className='text-secondary hover:text-grey cursor-pointer' />

@@ -83,7 +83,7 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
               <p>ID: { reservation.id }</p>
               <span>Arrival Date: { format(reservation.startDate, "MMMM d'th' yyyy") }</span>
               <span>Last Date: { format(reservation.endDate, "MMMM d'th' yyyy") }</span>
-              <span className='flex items-center gap-2'>Reserved by: <Link href={`/users/${ reservation.userId }`} className='flex items-center gap-2'><img src={reservation.user?.avatar || '/male_default_avatar.png'} className='w-8 aspect-square object-center object-cover rounded-full' />{ reservation.user.name }</Link></span>
+              <span className='flex items-center gap-2'>Reserved by: <Link href={`/users/${ reservation.userId }`} className='flex items-center gap-2'><img src={reservation.user?.avatar || reservation.user?.image || '/male_default_avatar.png'} className='w-8 aspect-square object-center object-cover rounded-full' />{ reservation.user.name }</Link></span>
             </div>
             <div className='w-full flex justify-start'>
               <button className={`flex items-center gap-2 text-grey border-grey border-2 py-2 px-4 disabled:cursor-not-allowed ${ reservation.isAccepted && 'hover:text-light hover:border-light' }`} onClick={handleDownload} disabled={!reservation.isAccepted} >

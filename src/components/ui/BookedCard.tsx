@@ -78,9 +78,9 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
             <span className="max-w-24 text-nowrap overflow-ellipsis overflow-hidden">
               {reservation.user.name}
             </span>
-            { reservation.user.avatar ? (
-              <img src={ reservation.user.avatar } className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
-            ): (
+            { (reservation.user.avatar || reservation.user.image) ? (
+              <img src={ reservation.user.avatar || reservation.user.image || '' } className="w-8 aspect-square rounded-full object-cover object-center" alt="" />
+            ) : (
               <RxAvatar size={32} className='text-grey' />
             )}
           </span>

@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { request } from "../utils";
-import YouTubePlayer from "../components/YouTubePlayer";
+import { VideoPlayer } from "../components/videoplayers";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -62,7 +62,17 @@ export default function Home() {
           </NoDataContent>
         )}
       </DataLoader>
-      <Scene path="/farm_house.glb" className="my-12" />
+      <div className="w-full space-y-8">
+        <h2 className="w-full text-center text-4xl text-light">Example Listing</h2>
+        <div className="w-full flex flex-col lg:flex-row gap-12">
+          <div className="w-full lg:w-1/2 h-1/2">
+            <Scene path="/farm_house.glb" className="my-12" full={window.innerWidth < 1024} half={window.innerWidth >= 1024} />
+          </div>
+          <div className="w-full flex justify-center items-center">
+            <VideoPlayer className="relative w-full max-w-[600px] aspect-video" src="/commercials/livingroom.mp4" type="video/mp4" autoPlay loop muted />
+          </div>
+        </div>        
+      </div>
     </Container>
   );
 }

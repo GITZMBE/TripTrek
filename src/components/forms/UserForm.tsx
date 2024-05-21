@@ -32,7 +32,7 @@ export const UserForm = ({}: UserFormProps) => {
     name: user?.name || '',
     email: user?.email || '',
     password: '',
-    image: user?.avatar || null
+    image: user?.avatar || user?.image || null
   }}, [user]);
   const {
     unregister,

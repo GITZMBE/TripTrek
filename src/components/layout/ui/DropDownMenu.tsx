@@ -3,9 +3,7 @@
 import React, { Dispatch } from 'react'
 import NavLink from './NavLink';
 import { User } from '@prisma/client';
-import { GiHamburgerMenu } from 'react-icons/gi';
 import { signOut } from 'next-auth/react';
-import { RxAvatar } from 'react-icons/rx';
 import { Icon } from '../../ui';
 
 interface DropDownMenu {
@@ -50,10 +48,10 @@ const DropDownMenu = ({ user, isOpen, setIsOpen }: DropDownMenu) => {
         ) : (
           <>
             <div className='flex sm:hidden gap-2 md:gap-4 items-center py-2 px-4'>
-              <p className="w-full text-white text-ellipsis">{user.name || user.email}</p>
-              {user.avatar ? (
+              <p className="w-full text-white text-ellipsis">{ user.name || user.email }</p>
+              { (user.avatar || user.image) ? (
                 <img
-                  src={user.avatar || ""}
+                  src={ user.avatar || user.image || "" }
                   className='w-8 aspect-square object-cover object-center rounded-full'
                   alt=''
                 />

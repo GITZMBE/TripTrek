@@ -1,4 +1,5 @@
 import React, { ComponentPropsWithoutRef } from 'react';
+import { Filter } from '../ui';
 
 interface IProps extends ComponentPropsWithoutRef<"video"> {
   src: string;

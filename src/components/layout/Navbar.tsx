@@ -22,9 +22,9 @@ export const Navbar = ({ currentUser }: NavbarProps) => {
           href={`/users/${currentUser?.id}`}
           className='hidden sm:flex gap-2 md:gap-4 items-center'
         >
-          {currentUser.avatar ? (
+          { (currentUser.avatar || currentUser.image) ? (
             <img
-              src={currentUser.avatar || ""}
+              src={currentUser.avatar || currentUser.image || ""}
               className='w-8 aspect-square object-cover object-center rounded-full'
               alt=''
             />

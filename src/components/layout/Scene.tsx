@@ -7,14 +7,16 @@ import React, { ComponentPropsWithRef, useEffect, useRef } from "react";
 
 interface SceneProps extends ComponentPropsWithRef<"div"> {
   path: string;
+  full?: boolean;
+  half?: boolean;
 }
 
-export const Scene = ({ path, className, ...props }: SceneProps) => {
+export const Scene = ({ path, full, half, className, ...props }: SceneProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(55, 2 * window.innerWidth / window.innerHeight, 0.1, 3000);
+    const camera = new THREE.PerspectiveCamera(55, full ? 2 * window.innerWidth / window.innerHeight : half ? (window.innerWidth / 2) / (2 * window.innerHeight / 6) : window.innerWidth / window.innerHeight, 0.1, 3000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     const geometry = new THREE.PlaneGeometry(0, 0);
     const material = new THREE.MeshStandardMaterial({ color: 0x555D6B, side: THREE.DoubleSide });
@@ -36,7 +38,7 @@ export const Scene = ({ path, className, ...props }: SceneProps) => {
     controls.target = new THREE.Vector3(0, 0, 0);
     controls.update();
 
-    renderer.setSize(window.innerWidth, window.innerHeight / 2);
+    renderer.setSize(half ? window.innerWidth / 2 : window.innerWidth, full ? 2 * window.innerHeight / 6 : half ? window.innerHeight / 2 : window.innerHeight);
     renderer.setClearColor(0x222831);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
