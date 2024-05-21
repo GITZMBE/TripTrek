@@ -26,14 +26,14 @@ export const Scene = ({ path, className, ...props }: SceneProps) => {
 
     controls.enableDamping = true;
     controls.enablePan = false;
-    controls.minDistance = -30;
-    controls.maxDistance = 500;
+    controls.minDistance = -500;
+    controls.maxDistance = 1000;
     controls.minPolarAngle = Math.PI / 4;
     controls.maxPolarAngle = 3 * Math.PI / 4;
     controls.autoRotate = true;
     controls.rotateSpeed = .3;
     controls.enableZoom = false;
-    controls.target = new THREE.Vector3(0, -45, 0);
+    controls.target = new THREE.Vector3(0, 0, 0);
     controls.update();
 
     renderer.setSize(window.innerWidth, window.innerHeight / 2);
@@ -44,7 +44,7 @@ export const Scene = ({ path, className, ...props }: SceneProps) => {
 
     ref.current && ref.current.appendChild(renderer.domElement);
 
-    camera.position.set(1.5, -44.85, 0);
+    camera.position.set(-180, 50, 0);
     ground.position.set(0, -25, 0);
     ground.rotation.x = -Math.PI / 2;
     ground.castShadow = false;
@@ -84,7 +84,7 @@ export const Scene = ({ path, className, ...props }: SceneProps) => {
           child.receiveShadow = true;
         }
       });
-      model.position.set(0, -45, 0);
+      model.position.set(0, 0, 0);
       if (ref.current) rotate();
       model.scale.set(1, 1, 1);
       scene.add(model);

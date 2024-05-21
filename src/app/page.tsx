@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { request } from "../utils";
+import YouTubePlayer from "../components/YouTubePlayer";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -61,8 +62,7 @@ export default function Home() {
           </NoDataContent>
         )}
       </DataLoader>
-      <Scene path="/Modern_House.glb" className="my-12" />
-      <SplineScene />
+      <Scene path="/farm_house.glb" className="my-12" />
     </Container>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 // https://app.spline.design/file/49135fdc-18b5-40cc-a9be-8a71de8150ef
 
-import React, { useEffect, useRef } from "react";
-import { Application } from '@splinetool/runtime';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import SplineLoader from '@splinetool/loader';
+// import React, { useEffect, useRef } from "react";
+// import { Application } from '@splinetool/runtime';
+// import * as THREE from 'three';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import SplineLoader from '@splinetool/loader';
 
 export const SplineScene = () => {
   // const canvasRef = useRef<HTMLCanvasElement>(null);
