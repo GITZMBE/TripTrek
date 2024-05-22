@@ -5,7 +5,7 @@ import { Appearance, StripeElementsOptions, StripeElementsOptionsClientSecret, l
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/src/components/forms/CheckoutForm";
 import { Reservation } from "@prisma/client";
-import { request } from "@/src/utils";
+import { ProtectedRoute, request } from "@/src/utils";
 import { Container } from "@/src/components/layout";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -63,13 +63,15 @@ const CheckoutPage = ({ params }: { params: { reservationId: string } }) => {
   };
 
   return (
-    <Container extraPadding>
-      { clientSecret && (
-        <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
-        </Elements>
-      )}
-    </Container>
+    <ProtectedRoute>
+      <Container extraPadding>
+        { clientSecret && (
+          <Elements options={options} stripe={stripePromise}>
+            <CheckoutForm />
+          </Elements>
+        )}
+      </Container>
+    </ProtectedRoute>
   )
 }
 

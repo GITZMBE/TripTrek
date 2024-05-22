@@ -1,29 +1,14 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useCurrentUser } from "@/src/hooks";
+import { usePathname } from "next/navigation";
 
 const Pathbar = () => {
-  const router = useRouter();
   const pathName = usePathname();
   let paths = pathName.split("/");
   paths.shift();
   const currentPath = paths.findLast((_) => true);
-  const { currentUser: user } = useCurrentUser();
-
-  useEffect(() => {
-    const isLoggedIn = user !== undefined && user !== null;
-
-    if (!isLoggedIn && pathName !== "/login" && pathName !== "/signup") {
-      router.push("/login");
-    }
-
-    if (isLoggedIn && (pathName === "/login" || pathName === "/signup")) {
-      router.push('/');
-    }
-  }, [pathName, user]);
 
   return (
     <div className='flex gap-2 overflow-x-auto scrollbar-hidden'>

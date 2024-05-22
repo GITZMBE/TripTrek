@@ -4,7 +4,7 @@ import { DataLoader, NoDataContent } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
 import { BookedCard, LoadingAnimation } from "@/src/components/ui";
 import { useCurrentUser } from "@/src/hooks";
-import { request } from "@/src/utils";
+import { ProtectedRoute, request } from "@/src/utils";
 import { Listing, Reservation, User } from "@prisma/client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -35,37 +35,39 @@ const ReservationsPage = () => {
   }, []);
 
   return (
-    <Container extraPadding>
-      <h1 className='text-4xl text-light leading-[60px]'>Reservations of your listings</h1>
-      <div className="w-full flex flex-col gap-2">
-        <h2 className="w-full text-2xl text-grey">Unhandled Reservations</h2>
-        <DataLoader >
-          { isLoading ? (
-            <LoadingAnimation className="w-full" />
-          ) : reservations.length > 0 ? (
-            reservations.map((reservation) => (reservation.isAccepted === undefined || reservation.isAccepted === null) && (
-              <BookedCard key={reservation.id} reservation={reservation as Reservation & { listing: Listing; user: User }} />
-            ))
-          ) : (
-            <NoDataContent label='No Unhandled Reservations' icon="task" iconClasses="w-32" size={128} />
-          )}
-        </DataLoader>
-      </div>
-      <div className="w-full flex flex-col gap-2">
-        <h2 className="w-full text-2xl text-grey">Accepted Reservations</h2>
-        <DataLoader>
-          { isLoading ? (
-            <LoadingAnimation className="w-full" />
-          ) : reservations.length > 0 ? (
-            reservations.map((reservation) => reservation.isAccepted && (
-              <BookedCard key={reservation.id} reservation={reservation as Reservation & { listing: Listing; user: User }} />
-            ))
-          ) : (
-            <NoDataContent label='You have no handled reservations' icon="checkmark" iconClasses="w-32" size={128} />
-          )}
-        </DataLoader>
-      </div>      
-    </Container>
+    <ProtectedRoute>
+      <Container extraPadding>
+        <h1 className='text-4xl text-light leading-[60px]'>Reservations of your listings</h1>
+        <div className="w-full flex flex-col gap-2">
+          <h2 className="w-full text-2xl text-grey">Unhandled Reservations</h2>
+          <DataLoader >
+            { isLoading ? (
+              <LoadingAnimation className="w-full" />
+            ) : reservations.length > 0 ? (
+              reservations.map((reservation) => (reservation.isAccepted === undefined || reservation.isAccepted === null) && (
+                <BookedCard key={reservation.id} reservation={reservation as Reservation & { listing: Listing; user: User }} />
+              ))
+            ) : (
+              <NoDataContent label='No Unhandled Reservations' icon="task" iconClasses="w-32" size={128} />
+            )}
+          </DataLoader>
+        </div>
+        <div className="w-full flex flex-col gap-2">
+          <h2 className="w-full text-2xl text-grey">Accepted Reservations</h2>
+          <DataLoader>
+            { isLoading ? (
+              <LoadingAnimation className="w-full" />
+            ) : reservations.length > 0 ? (
+              reservations.map((reservation) => reservation.isAccepted && (
+                <BookedCard key={reservation.id} reservation={reservation as Reservation & { listing: Listing; user: User }} />
+              ))
+            ) : (
+              <NoDataContent label='You have no handled reservations' icon="checkmark" iconClasses="w-32" size={128} />
+            )}
+          </DataLoader>
+        </div>      
+      </Container>
+    </ProtectedRoute>
   );
 };
 

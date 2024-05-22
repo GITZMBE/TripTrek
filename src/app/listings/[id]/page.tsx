@@ -4,7 +4,7 @@ import { Container } from '@/src/components/layout'
 import { Calendar, Filter, Icon, LoadingAnimation } from '@/src/components/ui';
 import FavoriteButton from '@/src/components/ui/FavoriteButton';
 import { Category, Listing, Reservation, User } from '@prisma/client';
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { useCountries, useCurrentUser, useErrorMessage, useLoading } from '@/src/hooks';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -58,9 +58,14 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     setLocation(loc);
   }, [listing]);
 
-  const isValidReservation = dateRange !== undefined && dateRange.start !== undefined && dateRange.end !== undefined && user?.id && listing?.id && totalPrice > 0;
+  const isValidReservation = dateRange !== undefined && dateRange.start !== undefined && dateRange.end !== undefined && listing?.id && totalPrice > 0;
 
   const makeReservation = async () => {
+    if (!user) {
+      toast.error('Sign in before renting a property');
+      return;
+    }
+
     try {
       if (isValidReservation) {
         setIsLoading(true);
@@ -92,6 +97,17 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
     }
   };
 
+  const handleClickChatButton = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.stopPropagation();
+
+    if (!user) {
+      toast.error('Sign in before chatting');
+      return;
+    }
+
+    router.push(`${window.location.origin}/chatroom?chatToId=${listing?.user.id}&listingId=${listing?.id}`);
+  };
+
   return (
     <Container banner={user?.id !== listing?.userId} extraPadding={user?.id === listing?.userId}>
       { (listing && location) && (
@@ -120,11 +136,11 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
                 )}
                 <hr className='w-full border-secondary my-4' />
                 <div className='w-full flex justify-between items-center'>
-                  <button className='w-fit flex items-center gap-2 cursor-pointer' onClick={e => {e.stopPropagation(); router.push(`/users/${ listing.user.id }`)}}>
+                  <button className='w-fit flex items-center gap-2 cursor-pointer' onClick={e => { router.push(`/users/${ listing.user.id }`)}}>
                     <span className='text-light'>{ listing.user.name }</span>
                     <img src={ listing.user.avatar || listing.user.image || '' } className='w-8 aspect-square rounded-full object-center object-cover' alt="" />
                   </button>
-                  <button onClick={() => router.push(`${window.location.origin}/chatroom?chatToId=${listing.user.id}&listingId=${listing.id}`)}>
+                  <button onClick={handleClickChatButton}>
                     <Icon icon='chatbubble' size={24} className='text-secondary hover:text-grey cursor-pointer' />
                   </button>
                 </div>

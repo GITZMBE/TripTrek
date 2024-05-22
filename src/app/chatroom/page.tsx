@@ -4,7 +4,7 @@ import { Container } from '@/src/components/layout'
 import { ChatLogs, ChatRecord, LoadingAnimation } from '@/src/components/ui';
 import { useCurrentUser, useLoading } from '@/src/hooks';
 import { ExtendedChat, ExtendedChatNoMessages } from '@/src/models';
-import { request } from '@/src/utils';
+import { ProtectedRoute, request } from '@/src/utils';
 import { Chat, Listing, Message, User } from '@prisma/client';
 import { useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -118,27 +118,30 @@ const Chatroompage = () => {
   }, [searchParams, user, chatWith, listingId]);
 
   return (
-    <Container extraPadding>
-      <div className='w-full flex justify-end h-[80vh] lg:max-w-[1200px] bg-primary border-2 border-secondary shadow-secondary shadow-lg'>
-        <div className={`${ currentChat ? 'w-0 md:w-1/3' : 'w-full' } flex-grow-1 flex flex-col items-center justify-start transition-size`}>
-          { isLoading ? (
-              <LoadingAnimation className='w-32 aspect-square' />
-            ) : userChats.length > 0 ? (
-              userChats.map((chat) => (
-                <ChatRecord key={chat.id} currentChat={currentChat} chat={chat as ExtendedChatNoMessages} setCurrentChat={setCurrentChat} />
-              ))
-            ) : (
-              <div className='flex flex-col items-center py-8 gap-2'>
-                <p className='text-light text-xl text-center'>No chats found</p>
-                <button className='py-2 px-4 font-bold text-center text-grey rounded-lg border-2 border-grey hover:bg-grey hover:text-light transition' onClick={() => {}}>Create new chat</button>
-              </div>
-            )
-          }
+    <ProtectedRoute>
+      <Container extraPadding>
+        <div className='w-full flex justify-end h-[80vh] lg:max-w-[1200px] bg-primary border-2 border-secondary shadow-secondary shadow-lg'>
+          <div className={`${ currentChat ? 'w-0 md:w-1/3' : 'w-full' } flex-grow-1 flex flex-col items-center justify-start transition-size`}>
+            { isLoading ? (
+                <LoadingAnimation className='w-32 aspect-square' />
+              ) : userChats.length > 0 ? (
+                userChats.map((chat) => (
+                  <ChatRecord key={chat.id} currentChat={currentChat} chat={chat as ExtendedChatNoMessages} setCurrentChat={setCurrentChat} />
+                ))
+              ) : (
+                <div className='flex flex-col items-center py-8 gap-2'>
+                  <p className='text-light text-xl text-center'>No chats found</p>
+                  <button className='py-2 px-4 font-bold text-center text-grey rounded-lg border-2 border-grey hover:bg-grey hover:text-light transition' onClick={() => {}}>Create new chat</button>
+                </div>
+              )
+            }
+          </div>
+          <div className={`${ currentChat ? 'hidden md:block' : 'hidden' } flex-grow-1 w-[2px] bg-secondary`} />
+          <ChatLogs currentChat={currentChat} setCurrentChat={setCurrentChat} />
         </div>
-        <div className={`${ currentChat ? 'hidden md:block' : 'hidden' } flex-grow-1 w-[2px] bg-secondary`} />
-        <ChatLogs currentChat={currentChat} setCurrentChat={setCurrentChat} />
-      </div>
-    </Container>
+      </Container>
+    </ProtectedRoute>
+
   )
 }
 

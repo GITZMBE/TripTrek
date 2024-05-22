@@ -10,6 +10,7 @@ import jsPDF from 'jspdf';
 import { useCurrentUser, useLoading } from '@/src/hooks';
 import { LoadingAnimation } from '@/src/components/ui';
 import { toast } from 'react-toastify';
+import { ProtectedRoute } from '@/src/utils';
 
 const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
   const { currentUser: user } = useCurrentUser();
@@ -74,64 +75,66 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
   }, [params]);
 
   return (
-    <Container center>
-      <h1 className='text-4xl text-light'>Information about your reservation</h1>
-      <div className='flex flex-col items-center gap-8 w-full max-w-[550px]'>
-        { reservation ? (
-          <>
-            <div className='flex flex-col gap-2 w-full text-grey'>
-              <p>ID: { reservation.id }</p>
-              <span>Arrival Date: { format(reservation.startDate, "MMMM d'th' yyyy") }</span>
-              <span>Last Date: { format(reservation.endDate, "MMMM d'th' yyyy") }</span>
-              <span className='flex items-center gap-2'>Reserved by: <Link href={`/users/${ reservation.userId }`} className='flex items-center gap-2'><img src={reservation.user?.avatar || reservation.user?.image || '/male_default_avatar.png'} className='w-8 aspect-square object-center object-cover rounded-full' />{ reservation.user.name }</Link></span>
+    <ProtectedRoute>
+      <Container center>
+        <h1 className='text-4xl text-light'>Information about your reservation</h1>
+        <div className='flex flex-col items-center gap-8 w-full max-w-[550px]'>
+          { reservation ? (
+            <>
+              <div className='flex flex-col gap-2 w-full text-grey'>
+                <p>ID: { reservation.id }</p>
+                <span>Arrival Date: { format(reservation.startDate, "MMMM d'th' yyyy") }</span>
+                <span>Last Date: { format(reservation.endDate, "MMMM d'th' yyyy") }</span>
+                <span className='flex items-center gap-2'>Reserved by: <Link href={`/users/${ reservation.userId }`} className='flex items-center gap-2'><img src={reservation.user?.avatar || reservation.user?.image || '/male_default_avatar.png'} className='w-8 aspect-square object-center object-cover rounded-full' />{ reservation.user.name }</Link></span>
+              </div>
+              <div className='w-full flex justify-start'>
+                <button className={`flex items-center gap-2 text-grey border-grey border-2 py-2 px-4 disabled:cursor-not-allowed ${ reservation.isAccepted && 'hover:text-light hover:border-light' }`} onClick={handleDownload} disabled={!reservation.isAccepted} >
+                  <span>Download as PDF</span>
+                  <FaArrowDown size={20} className='pl-2 border-grey border-l-[1px]' />
+                </button>              
+              </div>
+              <p className='w-full text-left text-light'>
+                <span className='text-grey'>Status: </span>
+                { reservation.isAccepted === undefined || reservation.isAccepted === null ? (
+                  <span>Pending...</span>
+                ) : reservation.isAccepted ? (
+                  <span>Accepted</span>
+                ) : (
+                  <span>Declined</span>
+                )}              
+              </p>
+              <div className='w-full flex justify-center items-center'>
+                <Link href={`/checkout/${reservation.id}`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-center text-grey hover:text-light'>Checkout</Link>
+              </div>
+            </>
+          ) : isLoading ? (
+              <LoadingAnimation className='w-28 aspect-square' />
+          ) : (
+            <div className='flex flex-col gap-4 items-center text-secondary py-12'>
+              <img src="/data_not_found.png" className='w-48 opacity-50' alt="" />
+              <p className='text-2xl'>No reservation found</p>
             </div>
-            <div className='w-full flex justify-start'>
-              <button className={`flex items-center gap-2 text-grey border-grey border-2 py-2 px-4 disabled:cursor-not-allowed ${ reservation.isAccepted && 'hover:text-light hover:border-light' }`} onClick={handleDownload} disabled={!reservation.isAccepted} >
-                <span>Download as PDF</span>
-                <FaArrowDown size={20} className='pl-2 border-grey border-l-[1px]' />
-              </button>              
-            </div>
-            <p className='w-full text-left text-light'>
-              <span className='text-grey'>Status: </span>
-              { reservation.isAccepted === undefined || reservation.isAccepted === null ? (
-                <span>Pending...</span>
-              ) : reservation.isAccepted ? (
-                <span>Accepted</span>
-              ) : (
-                <span>Declined</span>
-              )}              
-            </p>
-            <div className='w-full flex justify-center items-center'>
-              <Link href={`/checkout/${reservation.id}`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-center text-grey hover:text-light'>Checkout</Link>
-            </div>
-          </>
-        ) : isLoading ? (
-            <LoadingAnimation className='w-28 aspect-square' />
-        ) : (
-          <div className='flex flex-col gap-4 items-center text-secondary py-12'>
-            <img src="/data_not_found.png" className='w-48 opacity-50' alt="" />
-            <p className='text-2xl'>No reservation found</p>
-          </div>
-        )}
-        <div className='flex justify-between gap-4 w-full'>
-          <Link href='/' className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
-            <FaAngleDoubleLeft size={24} />
-            <span className='w-full text-nowrap text-ellipsis'>Back Home</span>
-          </Link>
-          { reservation?.userId === user?.id ? (
-            <Link href={`/trips`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-right text-grey hover:text-light'>
-              <span className='w-full text-nowrap text-ellipsis overflow-hidden'>Your trips</span>
-              <FaAngleDoubleRight size={24} />
+          )}
+          <div className='flex justify-between gap-4 w-full'>
+            <Link href='/' className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-grey hover:text-light'>
+              <FaAngleDoubleLeft size={24} />
+              <span className='w-full text-nowrap text-ellipsis'>Back Home</span>
             </Link>
-          ) : reservation?.listing.userId === user?.id ? (
-            <Link href={`/reservations`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-right text-grey hover:text-light'>
-              <span className='w-full text-nowrap text-ellipsis overflow-hidden'>Your reservations</span>
-              <FaAngleDoubleRight size={24} />
-            </Link>
-          ) : (<></>)}
-        </div>        
-      </div>      
-    </Container>
+            { reservation?.userId === user?.id ? (
+              <Link href={`/trips`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-right text-grey hover:text-light'>
+                <span className='w-full text-nowrap text-ellipsis overflow-hidden'>Your trips</span>
+                <FaAngleDoubleRight size={24} />
+              </Link>
+            ) : reservation?.listing.userId === user?.id ? (
+              <Link href={`/reservations`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-right text-grey hover:text-light'>
+                <span className='w-full text-nowrap text-ellipsis overflow-hidden'>Your reservations</span>
+                <FaAngleDoubleRight size={24} />
+              </Link>
+            ) : (<></>)}
+          </div>        
+        </div>      
+      </Container>
+    </ProtectedRoute>
   )
 }
 

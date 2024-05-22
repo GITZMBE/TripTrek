@@ -8,9 +8,10 @@ import { User } from "@prisma/client";
 import { TfiReload } from "react-icons/tfi";
 import { MdOutlineChatBubble } from "react-icons/md";
 import { useRouter } from "next/navigation";
-import { LoadingAnimation } from "@/src/components/ui";
+import { Icon, LoadingAnimation } from "@/src/components/ui";
 import { request } from "@/src/utils";
 import Image3D from "@/src/components/ui/Image3D";
+import { toast } from "react-toastify";
 
 const UserPage = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -36,6 +37,15 @@ const UserPage = ({ params }: { params: { id: string } }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCreateChat = () => {
+    if (!user) {
+      toast.error('Sign in before chatting');
+      return;
+    }
+
+    router.push(`/chatroom?chatToId=${paramUser?.id}`)
   };
 
   useEffect(() => {
@@ -65,7 +75,7 @@ const UserPage = ({ params }: { params: { id: string } }) => {
               </div>
               <p className='w-full text-grey'>Name: {paramUser?.name}</p>
               <p className='w-full text-grey mb-2'>Email: {paramUser?.email}</p>
-              <button className="group flex items-center gap-2 text-grey hover:text-light hover:bg-grey py-2 px-4 rounded-lg border-2 border-grey" onClick={() => router.push(`/chatroom?chatToId=${paramUser?.id}`)}>Create / Open chat<MdOutlineChatBubble size={24} className='text-grey group-hover:text-light cursor-pointer' /></button>
+              <button className="group flex items-center gap-2 text-grey hover:text-light hover:bg-grey py-2 px-4 rounded-lg border-2 border-grey" onClick={handleCreateChat}>Create / Open chat<Icon icon='chatbubble' size={24} className='text-grey group-hover:text-light cursor-pointer' /></button>
             </div>
           </div>
         ) : (

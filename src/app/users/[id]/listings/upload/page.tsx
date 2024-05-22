@@ -12,7 +12,7 @@ import InfoStep from "@/src/components/listingSteps/InfoStep";
 import { LoadingAnimation } from "@/src/components/ui";
 import { useLoading } from "@/src/hooks";
 import { CountryModel } from "@/src/models";
-import { request } from "@/src/utils";
+import { ProtectedRoute, request } from "@/src/utils";
 import { Category, Listing } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -134,94 +134,96 @@ const UploadListingPage = ({ params }: { params: { id: string } }) => {
   }, [isClickable]);
 
   return (
-    <Container center extraPadding>
-      <form
-        onSubmit={e => {e.preventDefault();handleSubmit(onSubmit, onError)(e).catch(e => console.log(e))}}
-      >
-        <div className='flex flex-col gap-2 items-center'>
-          {step === Steps.Category ? (
-            <CategoryStep
-              unregister={unregister}
-              setValue={setValue}
-              watch={watch}
-              name='category'
-            />
-          ) : step === Steps.Location ? (
-            <LocationStep
-              unregister={unregister}
-              setValue={setValue}
-              watch={watch}
-              name='location'
-            />
-          ) : step === Steps.Info ? (
-            <InfoStep setValue={setValue} watch={watch} />
-          ) : step === Steps.Images ? (
-            <ImageStep
-              unregister={unregister}
-              setValue={setValue}
-              watch={watch}
-              setError={setError}
-              clearErrors={clearErrors}
-              errors={errors}
-            />
-          ) : step === Steps.Description ? (
-            <DescriptionStep
-              register={register}
-              watch={watch}
-              errors={errors}
-            />
-          ) : step === Steps.Price ? (
-            <PriceStep register={register} watch={watch} errors={errors} />
-          ) : (
-            <></>
-          )}
-          <p className='text-error'>{errors.root?.message || ""}</p>
-        </div>
-        <div className='w-full max-w-[700px] flex justify-between items-center px-4'>
-          <button className={``} onClick={onBack}>
-            <span
-              className={
-                step === Steps.Category
-                  ? "hidden"
-                  : "flex gap-4 text-grey hover:text-light"
-              }
-            >
-              <FaAngleDoubleLeft size={24} />
-              Back
-            </span>
-          </button>
-          {(isClickable && step === Steps.Price) ? (
-              <button type="submit" className="relative min-w-64 px-8 py-2 bg-accent/80 hover:bg-accent rounded-lg text-xl text-light text-center" disabled={!isClickable}>
-                Post your listing 
-                { isLoading && <LoadingAnimation className="absolute -top-[3px] right-1" width={64} height={64} /> }
-              </button>
+    <ProtectedRoute>
+      <Container center extraPadding>
+        <form
+          onSubmit={e => {e.preventDefault();handleSubmit(onSubmit, onError)(e).catch(e => console.log(e))}}
+        >
+          <div className='flex flex-col gap-2 items-center'>
+            {step === Steps.Category ? (
+              <CategoryStep
+                unregister={unregister}
+                setValue={setValue}
+                watch={watch}
+                name='category'
+              />
+            ) : step === Steps.Location ? (
+              <LocationStep
+                unregister={unregister}
+                setValue={setValue}
+                watch={watch}
+                name='location'
+              />
+            ) : step === Steps.Info ? (
+              <InfoStep setValue={setValue} watch={watch} />
+            ) : step === Steps.Images ? (
+              <ImageStep
+                unregister={unregister}
+                setValue={setValue}
+                watch={watch}
+                setError={setError}
+                clearErrors={clearErrors}
+                errors={errors}
+              />
+            ) : step === Steps.Description ? (
+              <DescriptionStep
+                register={register}
+                watch={watch}
+                errors={errors}
+              />
+            ) : step === Steps.Price ? (
+              <PriceStep register={register} watch={watch} errors={errors} />
             ) : (
-              <button
-                type="button"
-                className={`${!isClickable && "cursor-not-allowed"} ${step === Steps.Price && 'hidden'}`}
-                onClick={() =>
-                  isClickable && step !== Steps.Price
-                    ? onNext()
-                    : setError("root", {
-                        type: "manual",
-                        message: errorMessages[step],
-                      })
+              <></>
+            )}
+            <p className='text-error'>{errors.root?.message || ""}</p>
+          </div>
+          <div className='w-full max-w-[700px] flex justify-between items-center px-4'>
+            <button className={``} onClick={onBack}>
+              <span
+                className={
+                  step === Steps.Category
+                    ? "hidden"
+                    : "flex gap-4 text-grey hover:text-light"
                 }
               >
-                <span
-                  className={`flex gap-4 ${
-                    isClickable ? "text-grey hover:text-light" : "text-secondary"
-                  }`}
+                <FaAngleDoubleLeft size={24} />
+                Back
+              </span>
+            </button>
+            {(isClickable && step === Steps.Price) ? (
+                <button type="submit" className="relative min-w-64 px-8 py-2 bg-accent/80 hover:bg-accent rounded-lg text-xl text-light text-center" disabled={!isClickable}>
+                  Post your listing 
+                  { isLoading && <LoadingAnimation className="absolute -top-[3px] right-1" width={64} height={64} /> }
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={`${!isClickable && "cursor-not-allowed"} ${step === Steps.Price && 'hidden'}`}
+                  onClick={() =>
+                    isClickable && step !== Steps.Price
+                      ? onNext()
+                      : setError("root", {
+                          type: "manual",
+                          message: errorMessages[step],
+                        })
+                  }
                 >
-                  Next
-                  <FaAngleDoubleRight size={24} />
-                </span>
-              </button>
-            )
-          }
-        </div>
-      </form>
-    </Container>
+                  <span
+                    className={`flex gap-4 ${
+                      isClickable ? "text-grey hover:text-light" : "text-secondary"
+                    }`}
+                  >
+                    Next
+                    <FaAngleDoubleRight size={24} />
+                  </span>
+                </button>
+              )
+            }
+          </div>
+        </form>
+      </Container>
+    </ProtectedRoute>
   );
 };
 

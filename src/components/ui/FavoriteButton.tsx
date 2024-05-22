@@ -8,6 +8,7 @@ import React from 'react'
 import Icon from './Icon';
 import { useRecoilState } from 'recoil';
 import { currentUserState } from '@/src/recoil';
+import { toast } from 'react-toastify';
 
 interface FavoriteButtonProps {
   listing: Listing;
@@ -29,9 +30,13 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
   }
 
   const host = window.location.origin;
+  const uri = `/api/users/${user?.id}/favorites`;
 
   const handleLikeListing = async () => {
-    const uri = `/api/users/${user?.id}/favorites`;
+    if (!user) {
+      toast.error('Sign in before liking a listing');
+      return;
+    }
     const options: RequestInit = { 
       method: 'POST',
       cache: 'no-cache',
@@ -45,7 +50,10 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
   };
 
   const handleRemoveFavorite = async () => {
-    const uri = `/api/users/${user?.id}/favorites`;
+    if (!user) {
+      toast.error('Sign in before liking a listing');
+      return;
+    }
     const options: RequestInit = {
       method: 'DELETE',
       cache: 'no-cache',
