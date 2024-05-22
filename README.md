@@ -80,6 +80,8 @@ The project is deployed on Vercel. You can access the deployed version [here](ht
 5. Set the necessary environment variables in the Vercel dashboard.
 
 ## Directory Structure
+
+```
 triptrek/
 ├── public/ # Static assets
 ├── src/
@@ -95,6 +97,7 @@ triptrek/
 ├── package.json # Project metadata and scripts
 ├── package-lock.json # Project metadata and scripts
 └── README.md # Project documentation
+```
 
 ## Environment Variables
 Below are the environment variables used in the project. You will need to set these up in a `.env` file in the root directory of your project. 
