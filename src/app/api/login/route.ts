@@ -10,8 +10,11 @@ export const POST = async (req: Request, res: Response) => {
   if (!user) {
     return NextResponse.json({ message: "User with that email does not exist!" });
   };
+  if (user?.hashedPassword === null) {
+    return NextResponse.json({ message: "User doesn't have any password" });
+  };
 
-  const correctPassword = bcrypt.compareSync(password, user?.hashedPassword);
+  const correctPassword = bcrypt.compareSync(password, user.hashedPassword);
   if (!correctPassword) {
     return NextResponse.json({ message: "Incorrect password!" });
   };
