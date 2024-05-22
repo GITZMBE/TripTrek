@@ -11,6 +11,13 @@ interface SceneProps extends ComponentPropsWithRef<"div"> {
   half?: boolean;
 }
 
+/**
+ * 3D object
+ * @param path local path to glb or gltf file inside directory /public/models_3D
+ * @param full set the width of the scene to the width of the window
+ * @param half set the width of the scene to half of the window screen
+ * @return A canvas with an interactable 3D object
+ */
 export const Scene = ({ path, full, half, className, ...props }: SceneProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -38,7 +45,7 @@ export const Scene = ({ path, full, half, className, ...props }: SceneProps) => 
     controls.target = new THREE.Vector3(0, 0, 0);
     controls.update();
 
-    renderer.setSize(half ? window.innerWidth / 2 : window.innerWidth, full ? 2 * window.innerHeight / 6 : half ? window.innerHeight / 2 : window.innerHeight);
+    renderer.setSize(half ? window.innerWidth / 2 : window.innerWidth, half ? 2 * window.innerHeight / 6 : full ? window.innerHeight / 2 : window.innerHeight);
     renderer.setClearColor(0x222831);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
