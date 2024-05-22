@@ -18,7 +18,7 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
       dataToUpdate.email = email;
     }
     if (password && password.trim() !== '') {
-      const isSamePassword = await bcrypt.compare(password, user.hashedPassword);
+      const isSamePassword = await bcrypt.compare(password, user.hashedPassword || '');
       if (!isSamePassword) {
         const hashedPassword = bcrypt.hashSync(password, 10);
         dataToUpdate.hashedPassword = hashedPassword;        
