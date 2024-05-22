@@ -7,6 +7,11 @@ import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/src/hooks';
 import { request } from '@/src/utils';
 
+/**
+ * SlideShowBanner component displays a slideshow of listings and allows users to swipe through them.
+ * 
+ * @component
+ */
 const SlideShowBanner = () => {
   const router = useRouter();
   const { currentUser: user } = useCurrentUser();
@@ -16,11 +21,14 @@ const SlideShowBanner = () => {
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const slideTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  const isOwner = () => {
-    return currentListing?.userId === user?.id;
-  }
   
+  /**
+   * Fetches the listings to be displayed in the slideshow.
+   * 
+   * @async
+   * @function
+   * @returns {Promise<Listing[]>} The list of listings.
+   */
   const getListings = async () => {
     const host = window.location.origin;
     const uri = '/api/listings?amount=3';
@@ -35,6 +43,11 @@ const SlideShowBanner = () => {
     getListings().then(setListings);
   }, []);
 
+  /**
+   * Advances to the next slide in the slideshow.
+   * 
+   * @function
+   */
   const handleNextSlide = useCallback(() => {
     setCurrentListingIndex((prevIndex) => (prevIndex + 1) % listings.length);
   }, [listings.length]);
@@ -68,14 +81,29 @@ const SlideShowBanner = () => {
     }, 550);
   }, [currentListingIndex]);
 
+  /**
+   * Handles the start of a touch event.
+   * 
+   * @param {React.TouchEvent<HTMLDivElement>} e - The touch event.
+   */
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
+  /**
+   * Handles the movement during a touch event.
+   * 
+   * @param {React.TouchEvent<HTMLDivElement>} e - The touch event.
+   */
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     touchEndX.current = e.touches[0].clientX;
   };
 
+  /**
+   * Handles the end of a touch event and determines if the user swiped left or right.
+   * 
+   * @param {TouchEvent<HTMLDivElement>} e - The touch event.
+   */
   const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
     e.stopPropagation();
 
@@ -86,11 +114,13 @@ const SlideShowBanner = () => {
     }
   };
 
+  /**
+   * Handles the click event on the current listing, navigating to the listing's page.
+   * 
+   * @function
+   */
   const handleListingClick = () => {
-    const path = isOwner()
-      ? `/users/${user?.id}/listings/${currentListing?.id}`
-      : `/listings/${currentListing?.id}`;
-    router.push(path);
+    router.push(`/listings/${currentListing?.id}`);
   };
 
   return (
