@@ -5,6 +5,10 @@ import { currentUserState } from "../recoil";
 import { request } from "../utils";
 import { User } from "@prisma/client";
 
+/**
+ * Current logged in user or null if no user was found (you are logged out)
+ * @returns {User | null} The current user
+ */
 export const useCurrentUser = () => {
   const { data: session } = useSession();
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
