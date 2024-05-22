@@ -15,12 +15,18 @@ export const GET = async (req: Request) => {
         take,
         orderBy: {
           createdAt: 'desc'
+        },
+        include: {
+          category: true
         }
       });
     } else {
       listings = await prisma.listing.findMany({
         orderBy: {
           createdAt: 'desc'
+        },
+        include: {
+          category: true
         }
       });
     }

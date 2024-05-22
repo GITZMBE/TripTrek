@@ -1,10 +1,9 @@
 'use client';
 
 import { Listing } from '@prisma/client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { TouchEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Filter } from '../ui';
 import { useRouter } from 'next/navigation';
-import { user } from '@nextui-org/react';
 import { useCurrentUser } from '@/src/hooks';
 import { request } from '@/src/utils';
 
@@ -13,10 +12,10 @@ const SlideShowBanner = () => {
   const { currentUser: user } = useCurrentUser();
   const [listings, setListings] = useState<Listing[]>([]);
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
-  const [slideCount, setSlideCount] = useState(0);
   const [currentListing, setCurrentListing] = useState<Listing | null>(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+  const slideTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const isOwner = () => {
     return currentListing?.userId === user?.id;
@@ -36,15 +35,29 @@ const SlideShowBanner = () => {
     getListings().then(setListings);
   }, []);
 
+  const handleNextSlide = useCallback(() => {
+    setCurrentListingIndex((prevIndex) => (prevIndex + 1) % listings.length);
+  }, [listings.length]);
+
   useEffect(() => {
     if (listings.length === 0) return;
 
-    setCurrentListing(listings[0]);
-    setTimeout(() => {
-      setSlideCount(slideCount + 1)
-      setCurrentListingIndex((currentListingIndex + 1) % listings.length);
+    setCurrentListing(listings[currentListingIndex]);
+
+    if (slideTimeout.current) {
+      clearTimeout(slideTimeout.current);
+    }
+
+    slideTimeout.current = setInterval(() => {
+      handleNextSlide();
     }, 5000);
-  }, [listings, slideCount]);
+
+    return () => {
+      if (slideTimeout.current) {
+        clearTimeout(slideTimeout.current);
+      }
+    };
+  }, [listings]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -63,16 +76,21 @@ const SlideShowBanner = () => {
     touchEndX.current = e.touches[0].clientX;
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+
     if (touchStartX.current - touchEndX.current > 50) {
-      // Swiped left
-      const newIndex = (currentListingIndex + 1) % listings.length;
-      setCurrentListingIndex(newIndex);
+      setCurrentListingIndex((prevIndex) => (prevIndex + 1) % listings.length);
     } else if (touchEndX.current - touchStartX.current > 50) {
-      // Swiped right
-      const newIndex = currentListingIndex === 0 ? listings.length - 1 : currentListingIndex - 1;
-      setCurrentListingIndex(newIndex);
+      setCurrentListingIndex((prevIndex) => (prevIndex === 0 ? listings.length - 1 : prevIndex - 1));
     }
+  };
+
+  const handleListingClick = () => {
+    const path = isOwner()
+      ? `/users/${user?.id}/listings/${currentListing?.id}`
+      : `/listings/${currentListing?.id}`;
+    router.push(path);
   };
 
   return (
@@ -88,10 +106,10 @@ const SlideShowBanner = () => {
         { currentListing && (
           <div 
             className='w-full h-full flex flex-col justify-between items-center py-4'
-            onClick={() => { isOwner() ? router.push(`${window.location.origin}/users/${user?.id}/listings/${currentListing.id}`) : router.push(`${window.location.origin}/listings/${currentListing?.id}`)}}
+            onClick={handleListingClick}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
-            onTouchEnd={e => {e.stopPropagation(); handleTouchEnd()}}
+            onTouchEnd={handleTouchEnd}
           >
             <div></div>
             <h1 className={`text-6xl font-bold text-center text-light tracking-wider ${ currentListing ? 'animate-fadeIn' : '' }`}>{ currentListing.title }</h1>
