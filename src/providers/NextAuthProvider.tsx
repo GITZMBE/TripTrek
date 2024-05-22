@@ -9,7 +9,7 @@ interface NextAuthProviderProps {
   session: Session | null | undefined;
 }
 
-const NextAuthProvider = ({ children, session }: NextAuthProviderProps) => {
+export const NextAuthProvider = ({ children, session }: NextAuthProviderProps) => {
   return (
     <SessionProvider session={session}>{ children }</SessionProvider>
   )

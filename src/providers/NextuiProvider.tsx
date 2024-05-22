@@ -3,7 +3,7 @@
 import { NextUIProvider } from '@nextui-org/react'
 import React from 'react'
 
-const NextuiProvider = ({ children }: { children: React.ReactNode }) => {
+export const NextuiProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <NextUIProvider>
       {children}

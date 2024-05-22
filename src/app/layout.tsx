@@ -2,14 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/src/components/layout/Header";
-import RecoilProvider from "@/src/components/providers/RecoilProvider";
-import NextuiProvider from "@/src/components/providers/NextuiProvider";
-import NextAuthProvider from "@/src/components/providers/NextAuthProvider";
 import { getServerSession } from "next-auth";
 import { getCurrentUser } from "@/src/actions";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Head from "next/head";
+import { NextAuthProvider, NextuiProvider, RecoilProvider } from "../providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
