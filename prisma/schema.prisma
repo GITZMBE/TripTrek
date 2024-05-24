@@ -13,24 +13,24 @@ datasource db {
 }
 
 model User {
-  id             String        @id @default(cuid())
+  id             String         @id @default(cuid())
   name           String
-  email          String        @unique
+  email          String         @unique
   emailVerified  DateTime?
   hashedPassword String?
   avatar         String?
   image          String?
   favoriteIds    String[]
   accounts       Account[]
-  ownChats       Chat[]        @relation("owner")
+  ownChats       Chat[]         @relation("owner")
   listings       Listing[]
   messages       Message[]
   reservations   Reservation[]
-  memberChats    Chat[]        @relation("members")
+  memberChats    MemberOnChat[]
 }
 
 model Account {
-  id                String    @id @default(cuid())
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -42,7 +42,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -94,17 +94,27 @@ model Category {
 }
 
 model Chat {
-  id        String    @id @default(cuid())
+  id        String         @id @default(cuid())
   title     String?
   ownerId   String
   listingId String?
-  memberIds String[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  listing   Listing?  @relation(fields: [listingId], references: [id])
-  owner     User      @relation("owner", fields: [ownerId], references: [id])
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  listing   Listing?       @relation(fields: [listingId], references: [id])
+  owner     User           @relation("owner", fields: [ownerId], references: [id])
   messages  Message[]
-  members   User[]    @relation("members")
+  members   MemberOnChat[]
+}
+
+model MemberOnChat {
+  memberId  String
+  chatId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  member    User     @relation(fields: [memberId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id])
+
+  @@id([memberId, chatId])
 }
 
 model Message {
