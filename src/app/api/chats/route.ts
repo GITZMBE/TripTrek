@@ -7,22 +7,31 @@ export const GET = async (req: Request) => {
 
   const queryData: any = {};
   let memberIds: string[] = [];
-  const userId = searchParams.get('userId');
+  const userId = searchParams.get("userId");
   if (userId) {
     memberIds.push(userId);
   }
-  const chatToId = searchParams.get('chatToId');
+  const chatToId = searchParams.get("chatToId");
   if (chatToId) {
     memberIds.push(chatToId);
   }
 
-  if (userId || chatToId) {
-    queryData.memberIds = {
-      hasEvery: memberIds,
+  // if (userId || chatToId) {
+  //   queryData.memberIds = {
+  //     hasEvery: memberIds,
+  //   };
+  // }
+  if (memberIds.length > 0) {
+    queryData.members = {
+      some: {
+        memberId: {
+          in: memberIds,
+        },
+      },
     };
   }
 
-  const listingId = searchParams.get('listingId');
+  const listingId = searchParams.get("listingId");
   if (listingId) {
     queryData.listingId = listingId;
   }
@@ -31,18 +40,25 @@ export const GET = async (req: Request) => {
     where: queryData,
     include: {
       owner: true,
-      members: true,
+      members: {
+        include: {
+          member: true,
+        }
+      },
       listing: {
         include: {
-          category: true
-        }
+          category: true,
+        },
       },
       messages: {
         orderBy: {
-          createdAt: 'asc',
+          createdAt: "asc",
+        },
+        include: {
+          user: true
         }
       },
-    }
+    },
   });
 
   return NextResponse.json(chats);
@@ -51,50 +67,76 @@ export const GET = async (req: Request) => {
 export const POST = async (req: Request) => {
   const { title, userId, chatToId, listingId } = await req.json();
 
-  if (!userId && !chatToId && !listingId) {
-    return NextResponse.json({ message: "Required properties weren't provided" });
+  if (!userId && !chatToId) {
+    return NextResponse.json({
+      message: "Required properties weren't provided",
+    });
   }
 
   let newChat;
+  let dataQuery: any = {
+    members: { 
+      create: []
+    },
+  };
 
-  if (userId && chatToId && listingId) {
-    newChat = await prisma.chat.create({
-      data: {
-        title: title,
-        ownerId: userId,
-        listingId: listingId,
-        memberIds: [userId, chatToId],
-      },
-      include: {
-        owner: true,
-        members: true,
-        listing: {
-          include: {
-            category: true
-          }
-        },
-        messages: true
-      }
-    });
-  } else if (userId && chatToId) {
-    newChat = await prisma.chat.create({
-      data: {
-        title: title,
-        ownerId: userId,
-        memberIds: [userId, chatToId]
-      },
-      include: {
-        owner: true,
-        members: true,
-        listing: {
-          include: {
-            category: true
-          }
-        },
-        messages: true
-      }
-    });
+  if (userId) {
+    dataQuery.ownerId = userId;
+    dataQuery.members = { 
+      create: [
+        ...dataQuery.members.create, 
+        { 
+          member: { 
+            connect: { 
+              id: userId
+            } 
+          } 
+        }
+      ]
+    };
   }
+  if (title && title.trim() !== "") {
+    dataQuery.title = title.trim();
+  }
+  if (chatToId) {
+    dataQuery.members = { 
+      create: [
+        ...dataQuery.members.create, 
+        { 
+          member: { 
+            connect: { 
+              id: chatToId
+            } 
+          } 
+        }
+      ]
+    };
+  }
+  if (listingId) {
+    dataQuery.listingId = listingId;
+  }
+
+  newChat = await prisma.chat.create({
+    data: dataQuery,
+    include: {
+      owner: true,
+      members: {
+        include: {
+          member: true
+        }
+      },
+      listing: {
+        include: {
+          category: true,
+        },
+      },
+      messages: {
+        include: {
+          user: true,
+        }
+      },
+    },
+  });
 
   return NextResponse.json(newChat);
 };

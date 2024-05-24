@@ -10,11 +10,18 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
     },
     include: {
       owner: true,
-      members: true,
+      members: {
+        include: {
+          member: true
+        }
+      },
       listing: true,
       messages: {
         orderBy: {
           createdAt: 'asc',
+        },
+        include: {
+          user: true
         }
       },
     }
@@ -61,4 +68,22 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
   });
 
   return NextResponse.json(newChat);
+};
+
+export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {
+  const { id } = params;
+
+  try {
+    const deletedChat = await prisma.chat.delete({
+      where: {
+        id
+      }
+    });
+    console.log(deletedChat)
+    
+    return NextResponse.json(deletedChat);
+  } catch (error: any) {
+    console.log(error)
+    return NextResponse.json({ message: error.meta.cause });
+  }
 };

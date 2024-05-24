@@ -10,6 +10,9 @@ export const POST = async (req: Request) => {
       chatId,
       text
     },
+    include: {
+      user: true
+    }
   });
 
   return NextResponse.json(addedMessage);

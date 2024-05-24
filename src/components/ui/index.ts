@@ -12,3 +12,4 @@ export * from "./BookedCard";
 export * from "./ChatRecord";
 export * from "./ChatLogs";
 export * from "./TextMessage";
+export * from './ChatSearcher';

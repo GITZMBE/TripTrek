@@ -1,6 +1,5 @@
 'use client';
 
-import { Message } from '@prisma/client';
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import TextMessage from './TextMessage';
 import { useCurrentUser } from '@/src/hooks';
@@ -9,6 +8,8 @@ import { MdEdit } from 'react-icons/md';
 import { FaAngleDoubleRight, FaUserCircle } from 'react-icons/fa';
 import { request } from '@/src/utils';
 import { ExtendedChat } from '@/src/models';
+import Icon from './Icon';
+import { ExtendedMessage } from '@/src/models/ExtendedMessage';
 
 interface IProps {
   currentChat: ExtendedChat | null;
@@ -35,6 +36,8 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
   };
 
   const handleSendMessage = async () => {
+    if (currentChat === null) return;
+
     const uri = `/api/chats/message`;
     const options = { 
       method: 'POST',
@@ -45,7 +48,8 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
         chatId: currentChat?.id
       })
     };
-    const newMessage = await request<Message>(host, uri, options);
+    const newMessage = await request<ExtendedMessage>(host, uri, options);
+    setCurrentChat({...currentChat, messages: [...currentChat.messages, newMessage]});
     const chat = await getChat();
     setCurrentChat(chat);
     setTextInputValue('');
@@ -72,6 +76,11 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
   };
 
   const handleBlurEditTitleInput = () => {
+    if (titleInputValue !== '' && titleInputValue !== currentChat?.title) {
+      setEditTitle(false);
+      return;
+    };
+
     updateChatTitle();
     setEditTitle(false);
   };
@@ -91,16 +100,16 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
               <div className='group flex items-center gap-2 w-full'>
                 {editTitle ? (
                   <div className='w-full h-full py-2'>
-                    <input type="text" autoFocus className='w-full py-1 px-2 outline-none' value={titleInputValue} onChange={e => setTitleInputValue(e.target.value)} onBlur={handleBlurEditTitleInput} />
+                    <input type="text" autoFocus className='w-full text-light placeholder:text-grey py-1 px-2 bg-secondary rounded-full outline-none' value={titleInputValue} onChange={e => setTitleInputValue(e.target.value)} onBlur={handleBlurEditTitleInput} />
                   </div>
                 ) : (
                   <p className='flex items-center gap-2 w-full overflow-hidden text-nowrap text-ellipsis text-light font-semibold py-2'>
-                    {currentChat.title ? currentChat.title : currentChat?.owner ? `${currentChat.owner.name}'s chat${currentChat.listing && ` for '${currentChat.listing.title}'`}` : ''}
-                    <span>
-                      { currentChat.members && currentChat.members.map(member => member?.avatar ? (
-                        <img key={member.id} src={member.avatar} className='w-10 aspect-square rounded-full object-center object-cover' alt="" />
+                    {currentChat.title ? currentChat.title : currentChat?.owner ? `${currentChat.owner.name}'s chat${currentChat.listing ? ` for '${currentChat.listing.title}'` : ''}` : ''}
+                    <span className='flex items-center gap-2'>
+                      { currentChat.members && currentChat.members.map(member => (member.member?.avatar || member.member?.image) ? (
+                        <img key={member.memberId} src={member.member.avatar || member.member.image || ''} className='w-6 aspect-square rounded-full object-center object-cover' alt="" />
                       ) : (
-                        <FaUserCircle key={member.id} size={40} className='text-grey' />
+                        <FaUserCircle key={member.memberId} size={24} className='text-grey' />
                       ))}
                     </span>
                   </p>
@@ -110,7 +119,7 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
                 </div>
               </div>
             </div>
-            <div className='flex flex-col justify-end gap-2 p-2 flex-grow overflow-y-auto scrollbar-hidden'>
+            <div className='flex flex-col justify-end gap-4 p-2 flex-grow overflow-y-auto scrollbar-hidden'>
               { currentChat.messages && currentChat.messages.map(message => (
                 <TextMessage key={message.id} message={message} />
               ))}
@@ -119,16 +128,42 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
         )}
         <div className='flex flex-col'>
           {(currentChat?.members && currentChat?.members.length === 2) && (
-            <div className='flex justify-between items-center'>
-              <span className='flex gap-2 items-center'>
-                <img src={currentChat.members.filter(u => u.id !== user?.id)[0].avatar || ''} className='w-24 aspect-square rounded-full object-center object-cover' alt="" />
-                <span>{currentChat.members.filter(u => u.id !== user?.id)[0].name}</span>
-              </span>
-              <span className='flex gap-2 items-center'>
-                <img src={currentChat.members.filter(u => u.id === currentChat.ownerId)[0].avatar || ''} className='w-24 aspect-square rounded-full object-center object-cover' alt="" />
-                <span>{currentChat.members.filter(u => u.id === currentChat.ownerId)[0].name}</span>
-              </span>
-            </div>
+            <>
+              <hr className='border-secondary' />
+              <div className='flex justify-between items-center p-4 text-light'>
+                <span className='flex gap-4 items-center'>
+                  {(() => {
+                    const otherMember = currentChat.members.find(m => m.memberId !== user?.id);
+                    return otherMember && (
+                      <>
+                        { otherMember.member?.avatar || otherMember.member?.image ? (
+                          <img 
+                            src={otherMember.member.avatar || otherMember.member.image || ''} 
+                            className='w-10 aspect-square rounded-full object-center object-cover' 
+                            alt={otherMember?.member.name || 'User avatar'} 
+                          />
+                        ) : (
+                          <Icon icon='avatar' />
+                        )}
+                        <span>{otherMember?.member?.name}</span>
+                      </>
+                    );
+                  })()}
+                </span>
+                <span className='flex gap-4 items-center'>
+                  <span>You</span>
+                  { user?.avatar || user?.image ? (
+                    <img 
+                      src={user.avatar || user.image || ''} 
+                      className='w-10 aspect-square rounded-full object-center object-cover' 
+                      alt={user?.name || 'User avatar'} 
+                    />
+                  ) : (
+                    <Icon icon='avatar' />
+                  )}
+                </span>
+              </div>
+            </>
           )}
           <hr className='border-secondary' />
           <div className='bg-primary p-4'>
@@ -137,7 +172,6 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
         </div>
       </div>
     </div>
-
   )
 }
 

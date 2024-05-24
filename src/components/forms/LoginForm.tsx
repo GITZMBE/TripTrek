@@ -5,7 +5,7 @@ import React from "react";
 import { FormInput } from "./ui";
 import { FormButton } from "./ui";
 import Link from "next/link";
-import { SignInResponse, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -26,7 +26,6 @@ export const LoginForm = () => {
     try {
       setIsLoading(true);
       const res = await signIn('credentials', data);
-      console.log(res)
       toast.success('Login Successful');
       router.push("/");
     } catch(error: any) {
