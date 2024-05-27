@@ -28,15 +28,14 @@ export const POST = async (req: Request) => {
       imageSrc: image,
       title,
       description,
-      price: parseInt(price),
+      price: parseFloat(price),
       userId
     };
   
     const createdListing = await prisma.listing.create({ data: formData });
 
-    return NextResponse.json(createdListing);
+    return NextResponse.json(createdListing, { status: 201 });
   } catch(error: any) {
-    console.log(error)
-    return NextResponse.json(error);
+    return NextResponse.json({ message: error }, { status: 400 });
   }
 };
