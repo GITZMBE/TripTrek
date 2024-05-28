@@ -8,6 +8,7 @@ import { request } from '@/src/utils';
 import { Chat } from '@prisma/client';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { url } from 'inspector';
 
 interface IProps {
   chat: ExtendedChat;
@@ -53,8 +54,8 @@ export const ChatRecord = ({ chat, currentChat, setCurrentChat }: IProps) => {
   };
 
   return (
-    <button className={`w-full flex justify-between gap-2 py-2 px-4 border-b-2 border-b-secondary ${ chat?.id === currentChat?.id ? 'bg-secondary opacity-100': 'bg-transparent opacity-50' } hover:bg-secondary hover:opacity-100 transition`} onClick={() => setCurrentChat(chat)}>
-      <p className={`${ chat?.id === currentChat?.id ? 'text-light': 'text-grey' } overflow-hidden text-ellipsis text-nowrap`}>
+    <button style={chat.listing.imageSrc ? { backgroundImage: `url('${chat.listing.imageSrc}')`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}  className={`group w-full h-12 hover:h-64 transition-size flex justify-between gap-2 py-2 px-4 border-b-2 border-b-secondary ${ chat?.id === currentChat?.id ? 'bg-secondary opacity-100': 'bg-transparent opacity-50' } hover:bg-secondary hover:opacity-100`} onClick={() => setCurrentChat(chat)}>
+      <p className={`text-light text-shadow-sm group-hover:text-light group-hover:text-shadow-sm overflow-hidden text-ellipsis text-nowrap`}>
         { chat.title ? chat.title : chat.owner ? `${chat.owner.name}'s chat${chat.listing ? ` for '${chat.listing.title}'` : ''}` : '' }
       </p>
       { user?.id === chat.ownerId && (

@@ -133,10 +133,6 @@ const Chatroompage = () => {
             </div>
             { isLoading ? (
                 <LoadingAnimation className='w-32 aspect-square' />
-              ) : userChats.length > 0 ? (
-                userChats.map((chat) => (
-                  <ChatRecord key={chat.id} currentChat={currentChat} chat={chat} setCurrentChat={setCurrentChat} />
-                ))
               ) : createFormOpen ? (
                 <div className='w-full flex flex-col items-center'>
                   <div className='w-full flex items-center gap-4 p-4'>
@@ -155,6 +151,13 @@ const Chatroompage = () => {
                     }}
                   >Create Chat</button>
                 </div>
+              ) : userChats.length > 0 ? (
+                <>
+                  { userChats.map((chat) => (
+                    <ChatRecord key={chat.id} currentChat={currentChat} chat={chat} setCurrentChat={setCurrentChat} />
+                  ))}
+                  <button className='py-2 px-4 my-4 font-bold text-center text-grey rounded-lg border-2 border-grey hover:bg-grey hover:text-light transition' onClick={() => setCreateFormOpen(true)}>Create new chat</button>
+                </>
               ) : (
                 <div className='flex flex-col items-center py-8 gap-4'>
                   <p className='text-light text-2xl text-center'>No chats found</p>
