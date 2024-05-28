@@ -127,7 +127,7 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
   };
 
   return (
-    <div className={`${currentChat ? 'w-full md:w-2/3' : 'w-0'} h-full overflow-x-hidden transition-size`}>
+    <div className={`${currentChat ? 'w-full md:w-2/3' : 'w-0'} relative h-full overflow-x-hidden transition-size`}>
       <div className={`w-full xl:w-[800px] h-full flex flex-col`}>
         {currentChat && (
           <>
@@ -155,7 +155,7 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
                 <MdEdit size={40} className='lg:hidden lg:group-hover:block min-w-10 h-full aspect-square text-secondary focus:text-grey lg:hover:text-grey p-2 cursor-pointer' onClick={handleOpenTitle} />
               </div>
             </div>
-            <div ref={scrollContainerRef} className={`relative flex flex-col justify-end items-center flex-grow p-2 overflow-y-auto scrollbar-hidden ${ showScrollToBottomButton && 'scroll-smooth' }`}>
+            <div ref={scrollContainerRef} className={`flex flex-col items-center flex-grow p-2 overflow-y-auto scrollbar-hidden ${ showScrollToBottomButton && 'scroll-smooth' }`}>
               <div ref={messageContainerRef} className='w-full min-h-full flex flex-col gap-4 py-2'>
                 {currentChat.messages && currentChat.messages.map(message => (
                   <TextMessage key={message.id} message={message} />
@@ -163,10 +163,10 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
               </div>
               {showScrollToBottomButton && (
                 <button
-                  className={`fixed bottom-48 bg-grey rounded-full p-2 shadow-md transition ${ showScrollToBottomButton ? 'opacity-75 hover:opacity-100' : 'opacity-0' }`}
+                  className={`absolute bottom-36 bg-grey rounded-full p-2 shadow-md transition ${ showScrollToBottomButton ? 'bg-opacity-75 hover:bg-opacity-100' : 'opacity-0' }`}
                   onClick={() => showScrollToBottomButton && scrollToBottom()}
                 >
-                  <FiChevronDown size={24} />
+                  <FiChevronDown size={24} className='text-primary' />
                 </button>
               )}
             </div>

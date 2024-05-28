@@ -14,8 +14,8 @@ const TextMessage = ({ message }: IProps) => {
 
   return user && (
     <div className={`group w-full flex flex-col gap-1 ${ message.userId === user?.id ? 'items-end' : 'items-start' }`}>
-      <p className='sibling-hover max-w-[60%] text-light text-wrap text-left bg-secondary p-2 rounded-lg'>{ message.text }</p>
-      <p className='sibling max-w-[60%] text-grey text-no-wrap text-right text-sm h-0 opacity-0 transition-size'>
+      <p className='sibling-hover max-w-[60%] text-light text-wrap text-left bg-secondary p-2 rounded-lg cursor-default'>{ message.text }</p>
+      <p className='sibling max-w-[60%] text-grey text-no-wrap text-right text-sm h-0 opacity-0 transition-size cursor-default'>
         { formatDistance(message.createdAt, new Date(), { addSuffix: true }) }
       </p>
     </div>
