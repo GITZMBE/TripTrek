@@ -126,7 +126,7 @@ const Chatroompage = () => {
   return (
     <ProtectedRoute>
       <Container extraPadding>
-        <div className='w-full flex justify-end h-[80vh] lg:max-w-[1200px] bg-primary border-2 border-secondary shadow-secondary shadow-lg'>
+        <div className='w-full flex justify-end h-[75vh] lg:max-w-[1200px] bg-primary border-2 border-secondary shadow-secondary shadow-lg'>
           <div className={`${ currentChat ? 'w-0 md:w-1/3' : 'w-full' } flex-grow-1 flex flex-col items-center justify-start transition-size overflow-hidden`}>
             <div className='flex w-full p-4 bg-secondary shadow-lg'>
               <h2 className='text-xl text-light'>Your Chats</h2>
@@ -168,7 +168,6 @@ const Chatroompage = () => {
         </div>
       </Container>
     </ProtectedRoute>
-
   )
 }
 

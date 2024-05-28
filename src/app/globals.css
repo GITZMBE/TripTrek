@@ -43,4 +43,9 @@
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
   }
+
+  .sibling-hover:hover + .sibling {
+    opacity: 100;
+    height: 24px;
+  }
 }
