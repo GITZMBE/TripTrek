@@ -29,7 +29,7 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
     try {
       setIsLoading(true);
       const host = window.location.origin;
-      const uri = '/api/images/upload';
+      const uri = '/api/images';
       const options: RequestInit = {
         method: "POST",
         headers: {

@@ -96,27 +96,27 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
         {currentChat && (
           <>
             <div className='flex items-center w-full border-b-2 border-b-secondary'>
-              <FaAngleDoubleRight size={40} className='text-secondary hover:text-grey p-2 cursor-pointer' onClick={() => setCurrentChat(null)} />
-              <div className='group flex items-center gap-2 w-full'>
+              <FaAngleDoubleRight size={40} className='text-secondary hover:text-grey min-w-10 p-2 cursor-pointer' onClick={() => setCurrentChat(null)} />
+              <div className='group flex items-center w-full'>
                 {editTitle ? (
                   <div className='w-full h-full py-2'>
                     <input type="text" autoFocus className='w-full text-light placeholder:text-grey py-1 px-2 bg-secondary rounded-full outline-none' value={titleInputValue} onChange={e => setTitleInputValue(e.target.value)} onBlur={handleBlurEditTitleInput} />
                   </div>
                 ) : (
-                  <p className='flex items-center gap-2 w-full overflow-hidden text-nowrap text-ellipsis text-light font-semibold py-2'>
-                    {currentChat.title ? currentChat.title : currentChat?.owner ? `${currentChat.owner.name}'s chat${currentChat.listing ? ` for '${currentChat.listing.title}'` : ''}` : ''}
-                    <span className='flex items-center gap-2'>
-                      { currentChat.members && currentChat.members.map(member => (member.member?.avatar || member.member?.image) ? (
+                  <div className='flex items-center w-full py-2'>
+                    <span className='w-full overflow-hidden whitespace-nowrap text-nowrap text-ellipsis text-light font-semibold' onClick={handleOpenTitle}>
+                      {currentChat.title ? currentChat.title : currentChat?.owner ? `${currentChat.owner.name}'s chat${currentChat.listing ? ` for '${currentChat.listing.title}'` : ''}` : ''}
+                    </span>
+                    <div className='hidden sm:flex items-center flex-shrink-0 gap-2 px-2'>
+                      {currentChat.members && currentChat.members.map(member => (member.member?.avatar || member.member?.image) ? (
                         <img key={member.memberId} src={member.member.avatar || member.member.image || ''} className='w-6 aspect-square rounded-full object-center object-cover' alt="" />
                       ) : (
                         <FaUserCircle key={member.memberId} size={24} className='text-grey' />
                       ))}
-                    </span>
-                  </p>
+                    </div>
+                  </div>
                 )}
-                <div className='h-10 aspect-square'>
-                  <MdEdit size={40} className='lg:hidden lg:group-hover:block h-full aspect-square text-secondary focus:text-grey lg:hover:text-grey p-2 cursor-pointer' onClick={handleOpenTitle} />
-                </div>
+                <MdEdit size={40} className='lg:hidden lg:group-hover:block min-w-10 h-full aspect-square text-secondary focus:text-grey lg:hover:text-grey p-2 cursor-pointer' onClick={handleOpenTitle} />
               </div>
             </div>
             <div className='flex flex-col justify-end gap-4 p-2 flex-grow overflow-y-auto scrollbar-hidden'>

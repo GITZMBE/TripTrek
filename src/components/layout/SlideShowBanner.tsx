@@ -142,7 +142,7 @@ const SlideShowBanner = () => {
             onTouchEnd={handleTouchEnd}
           >
             <div></div>
-            <h1 className={`text-6xl font-bold text-center text-light tracking-wider ${ currentListing ? 'animate-fadeIn' : '' }`}>{ currentListing.title }</h1>
+            <h1 className={`text-3xl md:text-6xl font-bold text-center text-light tracking-wider ${ currentListing ? 'animate-fadeIn' : '' }`}>{ currentListing.title }</h1>
             <div className='flex gap-4'>{ listings.length > 0 && 
               listings.map((_, i) => (
                 i === currentListingIndex ? <span key={i} className='w-3 h-3 rounded-full border-2 border-accent bg-accent'></span> : <span key={i} className='w-3 h-3 rounded-full border-2 border-accent cursor-pointer' onClick={e => {e.stopPropagation(); setCurrentListingIndex(i)}}></span>

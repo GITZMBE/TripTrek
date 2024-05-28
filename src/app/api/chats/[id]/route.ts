@@ -79,11 +79,9 @@ export const DELETE = async (req: Request, { params }: { params: { id: string } 
         id
       }
     });
-    console.log(deletedChat)
     
     return NextResponse.json(deletedChat);
   } catch (error: any) {
-    console.log(error)
     return NextResponse.json({ message: error.meta.cause });
   }
 };

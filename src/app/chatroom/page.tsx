@@ -5,11 +5,13 @@ import { ChatLogs, ChatRecord, ChatSearcher, LoadingAnimation } from '@/src/comp
 import { useCurrentUser, useLoading } from '@/src/hooks';
 import { ExtendedChat } from '@/src/models';
 import { ProtectedRoute, request } from '@/src/utils';
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { FaAngleDoubleLeft } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const Chatroompage = () => {
+  const router = useRouter();
   const { currentUser: user } = useCurrentUser();
   const [userChats, setUserChats] = useState<ExtendedChat[]>([]);
   const { isLoading, setIsLoading } = useLoading(true);
@@ -51,7 +53,11 @@ const Chatroompage = () => {
       chats = await request<ExtendedChat[] | { message: string }>(host, uri, options);
     }
 
-    if ('message' in chats) return;
+    if ('message' in chats) {
+      toast.info('No chat found');
+      router.push('/chatroom');
+      return;
+    };
 
     if (chats.length === 0 && user?.id ) {
       let newChat: ExtendedChat | { message: string } | null = null;
@@ -75,13 +81,21 @@ const Chatroompage = () => {
       };
       newChat = await request<ExtendedChat | { message: string }>(host, uri, options);
 
-      if (newChat === null || 'message' in newChat) return;
+      if (newChat === null || 'message' in newChat) {
+        toast.error('Something went wrong, while trying to create a new chat');
+        router.push('/chatroom');
+        return;
+      };
 
       setCurrentChat(newChat);
+      toast.success(`Chat with user ${ newChat.members.filter(m => m.memberId === chatWith)[0].member.name } created`);
+      router.push('/chatroom');
       return;
     }
 
     setCurrentChat(chats[0]);
+    toast.success(`Chat${ chats.length > 1 ? 's' : '' } with user ${ chats[0].members.filter(m => m.memberId === chatWith)[0].member.name } found and opened ${ chats.length > 1 ? 'first chat ' : '' }successfully`)
+    router.push('/chatroom');
   }
 
   const getQueryParams = () => {
@@ -113,7 +127,7 @@ const Chatroompage = () => {
     <ProtectedRoute>
       <Container extraPadding>
         <div className='w-full flex justify-end h-[80vh] lg:max-w-[1200px] bg-primary border-2 border-secondary shadow-secondary shadow-lg'>
-          <div className={`${ currentChat ? 'w-0 md:w-1/3' : 'w-full' } flex-grow-1 flex flex-col items-center justify-start transition-size`}>
+          <div className={`${ currentChat ? 'w-0 md:w-1/3' : 'w-full' } flex-grow-1 flex flex-col items-center justify-start transition-size overflow-hidden`}>
             <div className='flex w-full p-4 bg-secondary shadow-lg'>
               <h2 className='text-xl text-light'>Your Chats</h2>
             </div>

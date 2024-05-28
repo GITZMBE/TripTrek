@@ -7,6 +7,7 @@ import Icon from './Icon';
 import { request } from '@/src/utils';
 import { Chat } from '@prisma/client';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 interface IProps {
   chat: ExtendedChat;
@@ -15,6 +16,7 @@ interface IProps {
 }
 
 export const ChatRecord = ({ chat, currentChat, setCurrentChat }: IProps) => {
+  const router = useRouter();
   const { currentUser: user } = useCurrentUser();
 
   const deleteChat = async () => {
@@ -40,6 +42,7 @@ export const ChatRecord = ({ chat, currentChat, setCurrentChat }: IProps) => {
 
     if (deletedChat.id === currentChat?.id) {
       setCurrentChat(null);
+      router.push('/chatroom')
     }
 
     if (Object.keys(deletedChat).length === 0) {
@@ -51,7 +54,9 @@ export const ChatRecord = ({ chat, currentChat, setCurrentChat }: IProps) => {
 
   return (
     <button className={`w-full flex justify-between gap-2 py-2 px-4 border-b-2 border-b-secondary ${ chat?.id === currentChat?.id ? 'bg-secondary opacity-100': 'bg-transparent opacity-50' } hover:bg-secondary hover:opacity-100 transition`} onClick={() => setCurrentChat(chat)}>
-      <p className={`${ chat?.id === currentChat?.id ? 'text-light': 'text-grey' } overflow-hidden text-ellipsis text-nowrap`}>{ chat.title ? chat.title : chat.owner ? `${chat.owner.name}'s chat` : '' }</p>
+      <p className={`${ chat?.id === currentChat?.id ? 'text-light': 'text-grey' } overflow-hidden text-ellipsis text-nowrap`}>
+        { chat.title ? chat.title : chat.owner ? `${chat.owner.name}'s chat${chat.listing ? ` for '${chat.listing.title}'` : ''}` : '' }
+      </p>
       { user?.id === chat.ownerId && (
         <span className='flex items-center gap-2'>
           <Icon icon='verified' size={24} className='w-6 text-verified' />
