@@ -4,6 +4,7 @@ import { DataLoader, NoDataContent } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
 import { BookedCard, LoadingAnimation } from "@/src/components/ui";
 import { useCurrentUser } from "@/src/hooks";
+import { ExtendedReservation } from "@/src/models";
 import { ProtectedRoute, request } from "@/src/utils";
 import { Listing, Reservation, User } from "@prisma/client";
 import Link from "next/link";
@@ -12,7 +13,7 @@ import React, { useEffect, useState } from "react";
 const ReservationsPage = () => {
   const { currentUser: user } = useCurrentUser();
   const [isLoading, setIsLoading] = useState(true);
-  const [reservations, setReservations] = useState<Reservation[] & { listing: Listing, user: User }[]>([]);
+  const [reservations, setReservations] = useState<ExtendedReservation[]>([]);
 
   const getUserReservations = async () => {
     const host = window.location.origin;
@@ -21,7 +22,7 @@ const ReservationsPage = () => {
       method: "GET",
       cache: 'no-cache'
     };
-    const userRes = await request<Reservation[] & { listing: Listing, user: User }[]>(host, uri, options) || [];
+    const userRes = await request<ExtendedReservation[]>(host, uri, options) || [];
     return userRes;
   };
 

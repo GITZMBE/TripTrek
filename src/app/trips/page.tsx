@@ -4,6 +4,7 @@ import { DataLoader, NoDataContent } from "@/src/components/dataHandlers";
 import { Container } from "@/src/components/layout";
 import { LoadingAnimation, ReservationCard } from "@/src/components/ui";
 import { useCurrentUser } from "@/src/hooks";
+import { ExtendedReservation } from "@/src/models";
 import { ProtectedRoute, request } from "@/src/utils";
 import { Listing, Reservation, User } from "@prisma/client";
 import Link from "next/link";
@@ -12,15 +13,16 @@ import React, { useEffect, useState } from "react";
 const TripsPage = () => {
   const { currentUser: user } = useCurrentUser();
   const [isLoading, setIsLoading] = useState(false);
-  const [reservations, setReservations] = useState<Reservation[] & { listing: Listing, user: User }[]>([]);
+  const [reservations, setReservations] = useState<ExtendedReservation[]>([]);
 
   const getUserReservations = async () => {
     const host = window.location.origin;
     const uri = `/api/reservations?userId=${user?.id}`;
     const options: RequestInit = {
       method: 'GET',
+      cache: 'no-cache'
     };
-    const userReservations = await request<Reservation[] & { listing: Listing, user: User }[]>(host, uri, options) || [];
+    const userReservations = await request<ExtendedReservation[]>(host, uri, options) || [];
     return userReservations;
   };
 

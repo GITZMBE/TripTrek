@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { DateValue, RangeValue } from '@nextui-org/react';
 import { dateValueToDate, request } from '@/src/utils';
-import { CountryModel } from '@/src/models';
+import { CountryModel, ExtendedListingWithoutChat } from '@/src/models';
 import { toast } from 'react-toastify';
 import ListingForm from '@/src/components/forms/ListingForm';
 import 'leaflet/dist/leaflet.css';
@@ -20,7 +20,7 @@ const Map = dynamic(() => import('@/src/components/listingSteps/ui/Map'), {
 
 const ListingPage = ({ params }: { params: { id: string} }) => {
   const { currentUser: user } = useCurrentUser();
-  const [listing, setListing] = useState<(Listing & { reservations: Reservation[], user: User, category: Category }) | null>(null);
+  const [listing, setListing] = useState<(ExtendedListingWithoutChat) | null>(null);
   const [location, setLocation] = useState<CountryModel | null>(null);
   const router = useRouter();
   const { isLoading, setIsLoading } = useLoading();
@@ -37,7 +37,7 @@ const ListingPage = ({ params }: { params: { id: string} }) => {
       method: 'GET',
       cache: 'no-cache'
     };
-    const list = await request<Listing & { reservations: Reservation[], user: User, category: Category }>(host, uri, options);
+    const list = await request<ExtendedListingWithoutChat>(host, uri, options);
     setListing(list);
     return list;
   };

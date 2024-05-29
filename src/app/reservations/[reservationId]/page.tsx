@@ -103,7 +103,7 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
                   <span>Declined</span>
                 )}              
               </p>
-              <div className='w-full flex justify-center items-center'>
+              <div className={`w-full justify-center items-center ${ reservation.isAccepted ? 'flex' : 'hidden' }`}>
                 <Link href={`/checkout/${reservation.id}`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-center text-grey hover:text-light'>Checkout</Link>
               </div>
             </>
