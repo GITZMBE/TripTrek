@@ -8,7 +8,7 @@ import { Reservation } from "@prisma/client";
 import { ProtectedRoute, request } from "@/src/utils";
 import { Container } from "@/src/components/layout";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
 
 const CheckoutPage = ({ params }: { params: { reservationId: string } }) => {
   const [clientSecret, setClientSecret] = useState("");
