@@ -27,13 +27,14 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
     }
   });
   const favoriteIds = user?.favoriteIds || [];
+  const filteredFavoriteIds = favoriteIds.filter(favoriteId => favoriteId !== listingId);
 
   const updatedUser = await prisma.user.update({ 
     where: { 
       id: id 
     },
     data: {
-      favoriteIds: [...favoriteIds, listingId]
+      favoriteIds: [...filteredFavoriteIds, listingId]
     }
   });
   return NextResponse.json(updatedUser);
