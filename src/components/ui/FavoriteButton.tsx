@@ -46,6 +46,7 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       body: JSON.stringify({ listingId: listing.id })
     };
     const data = await request<User>(host, uri, options);
+    toast.success('Liked listing successfully');
     setCurrentUser(data);
   };
 
@@ -63,6 +64,7 @@ const FavoriteButton = ({ listing }: FavoriteButtonProps) => {
       body: JSON.stringify({ listingId: listing.id })
     };
     const data = await request<User>(host, uri, options);
+    toast.success('Unliked listing successfully');
     setCurrentUser(data);
   };
 
