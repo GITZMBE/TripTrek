@@ -56,6 +56,7 @@ model Reservation {
   endDate    DateTime
   totalPrice Float
   isAccepted Boolean?
+  isPaid     Boolean?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
