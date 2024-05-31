@@ -132,7 +132,7 @@ export const ChatLogs = ({ currentChat, setCurrentChat }: IProps) => {
         {currentChat && (
           <>
             <div className='flex items-center w-full border-b-2 border-b-secondary'>
-              <FaAngleDoubleRight size={40} className='text-secondary hover:text-grey min-w-10 p-2 cursor-pointer' onClick={() => setCurrentChat(null)} />
+              <Icon icon='arrowdoubleright' size={40} className='text-secondary hover:text-grey min-w-10 p-2 cursor-pointer' onClick={() => setCurrentChat(null)} />
               <div className='group flex items-center w-full'>
                 {editTitle ? (
                   <div className='w-full h-full py-2'>

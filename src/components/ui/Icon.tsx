@@ -3,7 +3,7 @@
 import { BiQuestionMark, BiSolidCategory, BiTask } from 'react-icons/bi';
 import { GiBarn, GiBoatFishing, GiCactus, GiCastle, GiCaveEntrance, GiForestCamp, GiHamburgerMenu, GiIsland, GiWindmill } from 'react-icons/gi';
 import { MdOutlineChatBubble, MdOutlineVilla, MdVerified } from 'react-icons/md';
-import { FaHeart, FaRegHeart, FaSkiing } from 'react-icons/fa';
+import { FaAngleDoubleRight, FaHeart, FaLongArrowAltRight, FaRegHeart, FaSkiing } from 'react-icons/fa';
 import { BsSnow } from 'react-icons/bs';
 import { IoCheckmarkCircle, IoDiamond } from 'react-icons/io5';
 import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
@@ -71,6 +71,10 @@ export const Icon = ({ icon, className, size = 48, ...props }: IconProps) => {
       return <MdVerified size={size} className={`${className} ${defaultClasses}`} {...props} />;
     case "bin":
       return <RiDeleteBin2Fill size={size} className={`${className} ${defaultClasses}`} {...props} />;
+    case "arrowdoubleright":
+      return <FaAngleDoubleRight size={size} className={`${className} ${defaultClasses}`} {...props} />;
+    case "longarrowright":
+      return <FaLongArrowAltRight size={size} className={`${className} ${defaultClasses}`} {...props} />;
     default:
       return <BiQuestionMark size={size} className={`${className} ${defaultClasses}`} {...props} />;
   }
