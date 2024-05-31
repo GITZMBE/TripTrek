@@ -19,7 +19,7 @@ export const UnauthenticatedRoute = ({ children }: IProps) => {
     if (status === 'loading') return;
     if (session?.user) {
       toast.error("This page is only for unauthenticated users");
-      router.back();
+      router.push('/');
     }
   }, [session, status, router]);
 
