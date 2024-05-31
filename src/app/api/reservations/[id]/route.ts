@@ -18,14 +18,24 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
 
 export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
   const { id } = params;
-  const { accept } = await req.json();
+  const { accept, pay } = await req.json();
+
+  const queryData: any = {};
+  if (accept) {
+    queryData.isAccepted = accept;
+  }
+  if (pay) {
+    queryData.isPaid = pay;
+  }
 
   const handledAcception = await prisma.reservation.update({
     where: { 
       id 
     },
-    data: {
-      isAccepted: accept 
+    data: queryData,
+    include: {
+      user: true,
+      listing: true
     }
   });
 

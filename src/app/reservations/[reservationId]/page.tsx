@@ -1,7 +1,6 @@
 'use client';
 
 import { Container } from '@/src/components/layout';
-import { Listing, Reservation, User } from '@prisma/client';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -10,19 +9,32 @@ import jsPDF from 'jspdf';
 import { useCurrentUser, useLoading } from '@/src/hooks';
 import { LoadingAnimation } from '@/src/components/ui';
 import { toast } from 'react-toastify';
-import { ProtectedRoute } from '@/src/utils';
+import { ProtectedRoute, request } from '@/src/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { ExtendedReservation } from '@/src/models';
 
 const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
   const { currentUser: user } = useCurrentUser();
-  const [reservation, setReservation] = useState<Reservation & { listing: Listing, user: User }>();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [redirectStatus, setRedirectStatus] = useState<string | null>(null);
+  const [reservation, setReservation] = useState<ExtendedReservation>();
   const {isLoading, setIsLoading} = useLoading();
+
+  const host = window.location.origin;
+  const uri = `/api/reservations/${params.reservationId}`;
+
   const getReservation = async () => {
-    setIsLoading(true);
-    const res = await fetch(`${window.location.origin}/api/reservations/${params.reservationId}`);
-    const reserv: Reservation & { listing: Listing, user: User } = await res.json();
-    setReservation(reserv);
-    setIsLoading(false);
-    return reserv;
+    try {
+      setIsLoading(true);
+      const options: RequestInit = {
+        method: 'GET'
+      };
+      const res = await request<ExtendedReservation>(host, uri, options);
+      return res;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDownload = () => {
@@ -70,9 +82,36 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
     }
   };
 
+  const handlePay = async () => {
+    const options: RequestInit = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pay: true
+      }),
+    };
+    const res = await request<ExtendedReservation>(host, uri, options);
+    toast.success('Payment went through Successfully');
+    return res;
+  }
+
   useEffect(() => {
-    getReservation();
-  }, [params]);
+    const status = searchParams.get('redirect_status');
+    setRedirectStatus(status);
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (redirectStatus === 'succeeded') {
+        handlePay().then(setReservation);
+        router.push(window.location.pathname);
+      }
+      setIsLoading(true);
+      getReservation().then(setReservation);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [params, redirectStatus]);
 
   return (
     <ProtectedRoute>
@@ -93,16 +132,26 @@ const ReservationPage = ({ params }: { params: { reservationId: string } }) => {
                   <FaArrowDown size={20} className='pl-2 border-grey border-l-[1px]' />
                 </button>              
               </div>
-              <p className='w-full text-left text-light'>
-                <span className='text-grey'>Status: </span>
-                { reservation.isAccepted === undefined || reservation.isAccepted === null ? (
-                  <span>Pending...</span>
-                ) : reservation.isAccepted ? (
-                  <span>Accepted</span>
-                ) : (
-                  <span>Declined</span>
-                )}              
-              </p>
+              <div className='w-full space-y-2'>
+                <p className='w-full text-left text-light'>
+                  <span className='text-grey'>Status: </span>
+                  { reservation.isAccepted === undefined || reservation.isAccepted === null ? (
+                    <span>Pending...</span>
+                  ) : reservation.isAccepted ? (
+                    <span>Accepted</span>
+                  ) : (
+                    <span>Declined</span>
+                  )}              
+                </p>
+                <p className='w-full text-left text-light'>
+                  <span className='text-grey'>Payment: </span>
+                  { reservation.isPaid ? (
+                    <span className='text-light pb-2'>Paid</span>
+                  ) : (
+                    <span className='text-light pb-2'>Not Paid</span>
+                  )}
+                </p>
+              </div>
               <div className={`w-full justify-center items-center ${ reservation.isAccepted ? 'flex' : 'hidden' }`}>
                 <Link href={`/checkout/${reservation.id}`} className='flex gap-2 items-center py-2 px-4 rounded-lg bg-secondary text-center text-grey hover:text-light'>Checkout</Link>
               </div>
