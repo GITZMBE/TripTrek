@@ -85,12 +85,17 @@ export const BookedCard = ({ reservation, ...props }: ReservationCardProps) => {
             )}
           </span>
         </p>
-        <div className="flex gap-2 pt-2">
+        <div className={`flex ${ (reservation.isAccepted === true || reservation.isAccepted === false) ? 'justify-between items-center gap-2' : 'flex-col'} pt-2`}>
+          { reservation.isPaid ? (
+            <p className='text-light pb-2'>Paid</p>
+          ) : (
+            <p className='text-light pb-2'>Not Paid</p>
+          )}
           { (reservation.isAccepted === undefined || reservation.isAccepted === null) ? (
-            <>
+            <div className="flex w-full justify-between items-center gap-2">
               <span className="bg-transparent border-2 border-accept hover:bg-accept text-light w-full rounded-lg transition" onClick={e => { e.stopPropagation(); handleAccept() }}>Accept</span>
               <span className="bg-transparent border-2 border-love hover:bg-love text-light w-full rounded-lg transition" onClick={e => { e.stopPropagation(); handleDecline() }}>Decline</span>            
-            </>
+            </div>
           ) : reservation.isAccepted ? (
             <p className="text-center text-light">Accepted</p>
           ) : (

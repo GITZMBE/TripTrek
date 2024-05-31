@@ -60,14 +60,20 @@ export const ReservationCard = ({
           <span>{format(reservation.startDate, "yy-MM-dd")}</span>
           <span>{format(reservation.endDate, "yy-MM-dd")}</span>
         </div>
-        {reservation.isAccepted === undefined ||
-        reservation.isAccepted === null ? (
-          <p className='text-light pb-2'>Pending...</p>
-        ) : reservation.isAccepted ? (
-          <p className='text-light pb-2'>Accepted</p>
-        ) : (
-          <p className='text-light pb-2'>Declined</p>
-        )}
+        <div className="w-full flex justify-between items-center">
+          { reservation.isAccepted === undefined || reservation.isAccepted === null ? (
+            <p className='text-light pb-2'>Pending...</p>
+          ) : reservation.isAccepted ? (
+            <p className='text-light pb-2'>Accepted</p>
+          ) : (
+            <p className='text-light pb-2'>Declined</p>
+          )}
+          { reservation.isPaid ? (
+            <p className='text-light pb-2'>Paid</p>
+          ) : (
+            <p className='text-light pb-2'>Not Paid</p>
+          )}
+        </div>
         <span
           className='w-full py-1 px-2 text-white opacity-50 hover:opacity-100 rounded-lg bg-cancel'
           onClick={(e) => {
