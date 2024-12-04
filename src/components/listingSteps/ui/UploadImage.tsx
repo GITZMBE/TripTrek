@@ -39,7 +39,8 @@ export const UploadImage = ({ unregister, setValue, watch, setError, clearErrors
         body: file,
       };
       const savedImage = await request<{ url: string }>(host, uri, options);
-      setValue("image", savedImage);
+      const { url } = savedImage;
+      setValue("image", url);
     } finally {
       setIsLoading(false);
     }
